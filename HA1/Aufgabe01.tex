@@ -1,0 +1,464 @@
+\documentclass[a4paper, 11pt]{article}
+
+\usepackage{geometry}
+%\geometry{a4paper,left=30mm,right=30mm, top=20mm, bottom=20mm}
+\geometry{a4paper,left=20mm,right=20mm, top=25mm, bottom=20mm}
+
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{lscape}
+\usepackage{comment}
+\usetikzlibrary{positioning}
+
+\usepackage{lastpage} % Seitenzahlen
+
+\pagestyle{fancy}
+\usepackage{mathtools}   % Lädt »amsmath« 
+\newtagform{simple}{}{}{}
+\usetagform{simple}
+
+\usepackage{tabularx} %schöne tabellen
+\parindent0pt %einrücken verhindern
+
+\usepackage{polynom}
+% overall sans serif font
+%\renewcommand{\familydefault}{\sfdefault}
+\cfoot{\thepage  \ / \pageref{LastPage}}
+
+% % % % % % % % % % % % % % % % % % % % % % % %
+% % % % % % % % % % % % % % % % % % % % % % % %
+\newcommand{\modullang}{AOT}
+\newcommand{\modul}{AOT MSC}
+\newcommand{\blatt}{01 Übungsblatt}
+\newcommand{\tutorium}{Mittwoch 12:00 Uhr}
+\newcommand{\tutor}{Dr. Fricke}
+\newcommand{\datum}{17. November 2014}
+\newcommand{\gruppe}{Gr05}
+\newcommand{\RM}[1]{\MakeUppercase{\romannumeral #1}}
+% % % % % % % % % % % % % % % % % % % % % % % %
+% % % % % % % % % % % % % % % % % % % % % % % %
+
+\begin{document} 
+
+%%% Kopfzeile linker Bereich
+%      gerade Seite   ungerade Seite
+\lhead{\textbf{\modul}}
+%%% Kopfzeile mittlerer Bereich
+%      gerade Seite   ungerade Seite
+\chead{\blatt}
+%%% Kopfzeile linker Bereich
+%      gerade Seite             ungerade Seite
+\rhead{\gruppe}
+
+
+	%-- Deckblatt --						      
+	\title{\textbf{\modullang\\[0.25cm]}
+		\normalsize{\blatt}} %Thema ändern	
+	\author{\tutorium\\ \\
+		xxx, 000000\\
+		Tobias Pockrandt, 325550\\
+		xxx, 000000\\ \\ \\ \\ \\ \\ \\ 
+		Seitenzahl: \pageref{LastPage} \\ \\ \\ \\
+		%Professor: Knipping\\
+		Tutor: \tutor}
+	\date{Abgabedatum: \datum} %Datum ändern
+	\maketitle
+	\newpage
+	
+	%\renewcommand \thesection {\arabic{section}.}
+	%\renewcommand \thesubsection {\thesection. \arabic{subsection}}
+	%\renewcommand \thesubsubsection {\thesubsection. \arabic{subsubsection}}
+	
+
+\renewcommand{\labelenumi}{\alph{enumi})}
+\renewcommand{\labelenumii}{(\roman{enumii})}
+\renewcommand{\labelenumiii}{\arabic{enumiii}.}
+%\renewcommand{\labelenumii}{\textbf{-}}	
+%-- Eigentlicher Text --
+\section*{1. Aufgabe - Task Allokation per Auktion\hfill {\small (10 Punkte)}}
+\begin{enumerate}
+\item 
+\item 
+\item 
+\end{enumerate}
+\section*{2. Aufgabe - Dominanzelimination in gemischten Strategien\hfill {\small (5 Punkte)}}
+
+\begin{center}
+\begin{tabular}{c | cc}
+	\RM{1}/\RM{2} & c & d \\ \hline
+	A & 3,3 & 1,4\\
+	B & 5,2 & -1,1\\
+	C & 2,3 & 3,1\\
+\end{tabular}
+\end{center}
+
+\begin{align*}
+	Fall1: \RM{2} =  & c\\
+	E_\RM{1}(A) = & 3\\
+	E_\RM{1}(B) = & 5\\
+	E_\RM{1}(C) = & 2\\
+	\\
+	Fall2: \RM{2} = & d\\
+	E_\RM{1}(A) = & 1\\
+	E_\RM{1}(B) = & -1\\
+	E_\RM{1}(C) = & 3\\
+\end{align*}
+Behauptung: B und C Dominieren A\\
+zu Fall1:
+\begin{align}
+	x_1,x_2 \in & [0,1]\\
+	x_1 \cdot E_\RM{1}(B) + x_2 \cdot E_\RM{1}(C) \geq & E_\RM{1}(A)\\
+	\Rightarrow & 5x_1 + 2x_2 \geq 3\\ 
+	\text{Da Wahrscheinlichkeitsverteilung:  } & x_1 + x_2 = 1\\
+	\Rightarrow & x_1 \geq \frac{1}{3}~~~~ x_2 \leq \frac{2}{3} 
+\end{align}
+zu Fall2:
+\begin{align}
+	x_1,x_2 \in & [0,1]\\
+	x_1 \cdot E_\RM{1}(B) + x_2 \cdot E_\RM{1}(C) \geq & E_\RM{1}(A)\\
+	\Rightarrow & -x_1 + 3x_2 \geq 1\\ 
+	\text{Da Wahrscheinlichkeitsverteilung:  } & x_1 + x_2 = 1\\
+	\Rightarrow & x_1 \leq \frac{1}{2}~~~~ x_2 \geq \frac{1}{2} 
+\end{align}
+Aus (5) und (10) folgt:  $\frac{1}{3} \leq x_1 \leq \frac{1}{2}$ und $x_2 = 1-x_1$ bzw. $\frac{1}{2} \leq x_2 \leq \frac{2}{3}$. Wobei $x_1 \equiv P(B)$ und $x_2 \equiv P(C) $. \\
+Bei Verwendung dieser Wahrscheinlichkeitsverteilungen entfällt für Spieler \RM{1} die Option, sodass folgende verkleinerte Tabelle resultiert.\\
+
+\begin{minipage}{0.2\textwidth}
+	\begin{tabular}{c | cc}
+		\RM{1}/\RM{2} & c & d \\ \hline
+		A & 3,3 & 1,4\\
+		B & 5,2 & -1,1\\
+		C & 2,3 & 3,1\\
+	\end{tabular}
+\end{minipage}
+$\Rightarrow$
+\begin{minipage}{0.2\textwidth}
+	\begin{tabular}{c | cc}
+		\RM{1}/\RM{2} & c & d \\ \hline
+		B & 5,2 & -1,1\\
+		C & 2,3 & 3,1\\
+	\end{tabular}
+\end{minipage}
+$\overset{(*)}{\Rightarrow}$
+\begin{minipage}{0.2\textwidth}
+	\begin{tabular}{c | c}
+		\RM{1}/\RM{2} & c \\ \hline
+		B & 5,2 \\
+		C & 2,3 \\
+	\end{tabular}
+\end{minipage}
+$\overset{(*^2)}{\Rightarrow}$
+\begin{minipage}{0.2\textwidth}
+	\begin{tabular}{c | c}
+		\RM{1}/\RM{2} & c \\ \hline
+		B & 5,2 \\
+	\end{tabular}
+\end{minipage}\\
+
+(*): $E_\RM{2}(c) > E_\RM{2}(d)$ \\
+(*): $E_\RM{1}(B) > E_\RM{1}(C)$\\
+Somit ist \RM{1}(B) und \RM{2}(c) die dominante Strategie in gemischten Strategien.
+
+\section*{3. Aufgabe - Trembling Hand Perfection\hfill {\small (5 Punkte)}}
+\begin{tabular}{c | ccc}
+	\RM{1}/\RM{2} & a & b & c \\ \hline
+	A & \underline{1,1} & \underline{0},0 & -6,-4 \\
+	\\
+	B & 0,\underline{0} & \underline{0,0} & -4,\underline{-4} \\
+	\\
+	C & -4,-6 & \underline{-4},-4 & \underline{-4,-4} 
+\end{tabular}\\
+
+Reine Nash-Gleichgewichte sind demnach die Strategien $\{(A,a),(B,b),(C,c)\}$\\
+
+\begin{align}
+	E_\RM{1}(A) = & \frac{1}{3} \cdot 1 + \frac{1}{3} \cdot 0 + \frac{1}{3} \cdot -6 = \frac{1}{3} - \frac{6}{3} = -\frac{5}{3}\\
+	E_\RM{1}(B) = & \frac{1}{3} \cdot 0 + \frac{1}{3} \cdot 0 + \frac{1}{3} \cdot -4 = - \frac{4}{3}\\
+	E_\RM{1}(C) = & \frac{1}{3} \cdot -4 + \frac{1}{3} \cdot -4 + \frac{1}{3} \cdot -4 = - \frac{4}{3} - \frac{4}{3} - \frac{4}{3} = -\frac{12}{3} = -4\\
+	& \text{da Tabelle Symertisch ist die Werte für spieler \RM{2} analog}\\
+	E_\RM{2}(a) = & \frac{1}{3} \cdot 1 + \frac{1}{3} \cdot 0 + \frac{1}{3} \cdot -6 = \frac{1}{3} - \frac{6}{3} = -\frac{5}{3}\\
+	E_\RM{2}(b) = & \frac{1}{3} \cdot 0 + \frac{1}{3} \cdot 0 + \frac{1}{3} \cdot -4 = - \frac{4}{3}\\
+	E_\RM{2}(c) = & \frac{1}{3} \cdot -4 + \frac{1}{3} \cdot -4 + \frac{1}{3} \cdot -4 = - \frac{4}{3} - \frac{4}{3} - \frac{4}{3} = -\frac{12}{3} = -4
+\end{align}
+
+(A,a): (ist THP NGG)\\
+Für Spieler \RM{1} sei $p_a = 1- \varepsilon_b - \varepsilon_c$ ($\varepsilon_b$ ist die Wkt für das Abweichen nach b; $\varepsilon_c$ ist die Wkt für das Abweichen nach c). Dann gilt:\\
+\begin{align*}
+E_\RM{1}(A) = & (1-\varepsilon_B-\varepsilon_c) - \varepsilon_c \cdot 6 = 1 - \varepsilon_b - 7\varepsilon_c\\
+E_\RM{1}(B) = & - 4\varepsilon_c\\
+E_\RM{1}(C) = & (1-\varepsilon_b-\varepsilon_c) \cdot -4 + \varepsilon_b \cdot -4 + \varepsilon_c \cdot -4 = -4
+\end{align*}
+Der Erwartungswert für Spieler \RM{1} ist größer in der Gleichgewichtsstrategie, wenn gilt:\\
+$E_\RM{2}(A) > E_\RM{2}(B) \Leftrightarrow \varepsilon_b < 1 - 3\varepsilon_c$\\
+$E_\RM{2}(A) > E_\RM{2}(C) \Leftrightarrow \varepsilon_b < 5 - 7\varepsilon_c$\\
+Erfüllbar für beliebig kleine $\varepsilon_b$ und $\varepsilon_c$.\\
+Da die Tabelle symmetrisch ist verläuft Spieler \RM{2} analog mit dem gleichem Ergebnis. \\
+\\
+(B,b): (ist THP NGG)\\
+Für Spieler \RM{1} sei $p_b = 1- \varepsilon_a - \varepsilon_c$ ($\varepsilon_a$ ist die Wkt für das Abweichen nach a; $\varepsilon_c$ ist die Wkt für das Abweichen nach c). Dann gilt:\\
+\begin{align*}
+E_\RM{1}(A) = & \varepsilon_a - 6\varepsilon_c\\
+E_\RM{1}(B) = & -4\varepsilon_c\\
+E_\RM{1}(C) = & -4
+\end{align*} 
+Der Erwartungswert für Spieler \RM{1} ist größer in der Gleichgewichtsstrategie, wenn gilt:\\
+$E_\RM{2}(B) > E_\RM{2}(A) \Leftrightarrow \varepsilon_c > \frac{1}{2}\varepsilon_a$\\
+$E_\RM{2}(B) > E_\RM{2}(C) \Leftrightarrow \varepsilon_c < 1$\\
+Erfüllbar für beliebig kleine $\varepsilon_a$ und $\varepsilon_c$\\
+Da die Tabelle symmetrisch ist, verläuft Spieler \RM{2} analog mit dem gleichem Ergebnis.\\
+\\
+(C,c):\\
+Für Spieler \RM{1} sei $p_c = 1- \varepsilon_a - \varepsilon_b$ ($\varepsilon_a$ ist die Wkt für das Abweichen nach a; $\varepsilon_b$ ist die Wkt für das Abweichen nach b). Dann gilt:\\
+\begin{align*}
+E_\RM{1}(A) = & \varepsilon_a - 6 (1-\varepsilon_a - \varepsilon_b) = -6 + 5\varepsilon_a + 6\varepsilon_b\\
+E_\RM{1}(B) = & -4(1 - \varepsilon_a - \varepsilon_b) = -4 + 4\varepsilon_a + 4\varepsilon_b\\
+E_\RM{1}(C) = & -4
+\end{align*} 
+Der Erwartungswert für Spieler \RM{1} ist größer in der Gleichgewichtsstrategie, wenn gilt:\\
+$E_\RM{2}(C) > E_\RM{2}(A) \Leftrightarrow  \varepsilon_b < \frac{1}{3} - \frac{5}{6}\varepsilon_a$\\
+$E_\RM{2}(C) > E_\RM{2}(B) \Leftrightarrow 0 > \varepsilon_a + \varepsilon_b$\\
+Dies ist nicht möglich das $\varepsilon_a >= 0$ und $\varepsilon_b >= 0$ gelten muss. Daher kann (C,c) nicht THP sein.
+
+
+\section*{4. Aufgabe - 2-Stufiges Ultimatumspiel mit Inflation\hfill {\small (5 Punkte)}}
+a) / b)\\
+\begin{landscape}
+\begin{tikzpicture}[auto,node distance=2.2cm,thin]
+	\node(1) {\RM{2}};
+	\node(44) [below of=1] {\RM{1}};
+	\node(53) [left of=44] {\RM{1}};
+	\node(62) [left of=53] {\RM{1}};
+	\node(71) [left of=62] {\RM{1}};
+	\node(80) [left of=71] {\RM{1}};
+	\node(35) [right of=44] {\RM{1}};
+	\node(26) [right of=35] {\RM{1}};
+	\node(17) [right of=26] {\RM{1}};
+	\node(08) [right of=17] {\RM{1}};
+	
+	\node(J80) [below left=3cm and 0.5cm of 80] {8,0};
+	\node(N80) [below right=3cm and 0.5cm of 80] {0,0};
+	\node(J71) [below left=1.5cm and 0.5cm of 71] {7,1};
+	\node(N71) [below right=1.5cm and 0.5cm of 71] {0,0};
+	\node(J62) [below left=3cm and 0.5cm of 62] {6,2};
+	\node(N62) [below right=3cm and 0.5cm of 62] {0,0};
+	\node(J53) [below left=1.5cm and 0.5cm of 53] {5,3};
+	\node(N53) [below right=1.5cm and 0.5cm of 53] {0,0};
+	\node(J44) [below left=3cm and 0.5cm of 44] {4,4};
+	\node(N44) [below right=3cm and 0.5cm of 44] {0,0};
+	\node(J35) [below left=1.5cm and 0.5cm of 35] {3,5};
+	\node(N35) [below right=1.5cm and 0.5cm of 35] {0,0};	
+	\node(J26) [below left=3cm and 0.5cm of 26] {2,6};
+	\node(N26) [below right=3cm and 0.5cm of 26] {0,0};
+	\node(J17) [below left=1.5cm and 0.5cm of 17] {1,7};
+	\node(N17) [below right=1.5cm and 0.5cm of 17] {0,0};
+	\node(J08) [below left=3cm and 0.5cm of 08] {0,8};
+	\node(N08) [below right=3cm and 0.5cm of 08] {0,0};
+		
+	\path[-,left] (1) edge node {4,4} (44);
+	\path[-,bend right,left] (1) edge node {5,3} (53);
+	\path[-,bend right,left] (1) edge node {6,2} (62);
+	\path[-,bend right,left] (1) edge node {7,1} (71);
+	\path[-,bend right,left] (1) edge node {8,0} (80);
+	\path[-,bend left, right] (1) edge node {3,5} (35);
+	\path[-,bend left, right] (1) edge node {2,6} (26);
+	\path[-,red,bend left, right] (1) edge node {1,7} (17);
+	\path[-,bend left, right] (1) edge node {0,8} (08);
+	
+	\path[-,red,right] (80) edge node {J} (J80);
+	\path[-,left] (80) edge node {N} (N80);
+	\path[-,red,left] (71) edge node {J} (J71);
+	\path[-,right] (71) edge node {N} (N71);
+	\path[-,red,right] (62) edge node {J} (J62);
+	\path[-,left] (62) edge node {N} (N62);
+	\path[-,red,left] (53) edge node {J} (J53);
+	\path[-,right] (53) edge node {N} (N53);
+	\path[-,red,right] (44) edge node {J} (J44);
+	\path[-,left] (44) edge node {N} (N44);
+	\path[-,red,left] (35) edge node {J} (J35);
+	\path[-,right] (35) edge node {N} (N35);
+	\path[-,red,right] (26) edge node {J} (J26);
+	\path[-,left] (26) edge node {N} (N26);
+	\path[-,red,right] (17) edge node {J} (J17);
+	\path[-,left] (17) edge node {N} (N17);
+	\path[-,right] (08) edge node {J} (J08);
+	\path[-,red,left] (08) edge node {N} (N08);
+\end{tikzpicture}
+\end{landscape}
+\begin{landscape}
+		\begin{tikzpicture}[auto,node distance=2.2cm,thin]
+		%[above right=0.7cm and 4cm of A]
+		%Erstes Angebot
+		\node(1) {\RM{1}};
+		\node(55) [below of=1] {\RM{2}};
+		\node(64) [left of=55] {\RM{2}};
+		\node(73) [left of=64] {\RM{2}};
+		\node(82) [left of=73] {\RM{2}};
+		\node(91) [left of=82] {\RM{2}};
+		\node(100) [left of=91] {\RM{2}};
+		\node(46) [right of=55] {\RM{2}};
+		\node(37) [right of=46] {\RM{2}};
+		\node(28) [right of=37] {\RM{2}};
+		\node(19) [right of=28] {\RM{2}};
+		\node(010) [right of=19] {\RM{2}};
+		
+		%Neues Angebot
+		\node(G100) [below=6cm of 100] {1,7};
+		\node(G91) [below of=91] {1,7};
+		\node(G82) [below=6cm of 82] {1,7};
+		\node(G73) [below of=73] {1,7};
+		\node(G64) [below=6cm of 64] {1,7};
+		\node(G55) [below of=55] {1,7};
+		\node(G46) [below=6cm of 46] {1,7};
+		\node(G37) [below of=37] {1,7};
+		\node(G28) [below=6cm of 28] {1,7};
+		\node(G19) [below of=19] {1,7};
+		\node(G010) [below=6cm  of 010] {1,7};
+		
+		%Jesnodes
+		\node(J100) [left=0.5cm of G100] {10,0};
+		\node(J91) [left=0.5cm of G91] {9,1};
+		\node(J82) [left=0.5cm of G82] {8,2};
+		\node(J73) [left=0.5cm of G73] {7,3};
+		\node(J64) [left=0.5cm of G64] {6,4};
+		\node(J55) [left=0.5cm of G55] {5,5};
+		\node(J46) [left=0.5cm of G46] {4,6};
+		\node(J37) [left=0.5cm of G37] {3,7};
+		\node(J28) [left=0.5cm of G28] {2,8};
+		\node(J19) [left=0.5cm of G19] {1,9};
+		\node(J010) [left=0.5cm of G010] {0,10};
+		
+		%No-Nodes
+		\node(N100) [right=0.5cm of G100] {0,0};
+		\node(N91) [right=0.5cm of G91] {0,0};
+		\node(N82) [right=0.5cm of G82] {0,0};
+		\node(N73) [right=0.5cm of G73] {0,0};
+		\node(N64) [right=0.5cm of G64] {0,0};
+		\node(N55) [right=0.5cm of G55] {0,0};
+		\node(N46) [right=0.5cm of G46] {0,0};
+		\node(N37) [right=0.5cm of G37] {0,0};
+		\node(N28) [right=0.5cm of G28] {0,0};
+		\node(N19) [right=0.5cm of G19] {0,0};
+		\node(N010) [right=0.5cm of G010] {0,0};
+		
+		\path[-,left] (1) edge node {5,5} (55);
+		\path[-,bend right,left] (1) edge node {6,4} (64);
+		\path[-,bend right,left] (1) edge node {7,3} (73);
+		\path[-,bend right,left] (1) edge node {8,2} (82);
+		\path[-,bend right,left] (1) edge node {9,1} (91);
+		\path[-,bend right,above] (1) edge node {10,0} (100);
+		\path[-,bend left, right] (1) edge node {4,6} (46);
+		\path[-,bend left, right] (1) edge node {3,7} (37);
+		\path[-,red,bend left, right] (1) edge node {2,8} (28);
+		\path[-,bend left, right] (1) edge node {1,9} (19);
+		\path[-,bend left, above] (1) edge node {0,10} (010);
+		
+		\path[-,red,left] (100) edge node {A} (G100);
+		\path[-,red,left] (91) edge node {A} (G91);
+		\path[-,red,left] (82) edge node {A} (G82);
+		\path[-,red,left] (73) edge node {A} (G73);
+		\path[-,red,left] (64) edge node {A} (G64);
+		\path[-,red,left] (55) edge node {A} (G55);
+		\path[-,red,left] (46) edge node {A} (G46);
+		\path[-,red,left] (37) edge node {A} (G37);
+		\path[-,left] (28) edge node {A} (G28);
+		\path[-,left] (19) edge node {A} (G19);
+		\path[-,left] (010) edge node {A} (G010);
+		
+		\path[-,left] (100) edge node {J} (J100);
+		\path[-,left] (91) edge node {J} (J91);
+		\path[-,left] (82) edge node {J} (J82);
+		\path[-,left] (73) edge node {J} (J73);
+		\path[-,left] (64) edge node {J} (J64);
+		\path[-,left] (55) edge node {J} (J55);
+		\path[-,left] (46) edge node {J} (J46);
+		\path[-,left] (37) edge node {J} (J37);
+		\path[-,red,left] (28) edge node {J} (J28);
+		\path[-,red,left] (19) edge node {J} (J19);
+		\path[-,red,left] (010) edge node {J} (J010);
+		
+		\path[-,right] (100) edge node {N} (N100);
+		\path[-,right] (91) edge node {N} (N91);
+		\path[-,right] (82) edge node {N} (N82);
+		\path[-,right] (73) edge node {N} (N73);
+		\path[-,right] (64) edge node {N} (N64);
+		\path[-,right] (55) edge node {N} (N55);
+		\path[-,right] (46) edge node {N} (N46);
+		\path[-,right] (37) edge node {N} (N37);
+		\path[-,right] (28) edge node {N} (N28);
+		\path[-,right] (19) edge node {N} (N19);
+		\path[-,right] (010) edge node {N} (N010);
+		\end{tikzpicture}
+\end{landscape}
+c) Auf der geringsten Stufe in der \RM{1} 2 Münzen anbieten kann, werden sie sich beide auf (1,1) einigen (vgl. Baum unten). Mit diesem Ergebnis einigen sich beide auf der nächst höheren Stufe (\RM{2} bietet 4 Münzen) auf (2,2). Dies würde sich bis zu \RM{1} bietet 10 Münzen mit (5,5) fortsetzen.
+
+\begin{tikzpicture}[auto,node distance=2.5cm,thin]
+	\node(1) {\RM{1}};
+	\node(11) [below of=1] {\RM{2}};
+	\node(20) [left of=11] {\RM{2}};
+	\node(02) [right of=11] {\RM{2}};
+	
+	\node(J20) [below left=3cm and 0.5cm of 20] {2,0};
+	\node(N20) [below right=3cm and 0.5cm of 20] {0,0};
+	\node(J11) [below left=1.5cm and 0.5cm of 11] {1,1};
+	\node(N11) [below right=1.5cm and 0.5cm of 11] {0,0};
+	\node(J02) [below left=3cm and 0.5cm of 02] {0,2};
+	\node(N02) [below right=3cm and 0.5cm of 02] {0,0};
+	
+	\path[-,red,left] (1) edge node {1,1} (11);
+	\path[-,bend right,left] (1) edge node {2,0} (20);
+	\path[-,bend left,right] (1) edge node {0,2} (02);
+	
+	\path[-,right] (20) edge node {J} (J20);
+	\path[-,red,left] (20) edge node {N} (N20);
+	\path[-,red,left] (11) edge node {J} (J11);
+	\path[-,right] (11) edge node {N} (N11);
+	\path[-,red,right] (02) edge node {J} (J02);
+	\path[-,left] (02) edge node {N} (N02);
+\end{tikzpicture}
+
+\section*{5. Aufgabe - WM-Spielort vergeben\hfill {\small (10 Punkte)}}
+\begin{enumerate}
+	\item 
+	\item 
+	\item 
+\end{enumerate}
+
+\section*{6. Aufgabe - Konzentration auf Kernkompetenz\hfill {\small (10 Punkte)}}
+\begin{enumerate}
+	\item ~\\
+	Ein Eroberter Markt bringt 6 und ein verlorener Markt -1, da beide im Markt seinen wollen. Ein Kampf ist für beide schlechter als das Verlassen des Marktes.\\ 
+	\begin{tikzpicture}[auto,node distance=2cm,thin]
+	\node(A) {A};
+	\node(Aout) [below right of=A] {-1,6};
+	\node(Ain) [below left of=A] {B};
+	
+	\node(Ba) [below left of=Ain] {-2,-2};
+	\node(Bl) [below right of=Ain] {6,-1};
+	
+	\path[-,red,left] (A) edge node {In} (Ain);
+	\path[-] (A) edge node {Out} (Aout);
+	
+	\path[-,left] (Ain) edge node {fight} (Ba);
+	\path[-,red] (Ain) edge node {leave} (Bl);
+	\end{tikzpicture}
+	\item Nach dem Baum in Aufgabe a) würde A immer in den Markt gehen und B grundsätzlich verdrängen, weil B die Möglichkeit hat auf seinen Ersatzmarkt zurückzugreifen. Nimmt man B nun, wie aus der Aufgabenstellung, diese Rückzugsmöglichkeit würde es Grundsätzlich zum Kampf kommen und A würde nicht in den Markt einsteigen wollen.\\
+	\begin{tikzpicture}[auto,node distance=2cm,thin]
+	\node(A) {A};
+	\node(Aout) [below right of=A] {-1,6};
+	\node(Ain) [below left of=A] {B};
+	
+	\node(Ba) [below of=Ain] {-2,-2};
+	
+	\path[-,left] (A) edge node {In} (Ain);
+	\path[-,red] (A) edge node {Out} (Aout);
+	
+	\path[-,red,left] (Ain) edge node {fight} (Ba);
+	\end{tikzpicture}
+\end{enumerate}
+\end{document}
