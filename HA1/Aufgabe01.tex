@@ -423,10 +423,54 @@ c) Auf der geringsten Stufe in der \RM{1} 2 Münzen anbieten kann, werden sie si
 \end{tikzpicture}
 
 \section*{5. Aufgabe - WM-Spielort vergeben\hfill {\small (10 Punkte)}}
+
+Die Angabe der Bestechungen ist wie folgt aufgebaut: $Xp_i$ wobei X die Menge ist die dem Entscheider $p_i$ geboten wird. 0all bedeutet das kein Entscheider bestochen wird.\\
+Unter allem steht die Annahme das es Besser ist die WM auszutragen und mit 0-Nutzen hervorzugehen, als nicht zu Bestechen. \\
+\begin{tabular}{c | cccccccccc}
+	X$\setminus$ Y & 0all & 1$p_1$ & 1$p_2$ & 1$p_3$ & 1$p_1$1$p_2$ & 1$p_1$1$p_3$ & 1$p_2$1$p_3$ & 2$p_1$ & 2$p_2$ & 2$p_3$\\ \hline
+	0all & 0,2 & 0,1 & 0,1 & 0,1 & 0,0 & 0,0 & 0,0 & 0,0 & 0,0 & 0,0\\
+	1$p_1$ & -1,2 & -1,1 & -1,1 & -1,1 & -1,0 & -1,0 & -1,0 & -1,0 & -1,0 & -1,0\\
+	1$p_2$ & -1,2 & -1,1 & -1,1 & -1,1 & -1,0 & -1,0 & -1,0 & -1,0 & -1,0 & -1,0\\
+	1$p_3$ & -1,2 & -1,1 & -1,1 & -1,1 & -1,0 & -1,0 & -1,0 & -1,0 & -1,0 & -1,0\\
+	1$p_1$1$p_2$ & 0,0 & -2,1 & -2,1 & 0,-1 & -2,0 & -2,0 & -2,0 & -2,0 & -2,0 & 0,-2\\
+	1$p_1$1$p_3$ & 0,0 & -2,1 & 0,-1 & -2,1 & -2,0 & -2,0 & -2,0 & -2,0 & 0,-2 & -2,0\\
+	1$p_2$1$p_3$ & 0,0 & 0,-1 & -2,1 & -2,1 & -2,0 & -2,0 & -2,0 & 0,-2 & -2,0 & -2,0\\
+	2$p_1$& -2,2 & -2,1 & -2,1 & -2,1 & -2,0 & -2,0 & -2,0  & -2,0 & -2,0 & -2,0\\
+	2$p_2$& -2,2 & -2,1 & -2,1 & -2,1 & -2,0 & -2,0 & -2,0  & -2,0 & -2,0 & -2,0\\
+	2$p_3$& -2,2 & -2,1 & -2,1 & -2,1 & -2,0 & -2,0 & -2,0  & -2,0 & -2,0 & -2,0\\
+\end{tabular}
+\begin{center}
+{\huge $\overset{Dominanz}{\Downarrow}$}
+\end{center}
+\begin{tabular}{c | cccccccccc}
+	X$\setminus$ Y & 0all & 1$p_1$ & 1$p_2$ & 1$p_3$ & 1$p_1$1$p_2$ & 1$p_1$1$p_3$ & 1$p_2$1$p_3$ & 2$p_1$ & 2$p_2$ & 2$p_3$\\ \hline
+	0all & 0,2 & 0,1 & 0,1 & 0,1 & 0,0 & 0,0 & 0,0 & 0,0 & 0,0 & 0,0\\
+	1$p_1$1$p_2$ & 0,0 & -2,1 & -2,1 & 0,-1 & -2,0 & -2,0 & -2,0 & -2,0 & -2,0 & 0,-2\\
+	1$p_1$1$p_3$ & 0,0 & -2,1 & 0,-1 & -2,1 & -2,0 & -2,0 & -2,0 & -2,0 & 0,-2 & -2,0\\
+	1$p_2$1$p_3$ & 0,0 & 0,-1 & -2,1 & -2,1 & -2,0 & -2,0 & -2,0 & 0,-2 & -2,0 & -2,0\\
+\end{tabular}
+ \\
+ \\
+\begin{tabular}{c | cccccccccc}
+	X$\setminus$ Y & 0all & 1$p_1$ & 1$p_2$ & 1$p_3$ & 1$p_1$1$p_2$ & 1$p_1$1$p_3$ & 1$p_2$1$p_3$ & 2$p_1$ & 2$p_2$ & 2$p_3$\\ \hline
+	0all & \color{red}0,2 & 0,1 & 0,1 & 0,1 & 0,0 & 0,0 & 0,0 & 0,0 & 0,0 & 0,0\\
+	1$p_1$1$p_2$ & 0,0 & \color{red}-2,1 & \color{red}-2,1 & 0,-1 & -2,0 & -2,0 & -2,0 & -2,0 & -2,0 & 0,-2\\
+	1$p_1$1$p_3$ & 0,0 & \color{red}-2,1 & 0,-1 & \color{red}-2,1 & -2,0 & -2,0 & -2,0 & -2,0 & 0,-2 & -2,0\\
+	1$p_2$1$p_3$ & 0,0 & 0,-1 & \color{red}-2,1 & \color{red}-2,1 & -2,0 & -2,0 & -2,0 & 0,-2 & -2,0 & -2,0\\
+\end{tabular}
 \begin{enumerate}
+	\item In der letzten Tabelle sind die Effizientesten Antworten von Y auf die Bestechungen von X rot markiert. Daraus wird ersichtlich das Y immer mit 1 oder 2 Gewinnt. Für X ist das Beste Ergebnis keinen zu bestechen, somit bleibt X bei 0 und Y bei 2.
+	\item Ohne die erweiterte Tabelle zu erstellen lassen sich Schlüsse ziehen. Das Bestechen eines einzelnen Entscheiders egal mit welcher Summe, kann nur Verlust generieren, da die beiden anderen sich somit für Y entscheiden. Jeweils 2 Entscheider mit jeweils einer Einheit zu bestechen führt ebenfalls zu keinem Gewinn. Einen mit 2 und einen mit 1 zu bestechen würde einen Verlust bedeuten, da Y nur den Entscheider mit der 1 bestechen müsste um zu gewinnen. Gleiches gilt für einen mit 3 und einen mit 1. Alle mit 1 Einheit zu bestechen, würde ebenfalls einen Verlust zu folge haben, da Y nur 2 Bestechen müsste und gewinnt. Zwei mit 1 und einen mit 2 zu Bestechen hätte das gleiche Ergebnis. Somit bleibt nur noch die Möglichkeit 2 Entscheider mit jeweils 2 Einheiten zu bestechen, jedoch reicht es Y einen mit 2 zu Bestechen und gewinnt Automatisch. \\
+	Somit ist auch mit 4 Ressourcen für X kein Sieg möglich. Dies liegt daran das sich Y auf das Jeweilige Ergebnis einstellen kann und auch mittels der Gleichstandregel die Entscheidung des Komitees für sich entscheiden kann.
 	\item 
-	\item 
-	\item 
+	\begin{tabular}{c | c | c}
+		Y $\setminus$ X & Optimale Antowort & Outcome\\ \hline
+		0all & $1p_11p_2,1p_11p_3,1p_21p_3$ & 0,0~~X-Win\\ 
+		1$p_1$ = 1$p_2$ = 1$p_3$ & Bestechung beider anderen mit einer Einheit & -1,0~~X-Win\\
+		2$p_1$ = 2$p_2$ = 2$p_3$ & Bestechung beider anderen mit einer Einheit  & -2,0~~X-Win\\
+		$1p_11p_2,1p_11p_3,1p_21p_3$ & 0all & 0,0~~Y-Win\\
+	\end{tabular}\\
+	Der Vorteil, das sich Y auf X einstellen kann ist entfallen, somit ist nur noch die Gleichheitsregel für Y. Dies führt nach Tabelle dazu, das Y im Besten Fall mit 0 aus der Bestechungsaffäre hervorgeht. Die Wahl steht lediglich zwischen X gewinnt mit 0,0 und Y gewinnt mit 0,0.
 \end{enumerate}
 
 \section*{6. Aufgabe - Konzentration auf Kernkompetenz\hfill {\small (10 Punkte)}}
