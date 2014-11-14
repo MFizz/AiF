@@ -84,10 +84,16 @@
 \section*{1. Aufgabe - Task Allokation per Auktion\hfill {\small (10 Punkte)}}
 \begin{enumerate}
 \item 
-Für ein Spiel seien der Nutzen eines jeden Agenten $i$, falls er die Aution gewinnt, seine Wertschätzung $v_i$ minus sein Gebot $g_i$ und falls er nicht gewinnt 0.
-$N(i) = \begin{cases}v_i - g_i&\text{falls gewonnen}\\0&\text{sonst}\end{cases}
+Für ein Spiel seien der Nutzen eines jeden Agenten $i$, falls er die Aution gewinnt, seine Wertschätzung $v_i$ minus sein Gebot $g_i$ und falls er nicht gewinnt 0.\\
+$N(i) = \begin{cases}v_i - g_i&\text{falls gewonnen}\\0&\text{sonst}\end{cases} $ \\
+Alle Spieler haben ein Maximalgebot von $v_i$ das sonst ihr Nutzen unter $0$ fallen könnte.\\
+Nun ist ersichtlich, dass $1$ das höchste ($v_2$ das zweithöchste, etc.) Gebot setzen kann da $v_1$ echt größer als $v_{i\\1}$. Somit hat $1$ die Möglichkeit in jedem Spiel in dem er nicht Gewinnt auszuscheren und mehr zu bieten und damit höheren Nutzen zu erreichen.
+Damit sind die Spiele mit dem Ausgang $(v_1 - v_2 + \epsilon$ $\epsilon \in [0,v_1-v_2]$ die einzigen Nash-Gleichgewichte, also diejenigen in denen $1$ die Wertschätzung von $v_2$ überbietet.
+
 \item 
+In Fall (2) ist, angenommen ein Gebot gewinnt, $g_{2.höchstes} \leq g_i \leq v_i$ der Nutzen $v_i - g_{2.höchstes}$. Für den Fall dass das erste und zweite Gebot gleich und der Index des Agenten kleiner als der des anderen ist, oder das Gebot verliert ist er 0. Der Agent hat also keine Chance auszuscheren um einen höheren Nutzen zu erzielen.
 \item 
+Unter keinen Umständen.
 \end{enumerate}
 \section*{2. Aufgabe - Dominanzelimination in gemischten Strategien\hfill {\small (5 Punkte)}}
 
