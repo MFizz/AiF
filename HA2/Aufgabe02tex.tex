@@ -164,12 +164,32 @@ Für den Core gilt immer das Geschlecht, das weniger vorhanden ist, wird jeweils
 Bei dem Shapley-Value für 99M, 1F gibt es $100!$ mögliche Auszahlungsreihenfolgen. F kriegt nur keine Auszahlung, wenn Sie die erste in der Permutation ist, also in $99!$ Fällen. Das bedeutet, dass der SP für $F = 1 - \frac{99!}{100!} = \frac{99}{100}$ und da die M gleiches Gewicht besitzen dementsprechend $SP(M_i) = \frac{1}{9900}$ für $i \in [1,99]$.\\
 
 
-
-
 \end{enumerate}
 
 \section*{4. Aufgabe - Nukleolus in superadditivem Spiel\hfill {\small (5 Punkte)}}
+\begin{tabular}{c || c c c}
+& e(S,x) & (0,8,28) & (5,8,23) \\ \hline
+A & $0-x_1$ & 0 & -5\\
+B & $0-x_2$ & -8 & -8\\
+C & $6-x_3$ & -22 & -17\\
+AB & $6-(x_1+x_2)$ & -2 & -7\\
+AC & $12-(x_1+x_3)$ & -12 & -12\\
+BC & $26-(x_2+x_3)$ & -10 & -5\\
 
+\end{tabular}\\
+um die Varianz noch zu verkleinern könnte man noch:
+
+\begin{tabular}{c || c}
+& (5,10,19) \\ \hline
+A &-5\\
+B & -10\\
+C & -13\\
+AB & -9\\
+AC & -8\\
+BC & -5\\
+
+\end{tabular}\\
+anwenden.
 
 \section*{5. Weighted Voting und CFG mit $\geq$ 3 Spielern\hfill {\small (10 Punkte)}}
 
