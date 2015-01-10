@@ -39,6 +39,9 @@ class Agent(object):
 
     def utilityFunc(self, adventure):
         """ Determines the value an agent estimates for entering a given adventure.
+        For now we calculate utility by:
+        (skillpoints provided by agent / skillpoints required) * reward
+        for the best case.
 
         :param adventure (Adveture): The Adventure whose utility for the agent needs to be determined.
         :return (double): utility
