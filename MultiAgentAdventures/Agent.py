@@ -30,7 +30,8 @@ class Agent(object):
         """ Calculates the best 4 adventures for the agent by using his utility function
 
         :param adventures (list of Adventures): The available Adventures.
-        :return (list of Adventures): Best 4 adventures for the agent
+        :return (list of (double, list of(Skill, int), Adventure): Best 4 adventures for the agent with the respective
+        utility, and skill, power to achieve it.
         """
         advValues = []
         for adv in adventures:
@@ -44,7 +45,7 @@ class Agent(object):
         for the best case.
 
         :param adventure (Adveture): The Adventure whose utility for the agent needs to be determined.
-        :return (double): utility
+        :return (double, list of(Skill, int): Utility and the respective skills and power to achieve it.
 
         TODO: Agent's feature vector need to be incorporated
         """
