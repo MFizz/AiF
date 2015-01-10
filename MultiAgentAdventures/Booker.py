@@ -23,6 +23,6 @@ class Booker:
         TODO: return evaluable data of the outcome of the game
         """
         for a in self.agents:
-            print("Agent ID {}: {}".format(id(a),[(x, id(y)) for (x, y) in a.calcTopAdv(self.adventures)]))
+            print("Agent ID {}: {}".format(id(a), [(x, y, id(z)) for (x, y, z) in a.calcTopAdv(self.adventures)]))
 
 
