@@ -26,19 +26,19 @@ class Agent(object):
         self.skillList = skillList
         self.costs = _calcCostsAdv(advList)
 
-    def calcTopAdv(self, advetures):
+    def calcTopAdv(self, adventures):
         """ Calculates the best 4 adventures for the agent by using his utility function
 
         :param adventures (list of Adventures): The available Adventures.
         :return (list of Adventures): Best 4 adventures for the agent
         """
         advValues = []
-        for adv in advetures:
-            advValues.append((self.utilityFunc(adv), adv))
+        for adv in adventures:
+            advValues.append(self.utilityFuncForAdv(adv) + (adv,))
         return sorted(advValues, key=lambda x: x[0], reverse=True)[0:4]
 
-    def utilityFunc(self, adventure):
-        """ Determines the value an agent estimates for entering a given adventure.
+    def utilityFuncForAdv(self, adventure):
+        """ Determines the utility an agent estimates for entering a given adventure.
         For now we calculate utility by:
         (skillpoints provided by agent / skillpoints required) * reward
         for the best case.
@@ -48,14 +48,25 @@ class Agent(object):
 
         TODO: Agent's feature vector need to be incorporated
         """
-        cost = self.costs.get(adventure)
+        skillList = []
         skills = 0
         for skill, value in self.skillList:
             if skill in adventure.skillMap:
-                skills += min(value, adventure.skillMap.get(skill))
-        skillRatio = skills / sum(adventure.skillMap.values())
-        cost += skillRatio * adventure.reward
-        return cost
+                actSkill = (skill, min(value, adventure.skillMap.get(skill)))
+                skillList.append(actSkill)
+                skills += actSkill[1]
+
+        return self.utilityFunc(adventure, skills), skillList
+
+    def utilityFunc(self, adventure, skillPower):
+        """ Determines the utility an agent estimates for an adventure with a set number of skill points
+        he contributes.
+
+        :param adventure (Adventure):  The Adventure whose utility for the agent needs to be determined.
+        :param skillPower (int): Number of skill points he contributes (over all skills).
+        :return (double): utility
+        """
+        return (skillPower / sum(adventure.skillMap.values()) * adventure.reward) + self.costs.get(adventure)
 
 def _calcCostsAdv(adventures):
     """ Assigns random negative numbers to given adventures which represent a cost factor for every adventure.
