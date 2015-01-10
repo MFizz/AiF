@@ -1,6 +1,14 @@
+""" Module for starting a game.
+Every class and parameter used to get different game outcomes should be set here. Also documentation of
+game execution/performance should be contained here as much as possible, till we need dedicated modules for that.
+"""
+
 import Agent, Skill, Adventure
 from Booker import Booker
+
+""" number of random generated Adventures"""
 numAdv = 10
+""" number of random generated Agents"""
 numAgents = 4
 
 
