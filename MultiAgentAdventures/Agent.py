@@ -93,3 +93,32 @@ def createAgentList(t, advList):
         agentList.append(Agent(skillList, advList))
     return agentList
 
+class _Features:
+    """ The Features class stores features relevant to the Agent for a specific Adventure
+
+    Attributes:
+        costs (int) -  the adventurer's initial costs for this adventure
+        award (float) - the expected award the adventurer will get for this adventure
+        coalition (Coalition) - None if the agent is not in the winning coalition
+        missing_power (integer) - power needed to complete adventure
+        confirmed_agents ([Agent]) - list of agents that have decided to stay in the coalition after negotiations
+        times_failed (int) - counts how many times the agent applied for the adventure without getting in the winning coalition
+        rounds_left (int) - counts how many rounds are left until the game ends
+    """
+
+    def __init__(self, agent, adventure, award, coalition, missing_power, confirmed_agents):
+        """ Initialises Agent with a given skillList, and his initial costs calculated by calcCostAdv
+        Args:
+            :param skillList (list of (Skill,Int)): The skills and their power which an adventurer can contribute to an
+                                                    adventure.
+            :param advList (list of Adventures): The available Adventures.
+        """
+        self.costs = agent.costs.get(adventure)
+        invested_power == 0;
+        #if coalition is None:
+        #    for skill, value in self.skillList:
+        #        if skill in adventure.skillMap:
+        #            actSkill = (skill, min(value, adventure.skillMap.get(skill)))
+        #            skillList.append(actSkill)
+        #            skills += actSkill[1]
+
