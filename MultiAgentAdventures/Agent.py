@@ -97,28 +97,71 @@ class _Features:
     """ The Features class stores features relevant to the Agent for a specific Adventure
 
     Attributes:
-        costs (int) -  the adventurer's initial costs for this adventure
-        award (float) - the expected award the adventurer will get for this adventure
-        coalition (Coalition) - None if the agent is not in the winning coalition
-        missing_power (integer) - power needed to complete adventure
-        confirmed_agents ([Agent]) - list of agents that have decided to stay in the coalition after negotiations
-        times_failed (int) - counts how many times the agent applied for the adventure without getting in the winning coalition
-        rounds_left (int) - counts how many rounds are left until the game ends
+        costs (int): the adventurer's initial costs for this adventure
+        award (float): the expected award the adventurer will get for this adventure
+        coalition (Coalition): None if the agent is not in the winning coalition
+        missingPower (integer): power needed to complete adventure
+        confirmedAgents ([Agent]): list of agents that have decided to stay in the coalition after negotiations
+        timesFailed (int): counts how many times the agent applied for the adventure without getting in the winning coalition
+        roundsLeft (int): counts how many rounds are left until the game ends
     """
 
-    def __init__(self, agent, adventure, award, coalition, missing_power, confirmed_agents):
-        """ Initialises Agent with a given skillList, and his initial costs calculated by calcCostAdv
+    def __init__(self, agent, adventure):
+        """ Initialises Features with a given agent and adventure
         Args:
-            :param skillList (list of (Skill,Int)): The skills and their power which an adventurer can contribute to an
-                                                    adventure.
-            :param advList (list of Adventures): The available Adventures.
+            :param agent (Agent): The agent this feature vector belongs to
+            :param adventure (Adventures): The adventure this feature vector is for
         """
         self.costs = agent.costs.get(adventure)
-        invested_power == 0;
-        #if coalition is None:
-        #    for skill, value in self.skillList:
-        #        if skill in adventure.skillMap:
-        #            actSkill = (skill, min(value, adventure.skillMap.get(skill)))
-        #            skillList.append(actSkill)
-        #            skills += actSkill[1]
+        self.award = agent.utilityFuncForAdv(adventure)
+        self.coalition = None
+        self.missingPower = 0
+        self.confirmedAgents = []
+        self.timesFailed = 0
+        self.roundsLeft = 100
 
+    def updateFeatures(self, agent, adventure, coalition, confirmedAgents, falied):
+        """ Updates Features with the given arguments
+        Args:
+            :param agent (Agent): The agent this feature vector belongs to
+            :param adventure (Adventures): The adventure this feature vector is for
+            :param coalition (Coalition): The winning coalition the agent is in for this adventure (None if not in coalition)
+            :param confirmedAgents ([Agent]): list of agents that have decided to stay in the coalition after negotiations
+            :param failed (boolean): true if the attempt to join a winning coalition for the adventure failed, false otherwise
+
+        """
+        self.costs = agent.costs.get(adventure)
+        if coalition is None:
+            self.award = agent.utilityFuncForAdv(adventure)
+        else:
+            skillList = []
+            skillPower = 0
+            for entry in coalition.agentList:
+                if entry[0]==agent:
+                    skillList = entry[1]
+                    for entry in skillList:
+                        skillPower += entry[1]
+            self.award = (skillPower / sum(adventure.skillMap.values()) * adventure.reward)
+        
+        self.coalition = coalition
+        coalitionPower = 0
+        for entry in coalition:
+            coalitionPower += entry[1][1]
+        
+        skillList = [entry[1] for entry in coalition.agentList]
+        skillMap = dict({})
+        for entry in skillList:
+            if entry[0] not in skillMap.keys():
+                skillMap[entry[0]] = entry[1]
+            else:
+                skillMap[entry[0]] += entry[1]
+        self.missingPower = 0
+        for key in skillMap.keys():
+           self.missingPower += max(0, adventure.skillMap.get(key) - skillMap.get(key))
+        self.confirmedAgents = confirmedAgents
+        
+        if failed:
+            self.timesFailed += 1
+        
+        self.roundsLeft -= 1
+        
