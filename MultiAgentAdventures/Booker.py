@@ -25,12 +25,18 @@ class Booker:
         """
         print("Best adventures per adventurer:")
         requests = self.getRequests(self.agents, self.adventures)
+        coalsForAdv = {}
         for r in requests:
-            Coalition.createCoalitions(r, requests[r])
-
-        print(requests)
+            coalsForAdv[r] = Coalition.createCoalitions(r, requests[r]);
 
     def getRequests(self, agents, adventures):
+        """ Gets all request for all adventures.
+
+        :param agents (list of Agents): available agents
+        :param adventures (list of adventures): available adventures
+        :return (dict: key=adventure, value= list of (Agent, list of (Skill, int)): The applying Agents and their
+                                             skill/ power for every adveture.
+        """
         advRequests = {}
         for agent in self.agents:
             requests = agent.calcTopAdv(self.adventures)
