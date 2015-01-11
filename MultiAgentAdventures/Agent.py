@@ -41,10 +41,10 @@ class Agent(object):
     def utilityFuncForAdv(self, adventure):
         """ Determines the utility an agent estimates for entering a given adventure.
         For now we calculate utility by:
-        (skillpoints provided by agent / skillpoints required) * reward
+        ((skill points provided by agent / skill points required) * reward) - cost for adventure
         for the best case.
 
-        :param adventure (Adveture): The Adventure whose utility for the agent needs to be determined.
+        :param adventure (Adventure): The Adventure whose utility for the agent needs to be determined.
         :return (double, list of(Skill, int): Utility and the respective skills and power to achieve it.
 
         TODO: Agent's feature vector need to be incorporated
