@@ -19,6 +19,15 @@ class Coalition:
         self.agentList = agentList;
 
 def createCoalitions(adventure, agentRequests):
+    """ Creates all possible coalitions for every adventure and their requests from agents.
+    It returns all coalitions which complete an adventure or if those don't exist, the great
+    coalition of all agent requests.
+
+    :param adventure (Adventure): The adventure from which the coalitions shall be created.
+    :param agentRequests (list of (Agent, list of (Skill, int)): List of Agents and their skills and power, which
+                                                                 applied for that adventure
+    :return (list of Coalitions): List of coalitions for that Adventure.
+    """
     allSubSets = chain(*map(lambda x: combinations(agentRequests, x), range(1, len(agentRequests)+1)))
     completeSubSets = [x for x in list(allSubSets) if fullfillsReq(Coalition(adventure, x))]
     if not completeSubSets:
@@ -27,6 +36,11 @@ def createCoalitions(adventure, agentRequests):
         return [Coalition(adventure, x) for x in completeSubSets]
 
 def fullfillsReq(coalition):
+    """ Checks if the Coalition completes the adventure
+
+    :param coalition (Coalition): The examined Coaltion
+    :return (bool): True if every requirement is met.
+    """
     skillReqs = copy.deepcopy(coalition.adventure.skillMap)
     for agent, skillList in coalition.agentList:
         for skill, power in skillList:
