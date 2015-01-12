@@ -14,9 +14,15 @@ class Coalition:
         agentList (list of tuples of (Agent, list of (Skill, int))): Combination
     """
 
-    def __init__(self, adventure, agentList):
+    def __init__(self, adventure, agentList, vetoAgents=None):
         self.adventure = adventure
-        self.agentList = agentList;
+        self.agentList = agentList
+
+    def setVetoAgents(self, vetoAgents):
+        self.vetoAgents = vetoAgents
+
+    def appendVetoAgents(self, vetoAgents):
+        self.vetoAgents.append(vetoAgents)
 
 def createCoalitions(adventure, agentRequests):
     """ Creates all possible coalitions for every adventure and their requests from agents.
@@ -31,7 +37,10 @@ def createCoalitions(adventure, agentRequests):
     allSubSets = chain(*map(lambda x: combinations(agentRequests, x), range(1, len(agentRequests)+1)))
     completeSubSets = [x for x in list(allSubSets) if fullfillsReq(Coalition(adventure, x))]
     if not completeSubSets:
-        return [Coalition(adventure, x) for x in tuple(agentRequests)]
+        maxReqFilled = skillsLeftToFill(Coalition(adventure, tuple(agentRequests)))
+        bestSubSets = [x for x in completeSubSets if maxSkillsLeftToFill(x, maxReqFilled)]
+        coalitions = [Coalition(adventure, x) for x in bestSubSets]
+        vetoAgents = [x for]
     else:
         return [Coalition(adventure, x) for x in completeSubSets]
 
@@ -46,3 +55,19 @@ def fullfillsReq(coalition):
         for skill, power in skillList:
             skillReqs[skill] = skillReqs.get(skill) - power
     return reduce(lambda x, y: x and y, map(lambda x: x <= 0, list(skillReqs.values())))
+
+def skillsLeftToFill(coalition):
+    skillReqs = copy.deepcopy(coalition.adventure.skillMap)
+    for agent, skillList in coalition.agentList:
+        for skill, power in skillList:
+            skillReqs[skill] = skillReqs.get(skill) - power
+    return sum(skillReqs.values())
+
+def maxSkillsLeftToFill(coalition,t):
+    skillReqs = copy.deepcopy(coalition.adventure.skillMap)
+    for agent, skillList in coalition.agentList:
+        for skill, power in skillList:
+            skillReqs[skill] = skillReqs.get(skill) - power
+    return t >= sum([x for x in list(skillReqs.values()) if x > 0])
+
+def getVetoAgents(Coalitions):
