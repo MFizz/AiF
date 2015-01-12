@@ -40,7 +40,7 @@ def createCoalitions(adventure, agentRequests):
         maxReqFilled = skillsLeftToFill(Coalition(adventure, tuple(agentRequests)))
         bestSubSets = [x for x in completeSubSets if maxSkillsLeftToFill(x, maxReqFilled)]
         coalitions = [Coalition(adventure, x) for x in bestSubSets]
-        vetoAgents = [x for]
+        return coalitions
     else:
         return [Coalition(adventure, x) for x in completeSubSets]
 
@@ -69,5 +69,3 @@ def maxSkillsLeftToFill(coalition,t):
         for skill, power in skillList:
             skillReqs[skill] = skillReqs.get(skill) - power
     return t >= sum([x for x in list(skillReqs.values()) if x > 0])
-
-def getVetoAgents(Coalitions):
