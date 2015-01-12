@@ -28,6 +28,7 @@ class Agent(object):
         for adv in advList:
             self.featureMap[adv] = _Features(self, adv)
 
+
     def calcTopAdv(self, adventures):
         """ Calculates the best 4 adventures for the agent by using his utility function
 
@@ -42,24 +43,34 @@ class Agent(object):
 
     def utilityFuncForAdv(self, adventure):
         """ Determines the utility an agent estimates for entering a given adventure.
-        For now we calculate utility by:
-        ((skill points provided by agent / skill points required) * reward) - cost for adventure
-        for the best case.
 
         :param adventure (Adventure): The Adventure whose utility for the agent needs to be determined.
         :return (double, list of(Skill, int): Utility and the respective skills and power to achieve it.
 
-        TODO: Agent's feature vector need to be incorporated
         """
-        skillList = []
-        skills = 0
-        for skill, value in self.skillList:
-            if skill in adventure.skillMap:
-                actSkill = (skill, min(value, adventure.skillMap.get(skill)))
-                skillList.append(actSkill)
-                skills += actSkill[1]
+        features = self.featureMap.get(adventure)
 
-        return self.utilityFunc(adventure, skills), skillList
+        utility = 0
+        utility += features.reward
+        utility -= features.costs
+        skillList = []
+        if features.coalition is None:
+            utility /= features.timesFailed + 1.0      
+            utility *= features.roundsLeft/100.0
+            for skill,value in self.skillList:
+                if skill in adventure.skillMap:
+                    skillList.append((skill, min(value, adventure.skillMap.get(skill))))
+
+        """ TODO: utility depending on coalition
+        else:
+            
+        """
+
+            
+
+            
+            
+        return utility, skillList
 
     def utilityFunc(self, adventure, skillPower):
         """ Determines the utility an agent estimates for an adventure with a set number of skill points
@@ -78,25 +89,21 @@ class Agent(object):
         :param adventure (Adventure):   The Adventure for which the reward needs to be estimated.
         :param coalition (Coalition):   The coalition the agent for which the reward needs to be estimated.
                                             If there is no coalition then the value of this parameter can be None.
+        :return (float) - an estimate for the reward the agent will get for completing the adventure
         """
-        """ TODO: More accurate estimation based on coalition """
+        """ TODO: More accurate estimation based on veto agents """
         if coalition is None:
-            skillList = []
             skillPower = 0
             for skill, value in self.skillList:
                 if skill in adventure.skillMap:
-                    actSkill = (skill, min(value, adventure.skillMap.get(skill)))
-                    skillList.append(actSkill)
-                    skillPower += actSkill[1]
+                    skillPower +=  min(value, adventure.skillMap.get(skill))
             return (skillPower / sum(adventure.skillMap.values()) * adventure.reward)
         else:
-            skillList = []
             skillPower = 0
-            for entry in coalition.agentList:
-                if entry[0]==agent:
-                    skillList = entry[1]
-                    for entry in skillList:
-                        skillPower += entry[1]
+            for agent, skillList in coalition.agentList:
+                if agent==self:
+                    for skill,power in skillList:
+                        skillPower += power
             """ TODO: incorporate veto players  """
             return (skillPower / sum(adventure.skillMap.values()) * adventure.reward)
 
@@ -132,8 +139,10 @@ class _Features:
         costs (int):    the adventurer's initial costs for this adventure
         reward (float): the expected reward the adventurer will get for this adventure
         coalition (Coalition):  None if the agent is not in the winning coalition
-        missingPower (integer): power needed to complete adventure
-        confirmedAgents ([Agent]):  list of agents that have decided to stay in the coalition after negotiations
+        coalitionPower (list of (skill, integer)): coalition power comapred to power needed for adventure for each skill
+        confirmedAgents (list of Agents):  list of agents that have decided to stay in the coalition after negotiations
+        confirmedAgentsPower (list of (skill, integer)):   coalition power comapred to power needed for adventure for each skill, 
+                                                                only taking confirmed agents into account
         timesFailed (int):  counts how many times the agent applied for the adventure without getting in the winning coalition
         roundsLeft (int):   counts how many rounds are left until the game ends
     """
@@ -145,10 +154,11 @@ class _Features:
             :param adventure (Adventures):  The adventure this feature vector is for
         """
         self.costs = agent.costs.get(adventure)
-        self.reward = agent.utilityFuncForAdv(adventure)
+        self.reward = agent.estimateReward(adventure, None)
         self.coalition = None
-        self.missingPower = 0
+        self.coalitionPower = []
         self.confirmedAgents = []
+        self.confirmedAgentsPower = []
         self.timesFailed = 0
         self.roundsLeft = 100
 
@@ -165,21 +175,31 @@ class _Features:
         self.costs = agent.costs.get(adventure)
         self.reward = agent.estimateReward(adventure, coalition)
         self.coalition = coalition
-        coalitionPower = 0
-        for entry in coalition:
-            coalitionPower += entry[1][1]
         
-        skillList = [entry[1] for entry in coalition.agentList]
+        skillList = [sp for a, sp in coalition.agentList]
         skillMap = dict({})
-        for entry in skillList:
-            if entry[0] not in skillMap.keys():
-                skillMap[entry[0]] = entry[1]
+        for skill, power in skillList:
+            if skill not in skillMap.keys():
+                skillMap[skill] = power
             else:
-                skillMap[entry[0]] += entry[1]
-        self.missingPower = 0
-        for key in skillMap.keys():
-           self.missingPower += max(0, adventure.skillMap.get(key) - skillMap.get(key))
+                skillMap[skill] += power
+        self.coalitionPower = []
+        for skill in skillMap.keys():
+           self.coalitionPower.append(skill,adventure.skillMap.get(skill) - skillMap.get(skill))
+        
         self.confirmedAgents = confirmedAgents
+        
+        confirmedAgentList = [(a,sp) for a,sp in coalition.agentList if a in self.confirmedAgents]
+        skillList = [sp for a, sp in confirmedAgentList]
+        skillMap = dict({})
+        for skill, power in skillList:
+            if skill not in skillMap.keys():
+                skillMap[skill] = power
+            else:
+                skillMap[skill] += power
+        self.confirmedAgentsPower = []
+        for skill in skillMap.keys():
+           self.confirmedAgentsPower.append(skill,adventure.skillMap.get(skill) - skillMap.get(skill))
         
         if failed:
             self.timesFailed += 1
