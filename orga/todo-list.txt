@@ -1,21 +1,25 @@
 1. Agent
-    - Feature Vektor für Abenteuer implementieren (am besten zuerst). Kann wie eine Map {Abenteuer:Features} gespeichert werden. Die Klasse Features muss zumindest Kosten,erwarteter Gewinn, in Koalition (ja/nein), fehlende Power (falls was fehlt), usw enthalten. Auf jeden Fall gut über weitere mögliche Features nachdenken.  
+    - Feature Vektor für Abenteuer implementieren (am besten zuerst). Kann wie eine Map {Abenteuer:Features} gespeichert werden. Die Klasse Features muss zumindest Kosten,erwarteter Gewinn, in Koalition (ja/nein), fehlende Power (falls was fehlt), usw enthalten. Auf jeden Fall gut über weitere mögliche Features nachdenken.
     - Schätzfunktion (einfach und Koalition-Bedingt) "estimateValue(Adventure, Coalition(optional)) returns float" implementieren 
-    - Nutzenfunktion "utility(Adventure) returns float" implementueren 
-    - Funktion "chooseAdventures() returns [Adventure]" zur Auswahl der ersten 4 Abenteuern implementieren.
+
+    (Done) - Nutzenfunktion "utility(Adventure) returns float" implementueren
+    (Done) - Funktion "chooseAdventures() returns [Adventure]" zur Auswahl der ersten 4 Abenteuern implementieren.
 
 2. Modul coalition_utils
-    - Klasse Coalition implementieren (am besten zuerst). Sie soll zumindest Agenten, investierte Skill und Power pro Agent, zugehörige Abenteuer und Gewinn als Variablen speichern. 
     - "bestCoalition([Coalition]) returns Coalition" zur Auswahl einer Koalition (distributiver Ansatz) implementieren.
+
+    (Done) - Klasse Coalition implementieren (am besten zuerst). Sie soll zumindest Agenten, investierte Skill und Power pro Agent, zugehörige Abenteuer und Gewinn als Variablen speichern.
 
 3. Modul coalition_utils - Part 2 (klasse Coalition muss schon implementiert sein)
     - Funktion "shapelyValues(Coalition) returns {Agent:float}" im implementieren
-    - "buildCoalitions(Adventure,[Agents]) returns [[Coalition]]" zur Erstellung aller mögliche Koalitionen implementieren
+
+    (Done) - "buildCoalitions(Adventure,[Agents]) returns [[Coalition]]" zur Erstellung aller mögliche Koalitionen implementieren
 
 4. Modul zur Steuerung (World) implementieren und alle notwendige Funktionen aufrufen (auch wenn sie nicht komplett implementiert sind)
-    - ein paar Agenten und Abenteuern initialisieren.
-    - Agent.chooseAdventures() für jeden Agent aufrufen um Bewerbungen zu erhalten
-    - für jedes Abenteuer Koalitionen mit coalition_utils.buildCoalitions() erstellen
     - Beste Koalitionen mit coalition_utils.bestCoalition() erhalten
     - Shapely Values mit coalition_utils.shapelyValues() berechnen
-    - Funktion zur update von Feature Vectors in Klasse Agent schreiben, die abhängig von Resultat nach Coalition Forming und Shapely Value den Feature Vector aktualisiert. Falls der Feature Vektor im Agent noch nicht fertig implementiert ist, kann diese Funktion auch später implementiert werden. 
+
+    (Done) - ein paar Agenten und Abenteuern initialisieren.
+    (Done) - Agent.chooseAdventures() für jeden Agent aufrufen um Bewerbungen zu erhalten
+    (Done) - für jedes Abenteuer Koalitionen mit coalition_utils.buildCoalitions() erstellen
+    (Done) - Funktion zur update von Feature Vectors in Klasse Agent schreiben, die abhängig von Resultat nach Coalition Forming und Shapely Value den Feature Vector aktualisiert. Falls der Feature Vektor im Agent noch nicht fertig implementiert ist, kann diese Funktion auch später implementiert werden.
