@@ -90,13 +90,16 @@ class Agent(object):
                     skillPower +=  min(value, adventure.skillMap.get(skill))
             return skillPower / sum(adventure.skillMap.values()) * adventure.reward
         else:
-            skillPower = 0
+            agentsPower = dict({})
             for agent, skillList in coalition.agentList:
-                if agent==self:
-                    for skill,power in skillList:
-                        skillPower += power
+                skillPower = 0
+                for skill,power in skillList:
+                    skillPower += power
+                agentsPower[agent] = skillPower
+
+
             """ TODO: incorporate veto players  """
-            return skillPower / sum(adventure.skillMap.values()) * adventure.reward
+            return agentPower.get(agent) / sum(agentPower.values()) * adventure.reward
 
 
 def _calcCostsAdv(adventures):
@@ -130,9 +133,9 @@ class _Features:
         costs (int):    the adventurer's initial costs for this adventure
         reward (float): the expected reward the adventurer will get for this adventure
         coalition (Coalition):  None if the agent is not in the winning coalition
-        coalitionPower (list of (skill, integer)): coalition power compared to power needed for adventure for each skill
+        coalitionPowerDiff (list of (skill, integer)): coalition power compared to power needed for adventure for each skill
         confirmedAgents (list of Agents):  list of agents that have decided to stay in the coalition after negotiations
-        confirmedAgentsPower (list of (skill, integer)): coalition power compared to power needed for adventure for
+        confirmedAgentsPowerDiff (list of (skill, integer)): coalition power compared to power needed for adventure for
                                                          each skill, only taking confirmed agents into account
         timesFailed (int):  counts how many times the agent applied for the adventure without getting in the winning
                             coalition
@@ -148,9 +151,9 @@ class _Features:
         self.costs = agent.costs.get(adventure)
         self.reward = agent.estimateReward(adventure, None)
         self.coalition = None
-        self.coalitionPower = []
+        self.coalitionPowerDiff = []
         self.confirmedAgents = []
-        self.confirmedAgentsPower = []
+        self.confirmedAgentsPowerDiff = []
         self.timesFailed = 0
         self.roundsLeft = roundsLeft
 
@@ -175,9 +178,9 @@ class _Features:
                 skillMap[skill] = power
             else:
                 skillMap[skill] += power
-        self.coalitionPower = []
+        self.coalitionPowerDiff = []
         for skill in skillMap.keys():
-            self.coalitionPower.append(skill, adventure.skillMap.get(skill) - skillMap.get(skill))
+            self.coalitionPowerDiff.append(skill, adventure.skillMap.get(skill) - skillMap.get(skill))
 
         self.confirmedAgents = confirmedAgents
 
@@ -189,9 +192,9 @@ class _Features:
                 skillMap[skill] = power
             else:
                 skillMap[skill] += power
-        self.confirmedAgentsPower = []
+        self.confirmedAgentsPowerDiff = []
         for skill in skillMap.keys():
-            self.confirmedAgentsPower.append(skill,adventure.skillMap.get(skill) - skillMap.get(skill))
+            self.confirmedAgentsPowerDiff.append(skill,adventure.skillMap.get(skill) - skillMap.get(skill))
 
         if failed:
             self.timesFailed += 1
