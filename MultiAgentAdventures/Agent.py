@@ -76,7 +76,7 @@ class Agent(object):
     def estimateReward(self, adventure, coalition):
         """ Determines an estimate for the reward the agent will get for comleting the adventure,
         given a certain coalition (if available).
-        
+
         :param adventure (Adventure):   The Adventure for which the reward needs to be estimated.
         :param coalition (Coalition):   The coalition the agent for which the reward needs to be estimated.
                                             If there is no coalition then the value of this parameter can be None.
@@ -97,6 +97,23 @@ class Agent(object):
                         skillPower += power
             """ TODO: incorporate veto players  """
             return skillPower / sum(adventure.skillMap.values()) * adventure.reward
+
+
+    def updateGain(self, coalsForAgent):
+        """ Update the agents current estimation of the game and his expected gain
+
+        :param coalsForAgent (list of Coalitions): The Winning coalitions for this agent for each adventure
+        """
+
+        for adv in coalsForAgent:
+            """ TODO add confirmedAgents. Maybe these are only known at a
+                     different point.
+                TODO it is redundant to reference adventure from the feature map
+                     and as an argument of the function
+                TODO updateFeatures (calling estimateReward) can only handle one
+                     coalition at a time
+            """
+            self.featureMap[adv].updateFeatures(self, adv, coalsForAgent[adv], None, False)
 
 
 def _calcCostsAdv(adventures):
@@ -197,4 +214,3 @@ class _Features:
             self.timesFailed += 1
 
         self.roundsLeft -= 1
-        

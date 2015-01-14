@@ -29,6 +29,13 @@ class Booker:
         for r in requests:
             coalsForAdv[r] = Coalition.createCoalitions(r, requests[r]);
 
+        """ Give The agents the possibility to update their preferences
+            TODO: Agents should only see coalitions from adventures that they
+                  applied for.
+        """
+        #for a in self.agents:
+        #    a.updateGain(coalsForAdv)
+
     def getRequests(self, agents, adventures):
         """ Gets all request for all adventures.
 
