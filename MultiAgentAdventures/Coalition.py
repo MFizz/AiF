@@ -18,11 +18,6 @@ class Coalition:
         self.adventure = adventure
         self.agentList = agentList
 
-    def setVetoAgents(self, vetoAgents):
-        self.vetoAgents = vetoAgents
-
-    def appendVetoAgents(self, vetoAgents):
-        self.vetoAgents.append(vetoAgents)
 
 def createCoalitions(adventure, agentRequests):
     """ Creates all possible coalitions for every adventure and their requests from agents.
@@ -38,11 +33,14 @@ def createCoalitions(adventure, agentRequests):
     completeSubSets = [x for x in list(allSubSets) if fullfillsReq(Coalition(adventure, x))]
     if not completeSubSets:
         maxReqFilled = skillsLeftToFill(Coalition(adventure, tuple(agentRequests)))
-        bestSubSets = [x for x in completeSubSets if maxSkillsLeftToFill(x, maxReqFilled)]
+        bestSubSets = [x for x in completeSubSets if skillsLeftToFill(maxReqFilled) <= x]
         coalitions = [Coalition(adventure, x) for x in bestSubSets]
+        adventure.addCoalitions(coalitions)
         return coalitions
     else:
-        return [Coalition(adventure, x) for x in completeSubSets]
+        coalitions = [Coalition(adventure, x) for x in completeSubSets]
+        adventure.addCoalitions(coalitions)
+        return coalitions
 
 def fullfillsReq(coalition):
     """ Checks if the Coalition completes the adventure
@@ -61,11 +59,24 @@ def skillsLeftToFill(coalition):
     for agent, skillList in coalition.agentList:
         for skill, power in skillList:
             skillReqs[skill] = skillReqs.get(skill) - power
-    return sum(skillReqs.values())
+    return sum([x for x in list(skillReqs.values()) if x > 0])
 
-def maxSkillsLeftToFill(coalition,t):
+def excess(coalition):
     skillReqs = copy.deepcopy(coalition.adventure.skillMap)
     for agent, skillList in coalition.agentList:
         for skill, power in skillList:
             skillReqs[skill] = skillReqs.get(skill) - power
-    return t >= sum([x for x in list(skillReqs.values()) if x > 0])
+    return [x for x in list(skillReqs) if skillReqs[x] < 0]
+
+def getVetoAgents(coalitions):
+    if not coalitions:
+        return []
+    vetoAgents = []
+    for agent in coalitions[0].agentList:
+        inAll = True
+        for coal in coalitions:
+            if agent in coal.agentList:
+                break
+            inAll = inAll and coal.agentList.contains(agent)
+        if inAll:
+            vetoAgents.append(agent)

@@ -3,7 +3,7 @@
 Adventures require different skills from agents to be completed and return a reward.
 A list of random adventurers is created by *createAdvlist*
 """
-import random, Skill
+import random, Skill, Coalition
 
 class Adventure:
     """ Adventures require different skills from agents to be completed and return a reward.
@@ -19,6 +19,15 @@ class Adventure:
         """
         self.skillMap = skillMap
         self.reward = reward
+        self.vetoAgents = []
+        self.coalitions = []
+
+    def addVetoAgents(self, vetoAgents):
+        self.vetoAgents = vetoAgents
+
+    def addCoalitions(self, coalitions):
+        self.coalitions = coalitions
+        self.vetoAgents = Coalition.getVetoAgents(coalitions)
 
 
 def createAdvList(t):
