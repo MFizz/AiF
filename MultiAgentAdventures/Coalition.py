@@ -68,6 +68,21 @@ def excess(coalition):
             skillReqs[skill] = skillReqs.get(skill) - power
     return [x for x in list(skillReqs) if skillReqs[x] < 0]
 
+
+def powerDiff(coalition):
+    """ Returs a map containing the power difference between the adventure 
+    and coalition, for each skill needed by the adventure (replaces both excess and 
+    skillsLeftToFill)
+
+    :param coalition (Coalition): The Coaltion whose power difference should be calculated
+    :return (dict: key = skill, value=int) The map containing the power difference for each skill
+    """
+    skillReqs = copy.deepcopy(coalition.adventure.skillMap)
+    for agent, skillList in coalition.agentList:
+        for skill, power in skillList:
+            skillReqs[skill] = skillReqs.get(skill) - power
+    return skillReqs
+
 def getVetoAgents(coalitions):
     if not coalitions:
         return []
@@ -80,3 +95,28 @@ def getVetoAgents(coalitions):
             inAll = inAll and coal.agentList.contains(agent)
         if inAll:
             vetoAgents.append(agent)
+
+
+def agentPower(agent, coalition):
+    """ Calculates the power an agent has in a coalition
+
+    :param agent (Agent): the agent the power is calculated for
+    :param coalition (Coalition): the coalition the power is calculated for
+    :return (int): The total power of 'agent' in 'coalition'
+    """
+    power = 0
+    for a, skillList in coalition.agentList:
+        if a == agent:
+            power = sum([p for s,p in skillList])
+    return power
+
+def totalPower(coalition):
+    """ Calculates the total power of all agents in a coalition
+
+    :param coalition (Coalition): the coalition the power is calculated for
+    :return (int): The total power all agents in 'coalition'
+    """
+    power = 0
+    for agent, skillList in coalition.agentList:
+        power += sum([p for s,p in skillList])
+    return power

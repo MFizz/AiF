@@ -3,7 +3,7 @@
 The Agent represents the adventurer who should enter different adventures in order to complete them.
 A list of random agents is created by *createAgentlist*
 """
-import random, Adventure, Skill
+import random, Adventure, Skill, Coalition
 
 
 class Agent(object):
@@ -90,16 +90,16 @@ class Agent(object):
                     skillPower +=  min(value, adventure.skillMap.get(skill))
             return skillPower / sum(adventure.skillMap.values()) * adventure.reward
         else:
-            agentsPower = dict({})
-            for agent, skillList in coalition.agentList:
-                skillPower = 0
-                for skill,power in skillList:
-                    skillPower += power
-                agentsPower[agent] = skillPower
+            agentPower = Coalition.agentPower(self, coalition) 
+            coalitionPower = Coalition.totalPower(coalition)
+            vetoAgents = adventure.vetoAgents
+            #if not vetoAgents or len(vetoAgents)==len(coalition.agentList.keys()):
+            return (agentPower / coalitionPower) * adventure.reward
+            #elif self in vetoAgents:
 
 
-            """ TODO: incorporate veto players  """
-            return agentPower.get(agent) / sum(agentPower.values()) * adventure.reward
+                
+
 
 
     def updateGain(self, coalsForAgent):
@@ -188,17 +188,7 @@ class _Features:
         self.reward = agent.estimateReward(adventure, coalition)
         self.coalition = coalition
 
-        skillList = [sp for a, sp in coalition.agentList]
-        skillMap = dict({})
-        for skill, power in skillList:
-            if skill not in skillMap.keys():
-                skillMap[skill] = power
-            else:
-                skillMap[skill] += power
-        self.coalitionPowerDiff = []
-        for skill in skillMap.keys():
-            self.coalitionPowerDiff.append(skill, adventure.skillMap.get(skill) - skillMap.get(skill))
-
+        self.coalitionPowerDiff = Coalition.powerDiff(coalition)
         self.confirmedAgents = confirmedAgents
 
         confirmedAgentList = [(a,sp) for a,sp in coalition.agentList if a in self.confirmedAgents]
