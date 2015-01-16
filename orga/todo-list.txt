@@ -11,18 +11,27 @@
 
     (Done) - Klasse Coalition implementieren (am besten zuerst). Sie soll zumindest Agenten, investierte Skill und Power pro Agent, zugehörige Abenteuer und Gewinn als Variablen speichern.
 3. Modul coalition_utils - Part 2 (klasse Coalition muss schon implementiert sein)
-    - Funktion "shapelyValues(Coalition) returns {Agent:float}" im implementieren
+    - Verhandlungsprozess als divideReward(Coalition) returns {key=Agent:value=float} implementieren
+      - Excess power entfernen (gewichtet random)
+      - virtuellen spieler für veto spieler implementieren
+      - Gewinn fair verteilen
 
     (Done) - "buildCoalitions(Adventure,[Agents]) returns [[Coalition]]" zur Erstellung aller mögliche Koalitionen implementieren
 
 4. Modul zur Steuerung (World) implementieren und alle notwendige Funktionen aufrufen (auch wenn sie nicht komplett implementiert sind)
     - Beste Koalitionen mit coalition_utils.bestCoalition() erhalten
-    - Excess power entfernen (gewichtet random)
-    - virtuellen spieler für veto spieler implementiere
-    - Shapely Values mit coalition_utils.shapelyValues() berechnen
 
     (Done) - ein paar Agenten und Abenteuern initialisieren.
     (Done) - Agent.chooseAdventures() für jeden Agent aufrufen um Bewerbungen zu erhalten
     (Done) - für jedes Abenteuer Koalitionen mit coalition_utils.buildCoalitions() erstellen
-    (Done) - Funktion zur update von Feature Vectors in Klasse Agent schreiben, die abhängig von Resultat nach Coalition Forming und Shapely Value den Feature Vector aktualisiert. Falls der Feature Vektor im Agent noch nicht fertig implementiert ist, kann diese Funktion auch später implementiert werden.
+    - Funktion zur update von Feature Vectors in Klasse Agent schreiben, die abhängig von Resultat nach Coalition Forming und Shapely Value den Feature Vector aktualisiert. Falls der Feature Vektor im Agent noch nicht fertig implementiert ist, kann diese Funktion auch später implementiert werden.
     - Rounds left in Booker speichern
+    
+    
+    - Initialisierung verbessern:
+        - Power von Abenteuern soll binomial verteilt werden (und nicht total random), und falls notwendig, ein grosses Abenteuer manuell erstellen
+        - Power in einem Abenteuer soll an Skills random verteilt werden
+        - Reward von Abenteuer hängt super-linear von Power ab 
+        - Gesamte Power aller Agenten soll pro Skill ein fixen Teil von gesamten Power aller Abenteuern sein (Vorschlag: 40-50%)
+        - Power von Agenten soll auch binomial verteilt werden.
+
