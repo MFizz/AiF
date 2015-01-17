@@ -4,6 +4,7 @@ Adventures require different skills from agents to be completed and return a rew
 A list of random adventurers is created by *createAdvlist*
 """
 import random, Skill, Coalition
+import numpy as np
 
 class Adventure:
     """ Adventures require different skills from agents to be completed and return a reward.
@@ -35,9 +36,26 @@ def createAdvList(t):
 
     :param t (int): Number to specify how many Adventures will to be created.
     :return (list of Adventures): List of random Adventures with len = t.
+    :return (int): Sum of total power of all Adventures
     """
     advList = []
-    for i in range(t):
-        skillMap = {x : random.randint(1, 10) for x in random.sample(list(Skill.Skill), random.randint(1, 3))}
-        advList.append(Adventure(skillMap, random.randint(1, 20)))
+    powerDist = np.round(100*np.random.beta(2.3,4.6,t))
+    for p in powerDist:
+        numSkills = 0
+        if p <= 15:
+            numSkills = 1
+        elif p <=35:
+            numSkills = 2
+        else:
+            numSkills = 3
+        skills = random.sample(list(Skill.Skill), numSkills)
+        skillsProb = np.random.rand(numSkills)
+        skillsProb = skillsProb/sum(skillsProb)
+        skillsPow = np.round(skillsProb*p)
+        if sum(skillsPow) != p:
+            skillsPow[0] = p - sum(skillsPow[1:])
+        skillMap = dict(zip(skills,skillsPow))
+        reward = round(p**1.5) + random.randint(1,10) 
+        
+        advList.append(Adventure(skillMap, reward))
     return advList

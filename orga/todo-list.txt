@@ -28,10 +28,10 @@
     - Rounds left in Booker speichern
     
     
-    - Initialisierung verbessern:
-        - Power von Abenteuern soll binomial verteilt werden (und nicht total random), und falls notwendig, ein grosses Abenteuer manuell erstellen
-        - Power in einem Abenteuer soll an Skills random verteilt werden
-        - Reward von Abenteuer hängt super-linear von Power ab 
-        - Gesamte Power aller Agenten soll pro Skill ein fixen Teil von gesamten Power aller Abenteuern sein (Vorschlag: 40-50%)
-        - Power von Agenten soll auch binomial verteilt werden.
+    (Done) - Initialisierung verbessern:
+        (Done) - Power von Abenteuern soll binomial oder geometric verteilt werden (und nicht total random), und falls notwendig, ein grosses Abenteuer manuell erstellen
+        (Done) - Power in einem Abenteuer soll an Skills random verteilt werden
+        (Done) - Reward von Abenteuer hängt super-linear von Power ab 
+        (Done) - Gesamte Power aller Agenten soll pro Skill ein fixen Teil von gesamten Power aller Abenteuern sein (Vorschlag: 40-50%)
+        (Done) - Power von Agenten soll auch binomial oder geometric verteilt werden.
 

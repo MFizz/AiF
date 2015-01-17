@@ -25,7 +25,7 @@ class Agent(object):
         """
         self.skillList = skillList
         self.costs = _calcCostsAdv(advList)
-        self.featureMap = dict({})
+        self.featureMap = dict()
         for adv in advList:
             self.featureMap[adv] = _Features(self, adv)
 
@@ -53,7 +53,7 @@ class Agent(object):
 
         utility = 0
         utility += features.reward
-        utility -= features.costs
+        utility += features.costs
         skillList = []
         for skill, value in self.skillList:
             if skill in adventure.skillMap:
@@ -131,9 +131,9 @@ def _calcCostsAdv(adventures):
     :param adventures (list of Adventures): Available Adventures.
     :return (dict: key=Adventure, value=Int): A lookup table for the costs of every Adventure.
     """
-    costs = dict({})
+    costs = dict()
     for adv in adventures:
-        costs[adv] = -random.randint(1, 5)
+        costs[adv] = -random.randint(1, 15)
     return costs
 
 def createAgentList(t, advList):
@@ -144,14 +144,46 @@ def createAgentList(t, advList):
     :return (list of Agents): List of random Agents with len = t.
     """
     agentList = []
-    for i in range(t):
-        skillList = [(x, random.randint(1, 10)) for x in random.sample(list(Skill.Skill),2)]
-        agentList.append(Agent(skillList, advList))
+    skillMap = dict()
+    for adv in advList:
+        for skill in adv.skillMap.keys():
+            if skill in skillMap:
+                skillMap[skill] += adv.skillMap.get(skill)
+            else:
+                skillMap[skill] = adv.skillMap.get(skill)
+
+    print('skillMap: ', skillMap)
+    
+    numAgents = dict(skillMap)
+    for skill in numAgents.keys():
+        numAgents[skill] /= sum(skillMap.values())
+        numAgents[skill] *= t
+        numAgents[skill] = round(numAgents.get(skill))
+
+    if sum(numAgents.values()) != t:
+        skills = list(numAgents.keys())
+        numAgents[skills[0]] = t - sum(skills[1:])
+
+    for skill in numAgents.keys():
+        power = round(skillMap.get(skill)*(0.1*np.random.rand() + 0.4))
+        agentsProb = np.random.rand(numAgents.get(skill))
+        agentsProb /= sum(agentsProb)
+        agentsPow = np.round(agentsProb*power)
+        if sum(agentsPow) != power:
+            agentsPow[0] = power - sum(agentsPow[1:])
+
+        for p in agentsPow:
+            skillList = []
+            skillList.append((skill,p))
+
+            agentList.append(Agent(skillList,advList))
+
+    
     return agentList
 
 class _Features:
     """ The Features class stores features relevant to the Agent for a specific Adventure
-
+)
     Attributes:
         costs (int):                the adventurer's initial costs for this adventure
         reward (float):             the expected reward the adventurer will get for this adventure
@@ -211,7 +243,7 @@ class _Features:
 
             confirmedAgentList = [(a,sp) for a,sp in coalition.agentList if a in confirmedAgents]
             skillList = [sp for a, sp in confirmedAgentList]
-            skillMap = dict({})
+            skillMap = dict()
             for skill, power in skillList:
                 if skill not in skillMap.keys():
                     skillMap[skill] = power

@@ -9,7 +9,7 @@ from Booker import Booker
 """ number of random generated Adventures"""
 numAdv = 10
 """ number of random generated Agents"""
-numAgents = 4
+numAgents = 15
 
 
 if __name__ == '__main__':
