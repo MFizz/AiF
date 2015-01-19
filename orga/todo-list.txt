@@ -13,10 +13,10 @@
 3. Modul coalition_utils - Part 2 (klasse Coalition muss schon implementiert sein)
     - Verhandlungsprozess als divideReward(Coalition) returns {key=Agent:value=float} implementieren
       - Excess power entfernen (gewichtet random)
-      - virtuellen spieler für veto spieler implementieren
-      - Gewinn fair verteilen
+      - Gewinn fair verteilen (anteil an banzhaf power)
 
     (Done) - "buildCoalitions(Adventure,[Agents]) returns [[Coalition]]" zur Erstellung aller mögliche Koalitionen implementieren
+    - (in Progress - Mihail) Banhzaf power fur coalitionen berechnen
 
 4. Modul zur Steuerung (World) implementieren und alle notwendige Funktionen aufrufen (auch wenn sie nicht komplett implementiert sind)
     - Beste Koalitionen mit coalition_utils.bestCoalition() erhalten
@@ -24,7 +24,7 @@
     (Done) - ein paar Agenten und Abenteuern initialisieren.
     (Done) - Agent.chooseAdventures() für jeden Agent aufrufen um Bewerbungen zu erhalten
     (Done) - für jedes Abenteuer Koalitionen mit coalition_utils.buildCoalitions() erstellen
-    - Funktion zur update von Feature Vectors in Klasse Agent schreiben, die abhängig von Resultat nach Coalition Forming und Shapely Value den Feature Vector aktualisiert. Falls der Feature Vektor im Agent noch nicht fertig implementiert ist, kann diese Funktion auch später implementiert werden.
+    (Done) - Funktion zur update von Feature Vectors in Klasse Agent schreiben, die abhängig von Resultat nach Coalition Forming und Shapely Value den Feature Vector aktualisiert. Falls der Feature Vektor im Agent noch nicht fertig implementiert ist, kann diese Funktion auch später implementiert werden.
     - Rounds left in Booker speichern
     
     
