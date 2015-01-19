@@ -6,6 +6,10 @@ from itertools import chain, combinations
 from functools import reduce
 import copy
 
+
+vetoPowerFactor = 2
+
+
 class Coalition:
     """ A coalition contains everything
 
@@ -14,9 +18,15 @@ class Coalition:
         agentList (list of tuples of (Agent, list of (Skill, int))): Combination
     """
 
-    def __init__(self, adventure, agentList, vetoAgents=None):
+    def __init__(self, adventure, agentList):
         self.adventure = adventure
         self.agentList = agentList
+
+    def __str__(self):
+        return "Coalition: {} {}".format(self.adventure,self.agentList)
+
+    def __repr__(self):
+        return self.__str__()
 
 
 def createCoalitions(adventure, agentRequests):
@@ -30,17 +40,41 @@ def createCoalitions(adventure, agentRequests):
     :return (list of Coalitions): List of coalitions for that Adventure.
     """
     allSubSets = chain(*map(lambda x: combinations(agentRequests, x), range(1, len(agentRequests)+1)))
-    completeSubSets = [x for x in list(allSubSets) if fullfillsReq(Coalition(adventure, x))]
+    subSets = list(allSubSets)
+    completeSubSets = [x for x in subSets if fullfillsReq(Coalition(adventure, x))]
     if not completeSubSets:
-        maxReqFilled = skillsLeftToFill(Coalition(adventure, tuple(agentRequests)))
-        bestSubSets = [x for x in completeSubSets if skillsLeftToFill(maxReqFilled) <= x]
-        coalitions = [Coalition(adventure, x) for x in bestSubSets]
-        adventure.addCoalitions(coalitions)
-        return coalitions
+        coalitions = [Coalition(adventure,subSets[-1])]
     else:
         coalitions = [Coalition(adventure, x) for x in completeSubSets]
-        adventure.addCoalitions(coalitions)
-        return coalitions
+
+    
+    adventure.addCoalitions(coalitions)
+    return coalitions
+
+def getBanzhafPower(coalitions):
+    """ Calculates the Banzhaf Power for each agent in the given coalitions. Multiplies the power of
+        veto Agents by a certain factor
+
+    :param adventure (Adventure): The adventure for which the Banzhaf Powers will be calculated.
+    :param coalitions (list of Coalitions): List of coalitions for that Adventure.
+    
+    :return (dict: key=Agent, value=int) : A map containing the Banzhaf Power for each Agent
+    """
+    banzhafPowers = dict()
+
+    if coalitions:
+        for agent,skills in coalitions[-1].agentList:
+            banzhafPowers[agent] = 0
+
+        for coalition in coalitions:
+            for agent, skills in coalition.agentList:
+                c = Coalition(coalition.adventure, list(coalition.agentList))
+                c.agentList.remove((agent,skills))
+                if not fullfillsReq(c):
+                    banzhafPowers[agent] += 1
+
+    return banzhafPowers
+
 
 def fullfillsReq(coalition):
     """ Checks if the Coalition completes the adventure

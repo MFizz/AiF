@@ -22,13 +22,21 @@ class Adventure:
         self.reward = reward
         self.vetoAgents = []
         self.coalitions = []
+        self.banzhafPowers = dict()
 
     def addVetoAgents(self, vetoAgents):
         self.vetoAgents = vetoAgents
 
     def addCoalitions(self, coalitions):
         self.coalitions = coalitions
-        self.vetoAgents = Coalition.getVetoAgents(coalitions)
+        self.banzhafPowers = Coalition.getBanzhafPower(coalitions)
+
+    def __str__(self):
+        return "Adventure ID {}".format(id(self))
+
+    def __repr__(self):
+        return self.__str__()
+    
 
 
 def createAdvList(t):
@@ -49,11 +57,16 @@ def createAdvList(t):
         else:
             numSkills = 3
         skills = random.sample(list(Skill.Skill), numSkills)
+        random.shuffle(skills)
         skillsProb = np.random.rand(numSkills)
         skillsProb = skillsProb/sum(skillsProb)
         skillsPow = np.round(skillsProb*p)
         if sum(skillsPow) != p:
-            skillsPow[0] = p - sum(skillsPow[1:])
+            for i in range(numSkills):
+                    skillPow = p - sum(np.concatenate((skillsPow[:i],skillsPow[i+1:]),axis=1))
+                    if skillPow > 0:
+                        skillsPow[i] = skillPow
+                        break;
         skillMap = dict(zip(skills,skillsPow))
         reward = round(p**1.5) + random.randint(1,10) 
         

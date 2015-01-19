@@ -6,6 +6,10 @@ by the Booker module.
 """
 import Coalition
 
+rounds = 100
+
+roundsLeft = rounds
+
 class Booker:
     """ Contains relevant game Information and handles Communication/game process
 
@@ -29,6 +33,15 @@ class Booker:
         for r in requests:
             coalsForAdv[r] = Coalition.createCoalitions(r, requests[r]);
 
+        print('')
+        print("Largest coalitions and banzhaf power per adventure:")
+        for adv in self.adventures:
+            if adv.coalitions:
+                print(adv.coalitions[-1])
+                print('Banzhaf powers :{}'.format(adv.banzhafPowers))
+                print('#Coalitions = {}'.format(len(adv.coalitions)))
+            else:
+                print("no coalitions for {}".format(adv))
         """ Give The agents the possibility to update their preferences
             TODO: Agents should only see coalitions from adventures that they
                   applied for.

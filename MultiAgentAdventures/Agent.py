@@ -3,7 +3,7 @@
 The Agent represents the adventurer who should enter different adventures in order to complete them.
 A list of random agents is created by *createAgentlist*
 """
-import random, Adventure, Skill, Coalition
+import random, Adventure, Skill, Coalition, Booker
 import numpy as np
 
 
@@ -60,7 +60,7 @@ class Agent(object):
                 skillList.append((skill, min(value, adventure.skillMap.get(skill))))
         if features.coalition is None:
             utility *= 1 - ((features.timesFailed + 1.0)**2)/500
-            utility *= features.roundsLeft/100.0
+            utility *= Booker.roundsLeft/Booker.rounds
         elif not Coalition.fullfillsReq(features.coalition):
             a = np.linspace(1.35,1,20,endpoint=False)
             b = np.linspace(1,0.65,81)
@@ -69,11 +69,11 @@ class Agent(object):
             factor += (np.linspace(0.15,-0.15,101))[features.skillsNeeded]
             utility *= factor
             utility *= 1 - ((features.timesFailed + 1.0)**2)/1000
-            utility *= features.roundsLeft/100.0
+            utility *= Booker.roundsLeft/Booker.rounds
         else:
             powerFactor = (1 - features.confirmedPowerNeeded)**2
-            roundsFactor = 1+ (1 - (features.roundsLeft/100))**2
-            utility *= 1+(powerFactor*roundsLeft*0.7)
+            roundsFactor = 1+ (1 - (Booker.roundsLeft/Booker.rounds))**2
+            utility *= 1+(powerFactor*roundsFactor*0.7)
 
 
         return utility, skillList
@@ -124,6 +124,13 @@ class Agent(object):
             """
             self.featureMap[adv].updateFeatures(self, adv, coalsForAgent[adv], None, False)
 
+    
+    def __str__(self):
+        return "Agent ID {}".format(id(self))
+
+    def __repr__(self):
+        return self.__str__()
+
 
 def _calcCostsAdv(adventures):
     """ Assigns random negative numbers to given adventures which represent a cost factor for every adventure.
@@ -160,17 +167,27 @@ def createAgentList(t, advList):
         numAgents[skill] *= t
         numAgents[skill] = round(numAgents.get(skill))
 
+
     if sum(numAgents.values()) != t:
         skills = list(numAgents.keys())
-        numAgents[skills[0]] = t - sum(skills[1:])
+        random.shuffle(skills)
+        for i in range(len(skills)):
+            agentNum = t - sum([numAgents.get(s) for s in skills[:i]+skills[i+1:]])
+            if agentNum > 0:
+                numAgents[skills[i]] = agentNum
+                break;
+
+
+    print ('#Agents per skill: {}'.format(numAgents))
 
     for skill in numAgents.keys():
         power = round(skillMap.get(skill)*(0.1*np.random.rand() + 0.4))
+        print(power)
         agentsProb = np.random.rand(numAgents.get(skill))
         agentsProb /= sum(agentsProb)
-        agentsPow = np.round(agentsProb*power)
-        if sum(agentsPow) != power:
-            agentsPow[0] = power - sum(agentsPow[1:])
+        agentsPow = agentsProb*power
+        agentsPow = np.ceil(agentsProb*power)
+        print(sum(agentsPow))
 
         for p in agentsPow:
             skillList = []
@@ -194,10 +211,9 @@ class _Features:
                                         each skill, only taking confirmed agents into account
         timesFailed (int):          counts how many times the agent applied for the adventure without getting
                                         in the winning coalition
-        roundsLeft (int):           counts how many rounds are left until the game ends
     """
 
-    def __init__(self, agent, adventure, roundsLeft= 100):
+    def __init__(self, agent, adventure):
         """ Initialises Features with a given agent and adventure
         Args:
             :param agent (Agent):   The agent this feature vector belongs to
@@ -211,7 +227,6 @@ class _Features:
         self.confirmedPowerNeeded = 0
         self.confirmedAgents = 0
         self.timesFailed = 0
-        self.roundsLeft = roundsLeft
 
     def updateFeatures(self, agent, adventure, coalition, confirmedAgents):
         """ Updates Features with the given arguments
@@ -255,4 +270,3 @@ class _Features:
             self.confirmedPowerNeeded = sum([p for s,p in confirmedAgentsPowerDiff if p>0])
             self.confirmedPowerNeeded /= sum(adventure.skillMap.values())
             self.confirmedPowerNeeded /= round(self.confirmedPowerNeeded*100)
-        self.roundsLeft -= 1
