@@ -1,6 +1,6 @@
 1. Agent
     (Done) - Feature Vektor für Abenteuer implementieren (am besten zuerst). Kann wie eine Map {Abenteuer:Features} gespeichert werden. Die Klasse Features muss zumindest Kosten,erwarteter Gewinn, in Koalition (ja/nein), fehlende Power (falls was fehlt), usw enthalten. Auf jeden Fall gut über weitere mögliche Features nachdenken.
-    - (in Progress-Mihail) Schätzfunktion (einfach und Koalition-Bedingt) "estimateValue(Adventure, Coalition(optional)) returns float" implementieren. 
+    (Done) - Schätzfunktion (einfach und Koalition-Bedingt) "estimateValue(Adventure, Coalition(optional)) returns float" implementieren. 
           - Rounds left auch in schätzfunktion miteinbeziehen
 
     (Done) - Nutzenfunktion "utility(Adventure) returns float" implementueren

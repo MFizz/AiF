@@ -51,7 +51,7 @@ def createCoalitions(adventure, agentRequests):
     adventure.addCoalitions(coalitions)
     return coalitions
 
-def getBanzhafPower(coalitions):
+def getBanzhafPowers(coalitions):
     """ Calculates the Banzhaf Power for each agent in the given coalitions. Multiplies the power of
         veto Agents by a certain factor
 
@@ -60,18 +60,26 @@ def getBanzhafPower(coalitions):
     
     :return (dict: key=Agent, value=int) : A map containing the Banzhaf Power for each Agent
     """
+
+    if not coalitions:
+        return None
+    
     banzhafPowers = dict()
 
-    if coalitions:
-        for agent,skills in coalitions[-1].agentList:
-            banzhafPowers[agent] = 0
+    for agent,skills in coalitions[-1].agentList:
+        banzhafPowers[agent] = 0
 
-        for coalition in coalitions:
-            for agent, skills in coalition.agentList:
-                c = Coalition(coalition.adventure, list(coalition.agentList))
-                c.agentList.remove((agent,skills))
-                if not fullfillsReq(c):
-                    banzhafPowers[agent] += 1
+    for coalition in coalitions:
+        for agent, skills in coalition.agentList:
+            c = Coalition(coalition.adventure, list(coalition.agentList))
+            c.agentList.remove((agent,skills))
+            if not fullfillsReq(c):
+                banzhafPowers[agent] += 1
+
+    for agent in banzhafPowers.keys():
+        if banzhafPowers.get(agent) == len(coalitions):
+            banzhafPowers[agent] *= vetoPowerFactor
+
 
     return banzhafPowers
 
@@ -154,3 +162,15 @@ def totalPower(coalition):
     for agent, skillList in coalition.agentList:
         power += sum([p for s,p in skillList])
     return power
+
+def totalBanzhafPower(coalition):
+    """ Calculates the sum of the Banzhaf power of the agents in this
+            coalition
+    :param coalition (Coalition): the coalition whose total Banzhaf power needs to be calculated
+    :returns (int): the sum of the Banzhaf powers of all agents in this coalition
+    """
+    banzhafPower = 0;
+    for agent,s in coalition.agentList:
+        banzhafPower += coalition.adventure.banzhafPowers.get(agent)
+    
+    return banzhafPower

@@ -29,7 +29,7 @@ class Adventure:
 
     def addCoalitions(self, coalitions):
         self.coalitions = coalitions
-        self.banzhafPowers = Coalition.getBanzhafPower(coalitions)
+        self.banzhafPowers = Coalition.getBanzhafPowers(coalitions)
 
     def __str__(self):
         return "Adventure ID {}".format(id(self))
