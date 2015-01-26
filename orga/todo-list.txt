@@ -7,7 +7,7 @@
     (Done) - Funktion "chooseAdventures() returns [Adventure]" zur Auswahl der ersten 4 Abenteuern implementieren.
 
 2. Modul coalition_utils
-    - "bestCoalition([Coalition]) returns Coalition" zur Auswahl einer Koalition (distributiver Ansatz) implementieren.
+    (Done) - "bestCoalition([Coalition]) returns Coalition" zur Auswahl einer Koalition (distributiver Ansatz) implementieren.
 
     (Done) - Klasse Coalition implementieren (am besten zuerst). Sie soll zumindest Agenten, investierte Skill und Power pro Agent, zugehörige Abenteuer und Gewinn als Variablen speichern.
 3. Modul coalition_utils - Part 2 (klasse Coalition muss schon implementiert sein)
@@ -19,7 +19,7 @@
     (Done) - Banhzaf power fur coalitionen berechnen
 
 4. Modul zur Steuerung (World) implementieren und alle notwendige Funktionen aufrufen (auch wenn sie nicht komplett implementiert sind)
-    - Beste Koalitionen mit coalition_utils.bestCoalition() erhalten
+    (Done) - Beste Koalitionen mit coalition_utils.bestCoalition() erhalten
 
     (Done) - ein paar Agenten und Abenteuern initialisieren.
     (Done) - Agent.chooseAdventures() für jeden Agent aufrufen um Bewerbungen zu erhalten

@@ -174,3 +174,21 @@ def totalBanzhafPower(coalition):
         banzhafPower += coalition.adventure.banzhafPowers.get(agent)
     
     return banzhafPower
+
+
+def bestCoalition(coalitions):
+    """ Finds the best coalition by finding the one with the least excess Power
+    """
+
+    if not coalitions:
+        return []
+
+    # calculate the excess Power for all coalitions
+    excessPower = {}
+    for coalition in coalitions:
+        excessPower[coalition] = totalPower(coalition) - coalition.adventure.totalPower()
+
+    # get the coalition with the least excess power
+    bestCoalition = min(excessPower, key=excessPower.get)
+
+    return bestCoalition

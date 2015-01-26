@@ -40,6 +40,8 @@ class Booker:
                 print(adv.coalitions[-1])
                 print('Banzhaf powers :{}'.format(adv.banzhafPowers))
                 print('#Coalitions = {}'.format(len(adv.coalitions)))
+                print('Best Coalition : {}'.format(Coalition.bestCoalition(adv.coalitions)))
+                print('\n')
             else:
                 print("no coalitions for {}".format(adv))
         """ Give The agents the possibility to update their preferences

@@ -96,7 +96,7 @@ class Agent(object):
                     skillPower +=  min(value, adventure.skillMap.get(skill))
             return skillPower / sum(adventure.skillMap.values()) * adventure.reward
         elif not Coalition.fullfillsReq(coalition):
-            agentPower = Coalition.agentPower(self, coalition) 
+            agentPower = Coalition.agentPower(self, coalition)
             coalitionPower = Coalition.totalPower(coalition)
             return (agentPower / coalitionPower) * adventure.reward
         else:
@@ -104,8 +104,6 @@ class Agent(object):
             coalitionBP = Coalition.totalBanzhafPower(coalition)
             return (agentBP/coalitionBP) * adventure.reward
 
-
-                
 
 
 

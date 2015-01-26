@@ -36,7 +36,14 @@ class Adventure:
 
     def __repr__(self):
         return self.__str__()
-    
+
+    def totalPower(self):
+        totalPower = 0
+
+        for skill in self.skillMap:
+            totalPower += self.skillMap[skill]
+
+        return totalPower
 
 
 def createAdvList(t):
