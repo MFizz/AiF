@@ -5,6 +5,7 @@ by the Booker module.
 
 """
 import Coalition
+import Skill
 
 rounds = 100
 
@@ -70,5 +71,32 @@ class Booker:
             print("Agent ID {}: {}".format(id(agent), [(x, y, id(z)) for (x, y, z) in requests]))
         return advRequests
 
+    def getUpperBound(self):
+        """ Gets the highest bound for tha actual game.
+        Relies on the creation of adventures which reward grows exponentially with required skill power.
+        :return:
+        """
+
+        bound = 0
+
+        skillMap = {}
+        for skill in list(Skill.Skill):
+            skillMap[skill] = 0;
+        for agent in self.agents:
+            for skill, value in agent.skillList:
+                skillMap[skill] += value
 
 
+        sortedAdv = sorted(self.adventures, key=lambda x: x.reward, reverse= True)
+        for adv in sortedAdv:
+            if(sum(list(skillMap.values())) == 0):
+                break
+            possible = True
+            for skill, value in adv.skillMap.items():
+                possible = possible and skillMap[skill] >= value
+
+            if(possible):
+                for skill, value in adv.skillMap.items():
+                    skillMap[skill] -= value
+                bound += adv.reward
+        return bound

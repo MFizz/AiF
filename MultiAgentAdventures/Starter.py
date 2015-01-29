@@ -19,15 +19,15 @@ if __name__ == '__main__':
     for adv in advList:
         print("Adventure ID {}: {} gold reward, needs: {}".format(id(adv), adv.reward, adv.skillMap))
 
-    print()
-    print("Creating {} random adventurers: ".format(numAgents))
+    print("\n Creating {} random adventurers: ".format(numAgents))
     agentList = Agent.createAgentList(numAgents, advList)
 
     for a in agentList:
         print("Adventurer ID {}: Skills {}, Costs {}".format(id(a), a.skillList, [(id(x), y) for x, y in a.costs.items()]))
 
-    print()
-    print("Creating booker: ")
+    print("\n Creating booker: ")
     booker = Booker(agentList, advList)
+    upperBound = booker.getUpperBound()
+    print("Upper Bound for this game is: {} gold".format(upperBound))
     booker.run()
 

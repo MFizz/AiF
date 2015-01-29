@@ -132,7 +132,7 @@ def getVetoAgents(coalitions):
     for agent in coalitions[0].agentList:
         inAll = True
         for coal in coalitions:
-            if agent in coal.agentList:
+            if agent not in coal.agentList:
                 break
             inAll = inAll and coal.agentList.contains(agent)
         if inAll:
