@@ -70,7 +70,7 @@ def createAdvList(t):
         skillsPow = np.round(skillsProb*p)
         if sum(skillsPow) != p:
             for i in range(numSkills):
-                    skillPow = p - sum(np.concatenate((skillsPow[:i],skillsPow[i+1:]),axis=1))
+                    skillPow = p - sum(np.concatenate((skillsPow[:i],skillsPow[i+1:]), axis=1))
                     if skillPow > 0:
                         skillsPow[i] = skillPow
                         break;

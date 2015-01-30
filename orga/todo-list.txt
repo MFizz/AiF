@@ -26,6 +26,7 @@
     (Done) - für jedes Abenteuer Koalitionen mit coalition_utils.buildCoalitions() erstellen
     (Done) - Funktion zur update von Feature Vectors in Klasse Agent schreiben, die abhängig von Resultat nach Coalition Forming und Shapely Value den Feature Vector aktualisiert. Falls der Feature Vektor im Agent noch nicht fertig implementiert ist, kann diese Funktion auch später implementiert werden.
     (Done) - Rounds left in Booker speichern
+    (Done) - Upper Bound berechnen und anzeigen
     
     
     (Done) - Initialisierung verbessern:
