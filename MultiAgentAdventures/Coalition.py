@@ -3,6 +3,7 @@ coalitions and coalition
 buildung.
 """
 from itertools import chain, combinations
+import random
 from functools import reduce
 import copy
 
@@ -201,14 +202,13 @@ def bestCoalition(coalitions):
         if excessPower[coalition] == min_excess:
             bestCoalitions.append(coalition)
     
-    print('')
-    print ("Best coalitions")
-    for coalition in bestCoalitions:
-        print ("{}, excess = {}".format(coalition, excessPower.get(coalition)))
+    #print('')
+    #print ("Best coalitions")
+    #for coalition in bestCoalitions:
+    #    print ("{}, excess = {}".format(coalition, excessPower.get(coalition)))
 
     
-
-    # get the coalition with the least excess power
+# get the coalition with the least excess power
     bestCoalition = distributiveBestCoalition(bestCoalitions)
 
     return bestCoalition
@@ -226,10 +226,44 @@ def distributiveBestCoalition(coalitions):
             if reward > maxValue:
                 maxValue = reward
         coalitionValues[coalition] = maxValue
-
     return max(coalitions,key=coalitionValues.get)
         
 
-    
-    
+def removeExcess(coalition):
+    pDiff = powerDiff(coalition)
+    for skill in pDiff.keys():
+        diff = pDiff.get(skill)
+        if diff < 0:
+            skillMap = {}
+            for agent, skilllist in coalition.agentList:
+                for s, val in skilllist:
+                    if skill == s:
+                        skillMap[agent] = val
+                        break
+            print ('SkillMap = {}'.format(skillMap))
+            i = diff
+            while i<0:
+                removalProbs = dict(skillMap)
+                for agent in skillMap.keys():
+                    removalProbs[agent] /= sum(skillMap.values())
+                print ('Removal Probs = {}'.format(removalProbs))
+                chosenAgent = weightedChoice(removalProbs)
+                skillMap[chosenAgent] -= 1
+                i += 1
+            for j in range(len(coalition.agentList)):
+                for k in range(len(coalition.agentList[j][1])):
+                    if coalition.agentList[j][1][k][0] == skill:
+                        coalition.agentList[j][1][k] = (skill,skillMap.get(coalition.agentList[j][0]))
+                    
+    print ('Agentlist = {}'.format(coalition.agentList))
 
+    return coalition
+def weightedChoice(choices):
+    r = random.uniform(0, 1)
+    upto = 0
+    for c in choices.keys():
+        w = choices.get(c)
+        if upto + w > r:
+            return c
+        upto += w
+    assert False, "Shouldn't get here"

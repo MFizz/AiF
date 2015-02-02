@@ -41,7 +41,12 @@ class Booker:
                 print(adv.coalitions[-1])
                 print('Banzhaf powers :{}'.format(adv.banzhafPowers))
                 print('#Coalitions = {}'.format(len(adv.coalitions)))
-                print('Best Coalition : {}'.format(Coalition.bestCoalition(adv.coalitions)))
+                bestCoal = Coalition.bestCoalition(adv.coalitions)
+                print('Best Coalition : {}'.format(bestCoal))
+                if bestCoal != None:
+                    print('excess : {}'.format(Coalition.totalPower(bestCoal)-adv.totalPower()))
+                    bestCoal = Coalition.removeExcess(bestCoal)
+                    print ('Fulfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
                 print('\n')
             else:
                 print("no coalitions for {}".format(adv))
