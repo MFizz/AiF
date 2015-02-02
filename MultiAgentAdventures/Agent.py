@@ -100,7 +100,7 @@ class Agent(object):
             coalitionPower = Coalition.totalPower(coalition)
             return (agentPower / coalitionPower) * adventure.reward
         else:
-            agentBP = adventure.banzhafPowers.get(agent)
+            agentBP = adventure.banzhafPowers.get(self)
             coalitionBP = Coalition.totalBanzhafPower(coalition)
             return (agentBP/coalitionBP) * adventure.reward
 
