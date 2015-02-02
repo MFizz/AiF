@@ -80,11 +80,11 @@ class Agent(object):
 
 
     def estimateReward(self, adventure, coalition):
-        """ Determines an estimate for the reward the agent will get for comleting the adventure,
+        """ Determines an estimate for the reward the agent will get for completing the adventure,
         given a certain coalition (if available).
 
         :param adventure (Adventure):   The Adventure for which the reward needs to be estimated.
-        :param coa)ition (Coalition):   The coalition the agent for which the reward needs to be estimated.
+        :param coalition (Coalition):   The coalition the agent for which the reward needs to be estimated.
                                             If there is no coalition then the value of this parameter can be None.
         :return (float) - an estimate for the reward the agent will get for completing the adventure
         """
