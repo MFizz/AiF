@@ -177,18 +177,59 @@ def totalBanzhafPower(coalition):
 
 
 def bestCoalition(coalitions):
-    """ Finds the best coalition by finding the one with the least excess Power
+    """ Finds the best coalition
     """
 
     if not coalitions:
-        return []
+        return None
+    elif not fullfillsReq(coalitions[0]):
+        return None
+    
 
     # calculate the excess Power for all coalitions
     excessPower = {}
     for coalition in coalitions:
         excessPower[coalition] = totalPower(coalition) - coalition.adventure.totalPower()
 
+
+    min_excess = min(excessPower.values())
+     
+
+    bestCoalitions = []
+
+    for coalition in coalitions:
+        if excessPower[coalition] == min_excess:
+            bestCoalitions.append(coalition)
+    
+    print('')
+    print ("Best coalitions")
+    for coalition in bestCoalitions:
+        print ("{}, excess = {}".format(coalition, excessPower.get(coalition)))
+
+    
+
     # get the coalition with the least excess power
-    bestCoalition = min(excessPower, key=excessPower.get)
+    bestCoalition = distributiveBestCoalition(bestCoalitions)
 
     return bestCoalition
+
+def distributiveBestCoalition(coalitions):
+    """ Finds the best coalition by using the distributive algorithm on the coalitions with least excess
+    """
+    coalitionValues = dict()
+
+
+    for coalition in coalitions:
+        maxValue = 0
+        for agent,_ in coalition.agentList:
+            reward = agent.estimateReward(coalition.adventure, coalition) 
+            if reward > maxValue:
+                maxValue = reward
+        coalitionValues[coalition] = maxValue
+
+    return max(coalitions,key=coalitionValues.get)
+        
+
+    
+    
+
