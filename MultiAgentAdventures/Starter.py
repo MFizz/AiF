@@ -13,6 +13,7 @@ numAgents = 15
 
 
 if __name__ == '__main__':
+
     bookers = []
     for i in range(0, 10):
         seed = random.randrange(10, 500, 1)
@@ -38,12 +39,13 @@ if __name__ == '__main__':
         print("Upper Bound for this game is: {} gold".format(upperBound))
         print(booker.reward)
         print(sum(booker.reward))
-        print(closedAdventures)
-        print(openAdventures)
+        print('Closed Adventures {}'.format(closedAdventures))
+        print('Open Adventures {}'.format(openAdventures))
         for agent in booker.agents:
             print("{}: Income: {} Costs: {} Total: ".format(agent, agent.rewards, agent.finalCosts))
         bookers.append((booker, seed))
     for b, s in bookers:
         print("Seed: {}, UpperBound: {}, Completed {}".format(s, b.upperBound, sum(b.reward)))
+
 
 

@@ -45,7 +45,10 @@ class Agent(object):
         utility, and skill, power to achieve it.
         """
         advValues = []
+        print('Stats for agent {}:'.format(self))
         for adv in adventures:
+            features = self.featureMap.get(adv)
+            print('{}, Util {}, Costs {}, Reward {}'.format(adv, self.utility(adv), features.costs, features.reward))
             if self.utility(adv)[0] > 0:
                 advValues.append(self.utility(adv) + (adv,))
         return sorted(advValues, key=lambda x: x[0], reverse=True)[0:4]

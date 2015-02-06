@@ -45,8 +45,8 @@ class Booker:
             print("Largest coalitions and banzhaf power per adventure:")
             for adv in self.adventures:
                 if adv.coalitions:
-                    print(adv.coalitions[-1])
-                    print('Banzhaf powers :{}'.format(adv.banzhafPowers))
+                    #print(adv.coalitions[-1])
+                    #print('Banzhaf powers :{}'.format(adv.banzhafPowers))
                     print('#Coalitions = {}'.format(len(adv.coalitions)))
                     bestCoal = Coalition.bestCoalition(adv.coalitions)
                     print('Best Coalition : {}'.format(bestCoal))
@@ -57,7 +57,7 @@ class Booker:
                         if adv.bestCoalition:
                             for agent, power in adv.bestCoalition.agentList:
                                 agent.coalitions[adv] = adv.bestCoalition
-                        print ('Fulfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
+                        #print ('Fulfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
                     print('\n')
                 else:
                     print("no coalitions for {}".format(adv))
@@ -67,11 +67,17 @@ class Booker:
             """
             for agent in self.agents:
                 agent.choseCoalitionForConfirmation()
+            
+            for adv in self.adventures:
+                print("{} Confirmed Agents: {}".format(adv, adv.confirmedAgents))
 
             for agent in self.agents:
                 agent.updateGain()
                 agent.choseFinalCoalition()
                 agent.clean()
+            
+            for adv in self.adventures:
+                print("{} Final Agents: {}".format(adv, adv.finalAgents))
 
             for adv in list(self.adventures):
                 if adv.bestCoalition:
@@ -85,8 +91,11 @@ class Booker:
                         adv.clean()
                 else:
                     adv.clean()
+
             if rL:
                 roundsLeft -= 1
+                print('Completed adventures {}'.format(self.completedAdventures))
+
         #for a in self.agents:
         #    a.updateGain(coalsForAdv)
 
