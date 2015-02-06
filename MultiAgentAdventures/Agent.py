@@ -29,7 +29,9 @@ class Agent(object):
         for adv in advList:
             self.featureMap[adv] = _Features(self, adv)
         self.coalitions = {}
-        self.reward = 0
+        self.rewards = []
+        self.finalCosts = []
+
 
     def clean(self):
         self.coalitions = {}
@@ -43,7 +45,8 @@ class Agent(object):
         """
         advValues = []
         for adv in adventures:
-            advValues.append(self.utility(adv) + (adv,))
+            if self.utility(adv)[0] > 0:
+                advValues.append(self.utility(adv) + (adv,))
         return sorted(advValues, key=lambda x: x[0], reverse=True)[0:4]
 
     def utility(self, adventure):
@@ -58,28 +61,29 @@ class Agent(object):
         utility += features.reward
         utility += features.costs
         skillList = []
-        for skill, value in self.skillList:
-            if skill in adventure.skillMap:
-                skillList.append((skill, min(value, adventure.skillMap.get(skill))))
-        if features.coalition is None:
-            utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
-            utility *= Booker.roundsLeft/Booker.rounds
-        elif not Coalition.fullfillsReq(features.coalition):
-            a = np.linspace(1.35, 1, 20, endpoint=False)
-            b = np.linspace(1, 0.65, 81)
-            vals = np.concatenate((a, b))
-            factor = vals[features.powerNeeded]
-            factor += (np.linspace(0.15, -0.15, 101))[features.skillsNeeded]
-            utility *= factor
-            utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
+        if utility > 0:
+            for skill, value in self.skillList:
+                if skill in adventure.skillMap:
+                    skillList.append((skill, min(value, adventure.skillMap.get(skill))))
+            if features.coalition is None:
+                utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
+                utility *= Booker.roundsLeft/Booker.rounds
+            elif not Coalition.fullfillsReq(features.coalition):
+                a = np.linspace(1.35, 1, 20, endpoint=False)
+                b = np.linspace(1, 0.65, 81)
+                vals = np.concatenate((a, b))
+                factor = vals[features.powerNeeded]
+                factor += (np.linspace(0.15, -0.15, 101))[features.skillsNeeded]
+                utility *= factor
+                utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
 
-            utility *= Booker.roundsLeft/Booker.rounds
+                utility *= Booker.roundsLeft/Booker.rounds
+            else:
+                powerFactor = (1 - features.confirmedPowerNeeded)**2
+                roundsFactor = 1 + (1 - (Booker.roundsLeft/Booker.rounds))**2
+                utility *= 1+(powerFactor*roundsFactor*0.7)
         else:
-            powerFactor = (1 - features.confirmedPowerNeeded)**2
-            roundsFactor = 1 + (1 - (Booker.roundsLeft/Booker.rounds))**2
-            utility *= 1+(powerFactor*roundsFactor*0.7)
-
-
+            utility = 0
         return utility, skillList
 
 

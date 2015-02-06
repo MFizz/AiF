@@ -36,5 +36,6 @@ if __name__ == '__main__':
     print(sum(booker.reward))
     print(closedAdventures)
     print(openAdventures)
-    print(booker.agents)
+    for agent in booker.agents:
+        print("{}: Income: {} Costs: {} Total: ".format(agent, agent.rewards, agent.finalCosts))
 
