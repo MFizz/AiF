@@ -28,7 +28,11 @@ class Agent(object):
         self.featureMap = dict()
         for adv in advList:
             self.featureMap[adv] = _Features(self, adv)
+        self.coalitions = {}
+        self.reward = 0
 
+    def clean(self):
+        self.coalitions = {}
 
     def calcTopAdv(self, adventures):
         """ Calculates the best 4 adventures for the agent by using his utility function
@@ -62,17 +66,17 @@ class Agent(object):
             utility *= 1 - ((features.timesFailed + 1.0)**2)/500
             utility *= Booker.roundsLeft/Booker.rounds
         elif not Coalition.fullfillsReq(features.coalition):
-            a = np.linspace(1.35,1,20,endpoint=False)
-            b = np.linspace(1,0.65,81)
-            vals = np.concatenate((a,b))
+            a = np.linspace(1.35, 1, 20, endpoint=False)
+            b = np.linspace(1, 0.65, 81)
+            vals = np.concatenate((a, b))
             factor = vals[features.powerNeeded]
-            factor += (np.linspace(0.15,-0.15,101))[features.skillsNeeded]
+            factor += (np.linspace(0.15, -0.15, 101))[features.skillsNeeded]
             utility *= factor
             utility *= 1 - ((features.timesFailed + 1.0)**2)/1000
             utility *= Booker.roundsLeft/Booker.rounds
         else:
             powerFactor = (1 - features.confirmedPowerNeeded)**2
-            roundsFactor = 1+ (1 - (Booker.roundsLeft/Booker.rounds))**2
+            roundsFactor = 1 + (1 - (Booker.roundsLeft/Booker.rounds))**2
             utility *= 1+(powerFactor*roundsFactor*0.7)
 
 
@@ -107,13 +111,13 @@ class Agent(object):
 
 
 
-    def updateGain(self, coalsForAgent):
+    def updateGain(self):
         """ Update the agents current estimation of the game and his expected gain
 
         :param coalsForAgent (list of Coalitions): The Winning coalitions for this agent for each adventure
         """
 
-        for adv in coalsForAgent:
+        for adv in self.featureMap.keys():
             """ TODO add confirmedAgents. Maybe these are only known at a
                      different point.
                 TODO it is redundant to reference adventure from the feature map
@@ -121,9 +125,33 @@ class Agent(object):
                 TODO updateFeatures (calling estimateReward) can only handle one
                      coalition at a time
             """
-            self.featureMap[adv].updateFeatures(self, adv, coalsForAgent[adv], None, False)
+            if adv in self.coalitions:
+                self.featureMap[adv].updateFeatures(self, adv, self.coalitions[adv], adv.confirmedAgents)
+            else:
+                self.featureMap[adv].updateFeatures(self, adv, None, adv.confirmedAgents)
 
-    
+    def choseCoalitionForConfirmation(self):
+        bestCol = None
+        bestColReward = 0
+        for col in self.coalitions.values():
+            if self.estimateReward(col.adventure, col) > bestColReward:
+                bestCol = col
+                bestColReward = self.estimateReward(col.adventure, col)
+        if bestCol:
+            bestCol.adventure.confirmedAgents.append(self)
+
+    def choseFinalCoalition(self):
+        bestCol = None
+        bestColUtility = 0
+        for col in self.coalitions.values():
+            u, s = self.utility(col.adventure)
+            if u  > bestColUtility:
+                bestCol = col
+                bestColUtility = u
+        if bestCol:
+            bestCol.adventure.finalAgents.append(self)
+
+
     def __str__(self):
         return "Agent ID {}".format(id(self))
 
@@ -159,7 +187,7 @@ def createAgentList(t, advList):
                 skillMap[skill] = adv.skillMap.get(skill)
 
     print('skillMap: ', skillMap)
-    
+
     numAgents = dict(skillMap)
     for skill in numAgents.keys():
         numAgents[skill] /= sum(skillMap.values())
@@ -174,7 +202,7 @@ def createAgentList(t, advList):
             agentNum = t - sum([numAgents.get(s) for s in skills[:i]+skills[i+1:]])
             if agentNum > 0:
                 numAgents[skills[i]] = agentNum
-                break;
+                break
 
 
     print ('#Agents per skill: {}'.format(numAgents))
@@ -194,7 +222,7 @@ def createAgentList(t, advList):
 
             agentList.append(Agent(skillList,advList))
 
-    
+
     return agentList
 
 class _Features:
@@ -246,26 +274,28 @@ class _Features:
         else:
             coalitionPowerDiff = Coalition.powerDiff(coalition)
             self.powerNeeded = sum([p for p in coalitionPowerDiff.values() if p>0])
-            self.powerNeeded /= sum(adventure.skillMap.values)
-            self.powerNeeded = round(powerNeeded*100)
+            self.powerNeeded /= sum(adventure.skillMap.values())
+            self.powerNeeded = round(self.powerNeeded*100)
             self.skillsNeeded = len([p for p in coalitionPowerDiff.values() if p>0])
             self.skillsNeeded /= len(adventure.skillMap)
-            self.skillsNeeded = round(skillsNeeded*100)
+            self.skillsNeeded = round(self.skillsNeeded*100)
 
             self.confirmedAgents = len(confirmedAgents)/len(coalition.agentList)
             self.confirmedAgents = round(self.confirmedAgents*100)
 
             confirmedAgentList = [(a,sp) for a,sp in coalition.agentList if a in confirmedAgents]
-            skillList = [sp for a, sp in confirmedAgentList]
+            skillList = [sk for a, sp in confirmedAgentList for sk in sp]
             skillMap = dict()
-            for skill, power in skillList:
+            for skill, power in skillList:#
+
                 if skill not in skillMap.keys():
                     skillMap[skill] = power
                 else:
                     skillMap[skill] += power
             confirmedAgentsPowerDiff = []
             for skill in skillMap.keys():
-                confirmedAgentsPowerDiff.append(skill,adventure.skillMap.get(skill) - skillMap.get(skill))
+                confirmedAgentsPowerDiff.append((skill, adventure.skillMap[skill] - skillMap[skill]))
             self.confirmedPowerNeeded = sum([p for s,p in confirmedAgentsPowerDiff if p>0])
             self.confirmedPowerNeeded /= sum(adventure.skillMap.values())
-            self.confirmedPowerNeeded /= round(self.confirmedPowerNeeded*100)
+            # TODO /= ?!
+            self.confirmedPowerNeeded = round(self.confirmedPowerNeeded*100)

@@ -27,7 +27,12 @@ if __name__ == '__main__':
 
     print("\n Creating booker: ")
     booker = Booker(agentList, advList)
-    upperBound = booker.getUpperBound()
-    print("Upper Bound for this game is: {} gold".format(upperBound))
+    upperBound = booker.upperBound
+    closedAdventures = booker.completedAdventures
+    openAdventures = booker.adventures
     booker.run()
+    print("Upper Bound for this game is: {} gold".format(upperBound))
+    print(closedAdventures)
+    print(openAdventures)
+    print(booker.agents)
 
