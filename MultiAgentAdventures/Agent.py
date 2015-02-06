@@ -169,6 +169,7 @@ def _calcCostsAdv(adventures):
     :param adventures (list of Adventures): Available Adventures.
     :return (dict: key=Adventure, value=Int): A lookup table for the costs of every Adventure.
     """
+    random.seed(Adventure.seed)
     costs = dict()
     for adv in adventures:
         costs[adv] = -random.randint(1, 15)
@@ -181,6 +182,8 @@ def createAgentList(t, advList):
     :param advList (list of Adventures): Available Adventures.
     :return (list of Agents): List of random Agents with len = t.
     """
+    random.seed(Adventure.seed)
+    np.random.seed(Adventure.seed)
     agentList = []
     skillMap = dict()
     for adv in advList:
@@ -211,14 +214,15 @@ def createAgentList(t, advList):
 
     print ('#Agents per skill: {}'.format(numAgents))
 
-    for skill in numAgents.keys():
-        power = round(skillMap.get(skill)*(0.1*np.random.rand() + 0.4))
-        print(power)
+    for skill in sorted(numAgents.keys(),key=numAgents.get):
+        power = round(skillMap.get(skill)*(0.1*random.random() + 0.4))
+        print('Power {}'.format(power))
         agentsProb = np.random.rand(numAgents.get(skill))
+        print ('Agents Prob {}'.format(agentsProb))
         agentsProb /= sum(agentsProb)
         agentsPow = agentsProb*power
         agentsPow = np.ceil(agentsProb*power)
-        print(sum(agentsPow))
+        print('Agents Power {}'.format(sum(agentsPow)))
 
         for p in agentsPow:
             skillList = []

@@ -25,6 +25,7 @@ if __name__ == '__main__':
     for a in agentList:
         print("Adventurer ID {}: Skills {}, Costs {}".format(id(a), a.skillList, [(id(x), y) for x, y in a.costs.items()]))
 
+
     print("\n Creating booker: ")
     booker = Booker(agentList, advList)
     upperBound = booker.upperBound

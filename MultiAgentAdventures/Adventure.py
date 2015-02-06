@@ -6,6 +6,8 @@ A list of random adventurers is created by *createAdvlist*
 import random, Skill, Coalition
 import numpy as np
 
+seed = 314
+
 class Adventure:
     """ Adventures require different skills from agents to be completed and return a reward.
 
@@ -78,6 +80,8 @@ def createAdvList(t):
     :return (list of Adventures): List of random Adventures with len = t.
     :return (int): Sum of total power of all Adventures
     """
+    random.seed(seed)
+    np.random.seed(seed)
     advList = []
     powerDist = np.round(100*np.random.beta(2.3,4.6,t))
     for p in powerDist:
@@ -92,7 +96,8 @@ def createAdvList(t):
         random.shuffle(skills)
         skillsProb = np.random.rand(numSkills)
         skillsProb = skillsProb/sum(skillsProb)
-        skillsPow = np.round(skillsProb*p)
+        skillsPow = np.ceil(skillsProb*p)
+        print(skillsProb)
         if sum(skillsPow) != p:
             for i in range(numSkills):
                     skillPow = p - sum(np.concatenate((skillsPow[:i],skillsPow[i+1:]), axis=1))

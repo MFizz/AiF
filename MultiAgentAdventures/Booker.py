@@ -33,7 +33,9 @@ class Booker:
         global rounds, roundsLeft
         rounds = initRounds
         roundsLeft = initRounds
+        rl = rounds
         while roundsLeft != 0:
+        #while rl != 0:
             self.reward.append(0)
             print("Best adventures per adventurer:")
             requests = self.getRequests(self.agents, self.adventures)
@@ -86,6 +88,7 @@ class Booker:
                 else:
                     adv.clean()
 
+            #rl -= 1
             roundsLeft -= 1
         #for a in self.agents:
         #    a.updateGain(coalsForAdv)
