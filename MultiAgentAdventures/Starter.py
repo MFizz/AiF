@@ -35,8 +35,8 @@ if __name__ == '__main__':
     print("Upper Bound for this game is: {} gold".format(upperBound))
     print(booker.reward)
     print(sum(booker.reward))
-    print(closedAdventures)
-    print(openAdventures)
+    print('Closed Adventures {}'.format(closedAdventures))
+    print('Open Adventures {}'.format(openAdventures))
     for agent in booker.agents:
         print("{}: Income: {} Costs: {} Total: ".format(agent, agent.rewards, agent.finalCosts))
 
