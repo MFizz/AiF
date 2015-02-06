@@ -25,7 +25,7 @@ class Booker:
         self.reward = []
         self.upperBound = self.getUpperBound()
 
-    def run(self, initRounds):
+    def run(self, initRounds, rL = False):
         """ Starts and controls the game process
 
         TODO: return evaluable data of the outcome of the game
@@ -33,9 +33,7 @@ class Booker:
         global rounds, roundsLeft
         rounds = initRounds
         roundsLeft = initRounds
-        rl = rounds
-        while roundsLeft != 0:
-        #while rl != 0:
+        for i in range(0, initRounds):
             self.reward.append(0)
             print("Best adventures per adventurer:")
             requests = self.getRequests(self.agents, self.adventures)
@@ -87,9 +85,8 @@ class Booker:
                         adv.clean()
                 else:
                     adv.clean()
-
-            #rl -= 1
-            roundsLeft -= 1
+            if rL:
+                roundsLeft -= 1
         #for a in self.agents:
         #    a.updateGain(coalsForAdv)
 

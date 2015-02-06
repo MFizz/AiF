@@ -5,8 +5,8 @@ A list of random adventurers is created by *createAdvlist*
 """
 import random, Skill, Coalition
 import numpy as np
+import Starter
 
-seed = 314
 
 class Adventure:
     """ Adventures require different skills from agents to be completed and return a reward.
@@ -73,7 +73,7 @@ class Adventure:
 
 
 
-def createAdvList(t):
+def createAdvList(t,seed):
     """ Creates 't' random Adventures for testing.
 
     :param t (int): Number to specify how many Adventures will to be created.
