@@ -30,8 +30,10 @@ if __name__ == '__main__':
     upperBound = booker.upperBound
     closedAdventures = booker.completedAdventures
     openAdventures = booker.adventures
-    booker.run()
+    booker.run(10.0)
     print("Upper Bound for this game is: {} gold".format(upperBound))
+    print(booker.reward)
+    print(sum(booker.reward))
     print(closedAdventures)
     print(openAdventures)
     print(booker.agents)

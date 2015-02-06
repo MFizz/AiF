@@ -7,9 +7,8 @@ by the Booker module.
 import Coalition
 import Skill
 
-rounds = 100
-
-roundsLeft = rounds
+rounds = 0.0
+roundsLeft = 0.0
 
 class Booker:
     """ Contains relevant game Information and handles Communication/game process
@@ -26,13 +25,15 @@ class Booker:
         self.reward = []
         self.upperBound = self.getUpperBound()
 
-    def run(self):
+    def run(self, initRounds):
         """ Starts and controls the game process
 
         TODO: return evaluable data of the outcome of the game
         """
-
-        for i in range(0,10):
+        global rounds, roundsLeft
+        rounds = initRounds
+        roundsLeft = initRounds
+        while roundsLeft != 0:
             self.reward.append(0)
             print("Best adventures per adventurer:")
             requests = self.getRequests(self.agents, self.adventures)
@@ -84,6 +85,8 @@ class Booker:
                         adv.clean()
                 else:
                     adv.clean()
+
+            roundsLeft -= 1
         #for a in self.agents:
         #    a.updateGain(coalsForAdv)
 

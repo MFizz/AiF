@@ -54,7 +54,6 @@ class Agent(object):
 
         """
         features = self.featureMap.get(adventure)
-
         utility = 0
         utility += features.reward
         utility += features.costs
