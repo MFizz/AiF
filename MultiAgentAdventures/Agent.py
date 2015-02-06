@@ -59,7 +59,7 @@ class Agent(object):
             if skill in adventure.skillMap:
                 skillList.append((skill, min(value, adventure.skillMap.get(skill))))
         if features.coalition is None:
-            utility *= 1 - ((features.timesFailed + 1.0)**2)/500
+            utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
             utility *= Booker.roundsLeft/Booker.rounds
         elif not Coalition.fullfillsReq(features.coalition):
             a = np.linspace(1.35,1,20,endpoint=False)
@@ -68,7 +68,8 @@ class Agent(object):
             factor = vals[features.powerNeeded]
             factor += (np.linspace(0.15,-0.15,101))[features.skillsNeeded]
             utility *= factor
-            utility *= 1 - ((features.timesFailed + 1.0)**2)/1000
+            utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
+
             utility *= Booker.roundsLeft/Booker.rounds
         else:
             powerFactor = (1 - features.confirmedPowerNeeded)**2
