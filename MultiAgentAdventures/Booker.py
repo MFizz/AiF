@@ -22,38 +22,68 @@ class Booker:
     def __init__(self, agents, adventures):
         self.agents = agents
         self.adventures = adventures
+        self.completedAdventures = []
+        self.reward = []
+        self.upperBound = self.getUpperBound()
 
     def run(self):
         """ Starts and controls the game process
 
         TODO: return evaluable data of the outcome of the game
         """
-        print("Best adventures per adventurer:")
-        requests = self.getRequests(self.agents, self.adventures)
-        coalsForAdv = {}
-        for r in requests:
-            coalsForAdv[r] = Coalition.createCoalitions(r, requests[r]);
 
-        print('')
-        print("Largest coalitions and banzhaf power per adventure:")
-        for adv in self.adventures:
-            if adv.coalitions:
-                print(adv.coalitions[-1])
-                print('Banzhaf powers :{}'.format(adv.banzhafPowers))
-                print('#Coalitions = {}'.format(len(adv.coalitions)))
-                bestCoal = Coalition.bestCoalition(adv.coalitions)
-                print('Best Coalition : {}'.format(bestCoal))
-                if bestCoal != None:
-                    print('excess : {}'.format(Coalition.totalPower(bestCoal)-adv.totalPower()))
-                    bestCoal = Coalition.removeExcess(bestCoal)
-                    print ('Fulfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
-                print('\n')
-            else:
-                print("no coalitions for {}".format(adv))
-        """ Give The agents the possibility to update their preferences
-            TODO: Agents should only see coalitions from adventures that they
-                  applied for.
-        """
+        for i in range(0,10):
+            self.reward.append(0)
+            print("Best adventures per adventurer:")
+            requests = self.getRequests(self.agents, self.adventures)
+            coalsForAdv = {}
+            for r in requests:
+                coalsForAdv[r] = Coalition.createCoalitions(r, requests[r]);
+
+            print('')
+            print("Largest coalitions and banzhaf power per adventure:")
+            for adv in self.adventures:
+                if adv.coalitions:
+                    print(adv.coalitions[-1])
+                    print('Banzhaf powers :{}'.format(adv.banzhafPowers))
+                    print('#Coalitions = {}'.format(len(adv.coalitions)))
+                    bestCoal = Coalition.bestCoalition(adv.coalitions)
+                    print('Best Coalition : {}'.format(bestCoal))
+                    if bestCoal != None:
+                        print('excess : {}'.format(Coalition.totalPower(bestCoal)-adv.totalPower()))
+                        bestCoal = Coalition.removeExcess(bestCoal)
+                        adv.bestCoalition = bestCoal
+                        if adv.bestCoalition:
+                            for agent, power in adv.bestCoalition.agentList:
+                                agent.coalitions[adv] = adv.bestCoalition
+                        print ('Fulfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
+                    print('\n')
+                else:
+                    print("no coalitions for {}".format(adv))
+            """ Give The agents the possibility to update their preferences
+                TODO: Agents should only see coalitions from adventures that they
+                      applied for.
+            """
+            for agent in self.agents:
+                agent.choseCoalitionForConfirmation()
+
+            for agent in self.agents:
+                agent.updateGain()
+                agent.choseFinalCoalition()
+                agent.clean()
+
+            for adv in list(self.adventures):
+                if adv.bestCoalition:
+                    if set(adv.finalAgents).issuperset(set([a for a, s in adv.bestCoalition.agentList])):
+                        adv.rewardAgents()
+                        self.reward[-1] += adv.reward
+                        print(adv.reward)
+                        self.adventures.remove(adv)
+                        self.completedAdventures.append(adv)
+                    else:
+                        adv.clean()
+                else:
+                    adv.clean()
         #for a in self.agents:
         #    a.updateGain(coalsForAdv)
 

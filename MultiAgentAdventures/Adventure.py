@@ -23,6 +23,17 @@ class Adventure:
         self.vetoAgents = []
         self.coalitions = []
         self.banzhafPowers = dict()
+        self.bestCoalition = None
+        self.confirmedAgents = []
+        self.finalAgents = []
+
+    def clean(self):
+        self.vetoAgents = []
+        self.coalitions = []
+        self.banzhafPowers = dict()
+        self.bestCoalition = None
+        self.confirmedAgents = []
+        self.finalAgents = []
 
     def addVetoAgents(self, vetoAgents):
         self.vetoAgents = vetoAgents
@@ -44,6 +55,18 @@ class Adventure:
             totalPower += self.skillMap[skill]
 
         return totalPower
+
+    def rewardAgents(self):
+        banzhafTot = sum(self.banzhafPowers.values())
+        for agent, s in self.bestCoalition.agentList:
+            agent.reward = self.banzhafPowers[agent] / banzhafTot * self.reward
+            print([s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList])
+            for s, p in [s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList]:
+                skills = [sk for sk in agent.skillList if sk[0] == s]
+                for skill in skills:
+                    agent.skillList.remove(skill)
+                    agent.skillList.append((s, skill[1] -p))
+
 
 
 def createAdvList(t):
