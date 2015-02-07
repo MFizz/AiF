@@ -67,12 +67,19 @@ class PlotClassifier(Tk.Tk):
 
         self._text_mean_current_upper = Tk.StringVar()
         self._text_mean_current_greedy = Tk.StringVar()
+        self._text_open_adv = Tk.StringVar()
+        self._text_completed_adv = Tk.StringVar()
         label_mean_current_stats = Tk.Label(self,text="Statistics of current iteration: ", anchor='w', justify='left', bg="#CCCCCC")
         label_mean_current_stats.pack(fill=Tk.BOTH, expand=1)
         label_mean_current_upper = Tk.Label(self,textvariable=self._text_mean_current_upper, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_current_upper.pack(fill=Tk.BOTH, expand=1)
         label_mean_current_greedy = Tk.Label(self,textvariable=self._text_mean_current_greedy, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_current_greedy.pack(fill=Tk.BOTH, expand=1)
+        label_mean_current_greedy = Tk.Label(self,textvariable=self._text_open_adv, anchor='w', justify='left', bg="#CCCCCC")
+        label_mean_current_greedy.pack(fill=Tk.BOTH, expand=1)
+        label_mean_current_greedy = Tk.Label(self,textvariable=self._text_completed_adv, anchor='w', justify='left', bg="#CCCCCC")
+        label_mean_current_greedy.pack(fill=Tk.BOTH, expand=1)
+
 
         hline=Tk.Frame(self,height=1,bg="black")
         hline.pack(fill='x')
@@ -129,6 +136,10 @@ class PlotClassifier(Tk.Tk):
             self._text_mean_current_upper.set("Mean percentage of upper bound: %f"%mean_percentage_upper)
             mean_percentage_greedy = sum(self._bookers[loc][0].reward)/ self._bookers[loc][0].greedyBound
             self._text_mean_current_greedy.set("Mean percentage of upper bound: %f"%mean_percentage_greedy)
+            open_adv = len(self._bookers[loc][0].adventures)
+            compl_adv = len(self._bookers[loc][0].completedAdventures)
+            self._text_open_adv.set("Open adventures: %i"%open_adv)
+            self._text_completed_adv.set("Completed adventures: %i"%compl_adv)
         except IndexError:
             tkinter.messagebox.showinfo("No such dataset")
             self.destroy()
