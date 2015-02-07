@@ -82,7 +82,6 @@ class PlotClassifier(Tk.Tk):
         try:
             self._current_args = self._seed_args[loc]
             self._pos = loc
-            print(self._current_args)
             self._ax.cla()
             self._plot_generator_seed(self._ax, self._current_args)
             self._canvas.draw()
