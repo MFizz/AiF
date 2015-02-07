@@ -9,11 +9,12 @@ import tkinter as Tk
 import tkinter.messagebox
 
 class PlotClassifier(Tk.Tk):
-    def __init__(self, plot_generator_seed, plot_generator_agent, bookers, seed_callback, *args, **kwargs):
+    def __init__(self, plot_generator_seed, plot_generator_agent,plot_generator_mean,bookers, seed_callback, *args, **kwargs):
         Tk.Tk.__init__(self, *args, **kwargs)
         self.title("Plotting of %i games" % len(bookers))
         self._plot_generator_seed = plot_generator_seed
         self._plot_generator_agent = plot_generator_agent
+        self._plot_generator_mean = plot_generator_mean
         self._bookers = bookers
         self._seeds = ["Seed %i"%s for b,s in self._bookers]
         self._seed_args = [(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))], [b.greedyBound for i in range(0, len(b.reward))], s) for b,s in bookers]
@@ -37,6 +38,10 @@ class PlotClassifier(Tk.Tk):
             buttons_seed_class.append(Tk.Button(master=buttons_seeds_frame, text=cls,
                                            command=lambda x=i: self.button_seeds_callback(self._current_args, x)))
             buttons_seed_class[-1].pack(side=Tk.LEFT)
+
+        button_mean = Tk.Button(master=buttons_seeds_frame, text="Mean",
+                                command=self.button_mean_callback)
+        button_mean.pack(side=Tk.LEFT)
 
         self._agent_canvas = FigureCanvasTkAgg(agent, master=self)
         self._agent_canvas.get_tk_widget().pack(side=Tk.RIGHT, fill=Tk.BOTH, expand=1) #.grid(row=0, column=1, rowspan=3) #
@@ -86,6 +91,9 @@ class PlotClassifier(Tk.Tk):
         self._seed_callback(args, self._seeds[seed_idx])
         self.seed_plot(seed_idx)
 
+    def button_mean_callback(self):
+        self.mean_plot()
+
     def button_agents_callback(self, agent_idx):
         self.agent_plot(agent_idx)
 
@@ -95,6 +103,16 @@ class PlotClassifier(Tk.Tk):
         except IndexError:
             tkinter.messagebox.showinfo("Complete!", "Start from Beginning")
             self.seed_plot(0)
+
+    def mean_plot(self):
+        self._ax.cla()
+        averageGreedyBound = [np.mean([b.greedyBound for b,s in self._bookers]) for i in range(0,len(self._bookers[0][0].reward))]
+        averageUpperBound = [np.mean([b.upperBound for b,s in self._bookers]) for i in range(0,len(self._bookers[0][0].reward))]
+        averageAlgorithm = np.mean([list(accumulate(b.reward)) for b,s in self._bookers],axis=0)
+        args = (averageAlgorithm,averageUpperBound,averageGreedyBound)
+        self._plot_generator_mean(self._ax, args)
+        self._canvas.draw()
+
 
     def seed_plot(self, loc):
         try:
@@ -142,11 +160,22 @@ class PlotClassifier(Tk.Tk):
         self.agent_plot(0)
 
 
+def create_plot_mean(ax, args):
+
+    ax.set_title("Means: ")
+    ax.set_ylabel("Gold")
+    ax.set_xlabel("Iterations")
+    ax.plot(args[0], label = "Algorithm")
+    ax.plot(args[1], label = "UpperBound")
+    ax.plot(args[2], label = "GreedyBound")
+    ax.grid(True)
+    ax.legend(bbox_to_anchor=(1., 0.05), loc='lower right',
+           ncol=1)
 
 
 def create_plot_seed(ax, args):
 
-    ax.set_title("))ed %i"%args[3])
+    ax.set_title("Seed %i"%args[3])
     ax.set_ylabel("Gold")
     ax.set_xlabel("Iterations")
     ax.plot(args[0], label = "Algorithm")
@@ -172,13 +201,7 @@ def announce_seed(arguments, class_):
     #print(arguments, class_)
 
 def plot(bookers):
-    averageGreedyBound = np.mean([b.greedyBound for b,s in bookers])
-    averageUpperBound = np.mean([b.upperBound for b,s in bookers])
-    averageAlgorithm = np.mean([list(accumulate(b.reward)) for b,s in bookers],axis=0)
-    
-
-    classes = ["Seed %i"%s for b,s in bookers]
-    root = PlotClassifier(create_plot_seed, create_plot_agents, bookers, seed_callback=announce_seed)
+    root = PlotClassifier(create_plot_seed, create_plot_agents, create_plot_mean, bookers, seed_callback=announce_seed)
     root.after(50, root.seed_plot(0))
     root.mainloop()
 
