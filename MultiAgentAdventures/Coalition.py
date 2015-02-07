@@ -220,12 +220,13 @@ def distributiveBestCoalition(coalitions):
 
 
     for coalition in coalitions:
-        maxValue = 0
+        #minValue = coalition.adventure.totalPower()
+        minValue = 0
         for agent,_ in coalition.agentList:
             reward = agent.estimateReward(coalition.adventure, coalition) 
-            if reward > maxValue:
-                maxValue = reward
-        coalitionValues[coalition] = maxValue
+            if reward > minValue:
+                minValue = reward
+        coalitionValues[coalition] = minValue
     return max(coalitions,key=coalitionValues.get)
         
 
@@ -240,13 +241,13 @@ def removeExcess(coalition):
                     if skill == s:
                         skillMap[agent] = val
                         break
-            print ('SkillMap = {}'.format(skillMap))
+            #print ('SkillMap = {}'.format(skillMap))
             i = diff
             while i<0:
                 removalProbs = dict(skillMap)
                 for agent in skillMap.keys():
                     removalProbs[agent] /= sum(skillMap.values())
-                print ('Removal Probs = {}'.format(removalProbs))
+                #print ('Removal Probs = {}'.format(removalProbs))
                 chosenAgent = weightedChoice(removalProbs)
                 skillMap[chosenAgent] -= 1
                 i += 1
@@ -255,7 +256,7 @@ def removeExcess(coalition):
                     if coalition.agentList[j][1][k][0] == skill:
                         coalition.agentList[j][1][k] = (skill,skillMap.get(coalition.agentList[j][0]))
                     
-    print ('Agentlist = {}'.format(coalition.agentList))
+    print ('Best Coalition = {}'.format(coalition.agentList))
 
     return coalition
 def weightedChoice(choices):

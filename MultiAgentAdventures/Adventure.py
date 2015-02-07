@@ -5,6 +5,8 @@ A list of random adventurers is created by *createAdvlist*
 """
 import random, Skill, Coalition
 import numpy as np
+import Starter
+
 
 class Adventure:
     """ Adventures require different skills from agents to be completed and return a reward.
@@ -62,7 +64,7 @@ class Adventure:
             agent.rewards.append(self.banzhafPowers[agent] / banzhafTot * self.reward)
             agent.finalCosts.append(agent.costs[self])
 
-            print([s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList])
+            #print([s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList])
             for s, p in [s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList]:
                 skills = [sk for sk in agent.skillList if sk[0] == s]
                 for skill in skills:
@@ -71,13 +73,15 @@ class Adventure:
 
 
 
-def createAdvList(t):
+def createAdvList(t,seed):
     """ Creates 't' random Adventures for testing.
 
     :param t (int): Number to specify how many Adventures will to be created.
     :return (list of Adventures): List of random Adventures with len = t.
     :return (int): Sum of total power of all Adventures
     """
+    random.seed(seed)
+    np.random.seed(seed)
     advList = []
     powerDist = np.round(100*np.random.beta(2.3,4.6,t))
     for p in powerDist:
@@ -92,7 +96,8 @@ def createAdvList(t):
         random.shuffle(skills)
         skillsProb = np.random.rand(numSkills)
         skillsProb = skillsProb/sum(skillsProb)
-        skillsPow = np.round(skillsProb*p)
+        skillsPow = np.ceil(skillsProb*p)
+        #print(skillsProb)
         if sum(skillsPow) != p:
             for i in range(numSkills):
                     skillPow = p - sum(np.concatenate((skillsPow[:i],skillsPow[i+1:]), axis=1))

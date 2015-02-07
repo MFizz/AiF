@@ -22,10 +22,11 @@ class Booker:
         self.agents = agents
         self.adventures = adventures
         self.completedAdventures = []
-        self.reward = []
+        self.reward = [0]
         self.upperBound = self.getUpperBound()
+        self.greedyBound = self.getGreedyBound()
 
-    def run(self, initRounds):
+    def run(self, initRounds, rL = False):
         """ Starts and controls the game process
 
         TODO: return evaluable data of the outcome of the game
@@ -33,19 +34,20 @@ class Booker:
         global rounds, roundsLeft
         rounds = initRounds
         roundsLeft = initRounds
-        while roundsLeft != 0:
+        for i in range(0, initRounds):
             self.reward.append(0)
             print("Best adventures per adventurer:")
             requests = self.getRequests(self.agents, self.adventures)
             coalsForAdv = {}
             for r in requests:
                 coalsForAdv[r] = Coalition.createCoalitions(r, requests[r]);
+            
 
             print('')
-            print("Largest coalitions and banzhaf power per adventure:")
+            print("Best coalition and banzhaf power per adventure:")
             for adv in self.adventures:
                 if adv.coalitions:
-                    print(adv.coalitions[-1])
+                    print(adv)
                     print('Banzhaf powers :{}'.format(adv.banzhafPowers))
                     print('#Coalitions = {}'.format(len(adv.coalitions)))
                     bestCoal = Coalition.bestCoalition(adv.coalitions)
@@ -57,7 +59,7 @@ class Booker:
                         if adv.bestCoalition:
                             for agent, power in adv.bestCoalition.agentList:
                                 agent.coalitions[adv] = adv.bestCoalition
-                        print ('Fulfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
+                        #print ('F]lfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
                     print('\n')
                 else:
                     print("no coalitions for {}".format(adv))
@@ -67,11 +69,31 @@ class Booker:
             """
             for agent in self.agents:
                 agent.choseCoalitionForConfirmation()
+            
+            for adv in self.adventures:
+                if adv.bestCoalition:
+                    power = 0
+                    agents = [(a,sp) for a,sp in adv.bestCoalition.agentList if a in adv.confirmedAgents]
+                    for a,sp in agents:
+                        for s,p in sp:
+                            power += p
+                        
+                    print("{} Confirmed Agents: {}, Reward {}, Power Needed {}".format(adv, adv.confirmedAgents, adv.reward, (adv.totalPower() - power)/adv.totalPower()))
+
 
             for agent in self.agents:
                 agent.updateGain()
+                '''print('Stats for agent {}:'.format(agent))
+                for adv in self.adventures:
+                    features = agent.featureMap.get(adv)
+                    print('{}, Util {}, Costs {}, Reward {}'.format(adv, agent.utility(adv), features.costs, features.reward))'''
                 agent.choseFinalCoalition()
+
                 agent.clean()
+            
+            for adv in self.adventures:
+                if adv.bestCoalition:
+                    print("{} Final Agents: {}".format(adv, adv.finalAgents))
 
             for adv in list(self.adventures):
                 if adv.bestCoalition:
@@ -86,7 +108,16 @@ class Booker:
                 else:
                     adv.clean()
 
-            roundsLeft -= 1
+            if rL:
+                roundsLeft -= 1
+                print('Completed adventures {}'.format(self.completedAdventures))
+                print('Agents:')
+                for agent in self.agents:
+                    print ('{} {}'.format(agent, agent.skillList))
+                print('Adventures:')
+                for adv in self.adventures:
+                    print ('{} {}'.format(adv, adv.skillMap))
+
         #for a in self.agents:
         #    a.updateGain(coalsForAdv)
 
@@ -109,8 +140,9 @@ class Booker:
             print("Agent ID {}: {}".format(id(agent), [(x, y, id(z)) for (x, y, z) in requests]))
         return advRequests
 
-    def getUpperBound(self):
-        """ Gets the highest bound for tha actual game.
+
+    def getGreedyBound(self):
+        """ Gets the greedy bound for the actual game.
         Relies on the creation of adventures which reward grows exponentially with required skill power.
         :return:
         """
@@ -137,4 +169,34 @@ class Booker:
                 for skill, value in adv.skillMap.items():
                     skillMap[skill] -= value
                 bound += adv.reward
+        return bound
+    
+    def getUpperBound(self):
+        """ Gets the highest bound for the actual game.
+        Relies on the creation of adventures which reward grows exponentially with required skill power.
+        :return:
+        """
+
+        bound = 0
+
+        skillMap = {}
+        for skill in list(Skill.Skill):
+            skillMap[skill] = 0;
+        for agent in self.agents:
+            for skill, value in agent.skillList:
+                skillMap[skill] += value
+
+
+        sortedAdv = sorted(self.adventures, key=lambda x: x.reward, reverse= True)
+        for adv in sortedAdv:
+            if(sum(list(skillMap.values())) == 0):
+                break
+            totalPow = 0
+            for skill, value in adv.skillMap.items():
+                possiblePow = min(value, skillMap.get(skill))
+                totalPow += possiblePow
+                skillMap[skill] -= possiblePow
+            
+            bound += adv.reward*(totalPow/adv.totalPower())
+
         return bound

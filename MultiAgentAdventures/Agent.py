@@ -5,6 +5,7 @@ A list of random agents is created by *createAgentlist*
 """
 import random, Adventure, Skill, Coalition, Booker
 import numpy as np
+import Starter
 
 
 class Agent(object):
@@ -16,7 +17,7 @@ class Agent(object):
         featureMap (dict: key=Adventure, value=_Features) - Holds the agent's feature vectors for every adventure
     """
 
-    def __init__(self, skillList, advList):
+    def __init__(self, skillList, advList,seed):
         """ Initialises Agent with a given skillList, and his initial costs calculated by calcCostAdv
         Args:
             :param skillList (list of (Skill,Int)): The skills and their power which an adventurer can contribute to an
@@ -24,13 +25,14 @@ class Agent(object):
             :param advList (list of Adventures): The available Adventures.
         """
         self.skillList = skillList
-        self.costs = _calcCostsAdv(advList)
+        self.costs = _calcCostsAdv(advList,seed)
         self.featureMap = dict()
         for adv in advList:
             self.featureMap[adv] = _Features(self, adv)
         self.coalitions = {}
         self.rewards = []
         self.finalCosts = []
+        self.chosenAdvs = []
 
 
     def clean(self):
@@ -44,10 +46,15 @@ class Agent(object):
         utility, and skill, power to achieve it.
         """
         advValues = []
+        #print('Stats for agent {}:'.format(self))
         for adv in adventures:
+            features = self.featureMap.get(adv)
+            #print('{}, Util {}, Costs {}, Reward {}'.format(adv, self.utility(adv), features.costs, features.reward))
             if self.utility(adv)[0] > 0:
                 advValues.append(self.utility(adv) + (adv,))
-        return sorted(advValues, key=lambda x: x[0], reverse=True)[0:4]
+        finalAdv = sorted(advValues, key=lambda x: x[0], reverse=True)[0:4]
+        self.chosenAdvs = [x[2] for x in finalAdv]
+        return finalAdv
 
     def utility(self, adventure):
         """ Determines the utility an agent estimates for entering a given adventure.
@@ -66,7 +73,7 @@ class Agent(object):
                 if skill in adventure.skillMap:
                     skillList.append((skill, min(value, adventure.skillMap.get(skill))))
             if features.coalition is None:
-                utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
+                utility *= 1 - ((features.timesFailed)**2)/((Booker.rounds)**2)
                 utility *= Booker.roundsLeft/Booker.rounds
             elif not Coalition.fullfillsReq(features.coalition):
                 a = np.linspace(1.35, 1, 20, endpoint=False)
@@ -75,13 +82,14 @@ class Agent(object):
                 factor = vals[features.powerNeeded]
                 factor += (np.linspace(0.15, -0.15, 101))[features.skillsNeeded]
                 utility *= factor
-                utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
+                utility *= 1 - ((features.timesFailed)**2)/((Booker.rounds)**2)
 
                 utility *= Booker.roundsLeft/Booker.rounds
             else:
-                powerFactor = (1 - features.confirmedPowerNeeded)**2
-                roundsFactor = 1 + (1 - (Booker.roundsLeft/Booker.rounds))**2
-                utility *= 1+(powerFactor*roundsFactor*0.7)
+                roundsFactor = 1 + 20*(1 - (Booker.roundsLeft/Booker.rounds))**2
+                powerFactor = 1 + (1 - features.confirmedPowerNeeded)**4
+                powerFactor = powerFactor**roundsFactor
+                utility *= powerFactor
         else:
             utility = 0
         return utility, skillList
@@ -121,7 +129,7 @@ class Agent(object):
         :param coalsForAgent (list of Coalitions): The Winning coalitions for this agent for each adventure
         """
 
-        for adv in self.featureMap.keys():
+        for adv in self.chosenAdvs:
             """ TODO add confirmedAgents. Maybe these are only known at a
                      different point.
                 TODO it is redundant to reference adventure from the feature map
@@ -138,9 +146,9 @@ class Agent(object):
         bestCol = None
         bestColReward = 0
         for col in self.coalitions.values():
-            if self.estimateReward(col.adventure, col) > bestColReward:
+            if self.estimateReward(col.adventure, col)-self.costs.get(col.adventure) > bestColReward:
                 bestCol = col
-                bestColReward = self.estimateReward(col.adventure, col)
+                bestColReward = self.estimateReward(col.adventure, col)-self.costs.get(col.adventure)
         if bestCol:
             bestCol.adventure.confirmedAgents.append(self)
 
@@ -163,24 +171,27 @@ class Agent(object):
         return self.__str__()
 
 
-def _calcCostsAdv(adventures):
+def _calcCostsAdv(adventures,seed):
     """ Assigns random negative numbers to given adventures which represent a cost factor for every adventure.
 
     :param adventures (list of Adventures): Available Adventures.
     :return (dict: key=Adventure, value=Int): A lookup table for the costs of every Adventure.
     """
+    random.seed(seed)
     costs = dict()
     for adv in adventures:
         costs[adv] = -random.randint(1, 15)
     return costs
 
-def createAgentList(t, advList):
+def createAgentList(t, advList,seed):
     """ Creates 't' random Agents for testing.
 
     :param t (int): Number to specify how many Agents will to be created.
     :param advList (list of Adventures): Available Adventures.
     :return (list of Agents): List of random Agents with len = t.
     """
+    random.seed(seed)
+    np.random.seed(seed)
     agentList = []
     skillMap = dict()
     for adv in advList:
@@ -211,20 +222,21 @@ def createAgentList(t, advList):
 
     print ('#Agents per skill: {}'.format(numAgents))
 
-    for skill in numAgents.keys():
-        power = round(skillMap.get(skill)*(0.1*np.random.rand() + 0.4))
-        print(power)
+    for skill in sorted(numAgents.keys(),key=numAgents.get):
+        power = round(skillMap.get(skill)*(0.1*random.random() + 0.4))
+        print('Power {}'.format(power))
         agentsProb = np.random.rand(numAgents.get(skill))
+        #print ('Agents Prob {}'.format(agentsProb))
         agentsProb /= sum(agentsProb)
         agentsPow = agentsProb*power
         agentsPow = np.ceil(agentsProb*power)
-        print(sum(agentsPow))
+        print('Agents Power {}'.format(sum(agentsPow)))
 
         for p in agentsPow:
             skillList = []
             skillList.append((skill,p))
 
-            agentList.append(Agent(skillList,advList))
+            agentList.append(Agent(skillList,advList,seed))
 
 
     return agentList
@@ -299,7 +311,9 @@ class _Features:
             confirmedAgentsPowerDiff = []
             for skill in skillMap.keys():
                 confirmedAgentsPowerDiff.append((skill, adventure.skillMap[skill] - skillMap[skill]))
-            self.confirmedPowerNeeded = sum([p for s,p in confirmedAgentsPowerDiff if p>0])
+            self.confirmedPowerNeeded = adventure.totalPower()
+            agents = [(a,sp) for a,sp in coalition.agentList if a in confirmedAgents]
+            for a,sp in agents:
+                for s,p in sp:
+                    self.confirmedPowerNeeded -= p
             self.confirmedPowerNeeded /= sum(adventure.skillMap.values())
-            # TODO /= ?!
-            self.confirmedPowerNeeded = round(self.confirmedPowerNeeded*100)
