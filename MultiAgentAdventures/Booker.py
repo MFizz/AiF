@@ -98,7 +98,7 @@ class Booker:
             for adv in list(self.adventures):
                 if adv.bestCoalition:
                     if set(adv.finalAgents).issuperset(set([a for a, s in adv.bestCoalition.agentList])):
-                        adv.rewardAgents()
+                        adv.rewardAgents(i)
                         self.reward[-1] += adv.reward
                         print(adv.reward)
                         self.adventures.remove(adv)

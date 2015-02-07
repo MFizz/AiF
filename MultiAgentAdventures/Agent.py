@@ -24,6 +24,7 @@ class Agent(object):
                                                     adventure.
             :param advList (list of Adventures): The available Adventures.
         """
+        self.skillListBegin = list(skillList)
         self.skillList = skillList
         self.costs = _calcCostsAdv(advList,seed)
         self.featureMap = dict()
@@ -33,6 +34,7 @@ class Agent(object):
         self.rewards = [0]
         self.finalCosts = [0]
         self.earnings = [0]
+        self.closedAdvs = []
         self.chosenAdvs = []
 
 

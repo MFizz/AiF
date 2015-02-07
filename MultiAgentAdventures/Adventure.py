@@ -58,12 +58,13 @@ class Adventure:
 
         return totalPower
 
-    def rewardAgents(self):
+    def rewardAgents(self, iter):
         banzhafTot = sum(self.banzhafPowers.values())
         for agent, s in self.bestCoalition.agentList:
             agent.rewards.append(self.banzhafPowers[agent] / banzhafTot * self.reward)
             agent.finalCosts.append(agent.costs[self])
             agent.earnings.append(self.banzhafPowers[agent] / banzhafTot * self.reward + agent.costs[self])
+            agent.closedAdvs.append((self, iter+1))
 
             #print([s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList])
             for s, p in [s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList]:
