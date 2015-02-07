@@ -30,8 +30,6 @@ class PlotClassifier(Tk.Tk):
                                            command=lambda x=i: self.button_seeds_callback(self._current_args, x)))
             buttons_seed_class[-1].pack(side=Tk.LEFT)
 
-        button_quit = Tk.Button(master=buttons_seeds_frame, text='Quit', command=self.destroy)
-        button_quit.pack(side=Tk.RIGHT) #.grid(row=0,column=0)
 
         button_means = Tk.Button(master=buttons_seeds_frame, text='Means', command=self.destroy)
         button_means.pack(side=Tk.RIGHT) #.grid(row=0,column=0)
@@ -43,6 +41,24 @@ class PlotClassifier(Tk.Tk):
         self._canvas = FigureCanvasTkAgg(f, master=self)
         self._canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=0, column=1, rowspan=3) #
         self._canvas.show()
+
+        self._text_mean_current_upper = Tk.StringVar()
+        self._text_mean_current_greedy = Tk.StringVar()
+        label_mean_current_stats = Tk.Label(self,text="Statistics of current iteration: ", anchor='w', justify='left')
+        label_mean_current_stats.pack(fill=Tk.BOTH, expand=1)
+        label_mean_current_upper = Tk.Label(self,textvariable=self._text_mean_current_upper, anchor='w', justify='left')
+        label_mean_current_upper.pack(fill=Tk.BOTH, expand=1)
+        label_mean_current_greedy = Tk.Label(self,textvariable=self._text_mean_current_greedy, anchor='w', justify='left')
+        label_mean_current_greedy.pack(fill=Tk.BOTH, expand=1)
+
+        mean_percentage_upper = sum([sum(b.reward)/b.upperBound for b,s in self._bookers])/len(self._bookers)
+        mean_percentage_greedy = sum([sum(b.reward)/b.greedyBound for b,s in self._bookers])/len(self._bookers)
+        label_mean_stats = Tk.Label(self,text="Statistics over all iterations: ", anchor='w', justify='left')
+        label_mean_stats.pack(fill=Tk.BOTH, expand=1)
+        label_mean_upper = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_upper, anchor='w', justify='left')
+        label_mean_upper.pack(fill=Tk.BOTH, expand=1)
+        label_mean_greedy = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_greedy, anchor='w', justify='left')
+        label_mean_greedy.pack(fill=Tk.BOTH, expand=1)
 
         toolbar = NavigationToolbar2TkAgg( self._canvas, self )
         toolbar.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=3, column=1) #
@@ -67,6 +83,10 @@ class PlotClassifier(Tk.Tk):
             self._ax.cla()
             self._plot_generator_seed(self._ax, self._current_args)
             self._canvas.draw()
+            mean_percentage_upper = sum(self._bookers[loc][0].reward)/ self._bookers[loc][0].upperBound
+            self._text_mean_current_upper.set("Mean percentage of upper bound: %f"%mean_percentage_upper)
+            mean_percentage_greedy = sum(self._bookers[loc][0].reward)/ self._bookers[loc][0].greedyBound
+            self._text_mean_current_greedy.set("Mean percentage of upper bound: %f"%mean_percentage_greedy)
         except IndexError:
             tkinter.messagebox.showinfo("No such dataset")
             self.destroy()
