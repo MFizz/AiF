@@ -22,7 +22,7 @@ class Booker:
         self.agents = agents
         self.adventures = adventures
         self.completedAdventures = []
-        self.reward = []
+        self.reward = [0]
         self.upperBound = self.getUpperBound()
         self.greedyBound = self.getGreedyBound()
 

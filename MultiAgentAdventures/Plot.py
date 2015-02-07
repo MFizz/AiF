@@ -96,7 +96,7 @@ class PlotClassifier(Tk.Tk):
 
 
 def create_plot_seed(ax, args):
-    print(args)
+
     ax.set_title("Seed %i"%args[3])
     ax.set_ylabel("Gold")
     ax.set_xlabel("Iterations")
@@ -107,7 +107,8 @@ def create_plot_seed(ax, args):
            ncol=1)
 
 def announce_seed(arguments, class_):
-    print(arguments, class_)
+    a =1
+    #print(arguments, class_)
 
 def plot(bookers):
     classes = ["Seed %i"%s for b,s in bookers]
