@@ -30,8 +30,9 @@ class Agent(object):
         for adv in advList:
             self.featureMap[adv] = _Features(self, adv)
         self.coalitions = {}
-        self.rewards = []
-        self.finalCosts = []
+        self.rewards = [0]
+        self.finalCosts = [0]
+        self.earnings = [0]
         self.chosenAdvs = []
 
 
