@@ -104,6 +104,7 @@ class PlotClassifier(Tk.Tk):
         toolbar.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=3, column=1) #
         toolbar.update()
 
+
     def button_seeds_callback(self, args, seed_idx):
         self._seed_callback(args, self._seeds[seed_idx])
         self.seed_plot(seed_idx)
@@ -182,6 +183,9 @@ class PlotClassifier(Tk.Tk):
                     list(accumulate(self._bookers[self._pos][0].agents[pos].earnings)),
                     id(self._bookers[self._pos][0].agents[pos]))
             self._plot_generator_agent(self._agent_ax, args)
+            toolbar = NavigationToolbar2TkAgg( self._agent_canvas, self._agent_frame)
+            toolbar.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=3, column=1) #
+            toolbar.update()
             self._agent_canvas.draw()
 
         except IndexError:
