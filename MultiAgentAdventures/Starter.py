@@ -38,5 +38,5 @@ if __name__ == '__main__':
     print('Closed Adventures {}'.format(closedAdventures))
     print('Open Adventures {}'.format(openAdventures))
     for agent in booker.agents:
-        print("{}: Income: {} Costs: {} Total: ".format(agent, agent.rewards, agent.finalCosts))
+        print("{}: Income: {} Costs: {}".format(agent, agent.rewards, agent.finalCosts))
 

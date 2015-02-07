@@ -220,12 +220,13 @@ def distributiveBestCoalition(coalitions):
 
 
     for coalition in coalitions:
-        maxValue = 0
+        #minValue = coalition.adventure.totalPower()
+        minValue = 0
         for agent,_ in coalition.agentList:
             reward = agent.estimateReward(coalition.adventure, coalition) 
-            if reward > maxValue:
-                maxValue = reward
-        coalitionValues[coalition] = maxValue
+            if reward > minValue:
+                minValue = reward
+        coalitionValues[coalition] = minValue
     return max(coalitions,key=coalitionValues.get)
         
 
