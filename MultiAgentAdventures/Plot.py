@@ -4,6 +4,7 @@ matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 from itertools import accumulate
+import numpy as np
 import tkinter as Tk
 import tkinter.messagebox
 
@@ -97,7 +98,7 @@ class PlotClassifier(Tk.Tk):
 
 def create_plot_seed(ax, args):
 
-    ax.set_title("Seed %i"%args[3])
+    ax.set_title("))ed %i"%args[3])
     ax.set_ylabel("Gold")
     ax.set_xlabel("Iterations")
     ax.plot(args[0], label = "Algorithm")
@@ -111,6 +112,14 @@ def announce_seed(arguments, class_):
     #print(arguments, class_)
 
 def plot(bookers):
+    averageGreedyBound = np.mean([b.greedyBound for b,s in bookers])
+    averageUpperBound = np.mean([b.upperBound for b,s in bookers])
+    averageAlgorithm = np.mean([list(accumulate(b.reward)) for b,s in bookers],axis=0)
+    
+    print ('Average algorithm:{}'.format(averageAlgorithm))
+    print ('Average greedy bound:{}'.format(averageGreedyBound))
+    print ('Average upper bound:{}'.format(averageUpperBound))
+
     classes = ["Seed %i"%s for b,s in bookers]
     root = PlotClassifier(create_plot_seed, bookers, seed_callback=announce_seed)
     root.after(50, root.seed_plot(0))
