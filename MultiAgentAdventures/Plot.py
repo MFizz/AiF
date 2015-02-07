@@ -114,7 +114,10 @@ class PlotClassifier(Tk.Tk):
     def agent_plot(self,pos):
         try:
             self._agent_ax.cla()
-            args = (list(accumulate(self._bookers[self._pos][0].agents[pos].rewards)), id(self._bookers[self._pos][0].agents[pos]))
+            args = (list(accumulate(self._bookers[self._pos][0].agents[pos].rewards)),
+                    list(accumulate(self._bookers[self._pos][0].agents[pos].finalCosts)),
+                    list(accumulate(self._bookers[self._pos][0].agents[pos].earnings)),
+                    id(self._bookers[self._pos][0].agents[pos]))
             self._plot_generator_agent(self._agent_ax, args)
             self._agent_canvas.draw()
 
@@ -148,14 +151,18 @@ def create_plot_seed(ax, args):
     ax.plot(args[0], label = "Algorithm")
     ax.plot(args[1], label = "UpperBound")
     ax.plot(args[2], label = "GreedyBound")
+    ax.grid(True)
     ax.legend(bbox_to_anchor=(1., 0.05), loc='lower right',
            ncol=1)
 
 def create_plot_agents(ax, args):
-    ax.set_title("Agent %i"%args[1])
+    ax.set_title("Agent %i"%args[3])
     ax.set_ylabel("Gold")
     ax.set_xlabel("Iterations")
     ax.plot(args[0], label = "Reward")
+    ax.plot(args[1], label = "Costs")
+    ax.plot(args[2], label = "Earnings")
+    ax.grid(True)
     ax.legend(bbox_to_anchor=(1., 0.05), loc='lower right',
            ncol=1)
 

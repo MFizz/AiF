@@ -32,6 +32,7 @@ class Agent(object):
         self.coalitions = {}
         self.rewards = [0]
         self.finalCosts = [0]
+        self.earnings = [0]
         self.chosenAdvs = []
 
 

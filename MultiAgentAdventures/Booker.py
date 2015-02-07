@@ -111,6 +111,8 @@ class Booker:
             for agent in self.agents:
                 if len(agent.rewards) != i+2:
                     agent.rewards.append(0)
+                    agent.finalCosts.append(0)
+                    agent.earnings.append(0)
 
             if rL:
                 roundsLeft -= 1
