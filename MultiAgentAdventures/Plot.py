@@ -172,9 +172,11 @@ class PlotClassifier(Tk.Tk):
             for adv, iter in cur_agent.closedAdvs:
                 adv_skills = ", ".join(["{}: {}".format(s.name, p) for s, p in adv.skillMap.items()])
                 agent_cur_skills = ", ".join(["{}: {}".format(s.name, p) for s, p in [s for a,s in adv.bestCoalition.agentList if a == cur_agent][0]])
+                adv_coal = "\n".join(["{}: {}".format(a, ", ".join(["{}: {}".format(s.name, p) for s, p in skills])) for a, skills in adv.bestCoalition.agentList])
                 labels_adv.append(Tk.Label(master=self._closed_adv_frame, text="In round {} \n{} was comleted \n"
                                                                            "it needed: {} \n"
-                                                                           "Agent put in: {}\n ".format(iter, adv, adv_skills, agent_cur_skills), anchor='w', justify='left', bg="#CCCCCC"))
+                                                                           "Agent put in: {}\n"
+                                                                           "Coalition: \n{}".format(iter, adv, adv_skills, agent_cur_skills, adv_coal), anchor='w', justify='left', bg="#CCCCCC"))
                 labels_adv[-1].pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 
             self._agent_ax.cla()
