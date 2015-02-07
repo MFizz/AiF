@@ -150,7 +150,7 @@ class PlotClassifier(Tk.Tk):
 
         self._buttons_agents_class = []
 
-        self._agents = ["Agent %i"%id(a) for a in self._bookers[self._pos][0].agents]
+        self._agents = ["Agent %i earns: %i"%(id(a), sum(a.earnings)) for a in self._bookers[self._pos][0].agents]
 
         for i, cls in enumerate(self._agents):
             self._buttons_agents_class.append(Tk.Button(master=self._buttons_agents_frame, text=cls,
