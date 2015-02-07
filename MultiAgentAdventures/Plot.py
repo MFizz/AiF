@@ -176,9 +176,6 @@ def plot(bookers):
     averageUpperBound = np.mean([b.upperBound for b,s in bookers])
     averageAlgorithm = np.mean([list(accumulate(b.reward)) for b,s in bookers],axis=0)
     
-    print ('Average algorithm:{}'.format(averageAlgorithm))
-    print ('Average greedy bound:{}'.format(averageGreedyBound))
-    print ('Average upper bound:{}'.format(averageUpperBound))
 
     classes = ["Seed %i"%s for b,s in bookers]
     root = PlotClassifier(create_plot_seed, create_plot_agents, bookers, seed_callback=announce_seed)
