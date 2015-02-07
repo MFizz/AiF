@@ -72,11 +72,12 @@ class PlotClassifier(Tk.Tk):
 
 def create_plot(ax, args):
     print(args)
+    ax.set_title("Seed %i"%args[2])
     ax.set_ylabel("Gold")
     ax.set_xlabel("Iterations")
     ax.plot(args[0], label = "Algorithm")
     ax.plot(args[1], label = "UpperBound")
-    ax.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+    ax.legend(bbox_to_anchor=(0., -0.11, 1, 0), loc=3,
            ncol=2, mode="expand", borderaxespad=0.)
 
 def announce_classification(arguments, class_):
@@ -84,8 +85,8 @@ def announce_classification(arguments, class_):
 
 def plot(bookers):
     classes = ["Seed %i"%s for b,s in bookers]
-    arguments_for_plot = [(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))]) for b,s in bookers]
+    arguments_for_plot = [(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))], s) for b,s in bookers]
     print(arguments_for_plot)
     root = PlotClassifier(create_plot, arguments_for_plot, classes, classification_callback=announce_classification)
-    root.after(50, root.classify_next_plot)
+    root.after(50, root.classify_plot(0))
     root.mainloop()
