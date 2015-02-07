@@ -10,13 +10,12 @@ from Booker import Booker
 numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
-
-plays = 2
+iters = 10
 
 
 if __name__ == '__main__':
     bookers = []
-    iters = 10
+
     for i in range(0, iters):
         seed = random.randrange(10, 500, 1)
         print("Creating {} random adventures: ".format(numAdv))

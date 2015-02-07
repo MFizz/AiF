@@ -92,6 +92,13 @@ class PlotClassifier(Tk.Tk):
         label_mean_upper.pack(fill=Tk.BOTH, expand=1)
         label_mean_greedy = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_greedy, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_greedy.pack(fill=Tk.BOTH, expand=1)
+        mean_open_adv = np.mean([len(b.adventures) for b,s in self._bookers])
+        label_mean_open_adv = Tk.Label(self,text="Mean open adventures: %f"%mean_open_adv, anchor='w', justify='left', bg="#CCCCCC")
+        label_mean_open_adv.pack(fill=Tk.BOTH, expand=1)
+        mean_completed_adv = np.mean([len(b.completedAdventures) for b,s in self._bookers])
+        label_mean_completed_adv = Tk.Label(self,text="Mean completed adventures: %f"%mean_completed_adv, anchor='w', justify='left', bg="#CCCCCC")
+        label_mean_completed_adv.pack(fill=Tk.BOTH, expand=1)
+
 
         toolbar = NavigationToolbar2TkAgg( self._canvas, self )
         toolbar.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=3, column=1) #
