@@ -31,8 +31,8 @@ class PlotClassifier(Tk.Tk):
             buttons_seed_class[-1].pack(side=Tk.LEFT)
 
 
-        button_means = Tk.Button(master=buttons_seeds_frame, text='Means', command=self.destroy)
-        button_means.pack(side=Tk.RIGHT) #.grid(row=0,column=0)
+        button_quit = Tk.Button(master=buttons_seeds_frame, text='Quit', command=self.destroy)
+        button_quit.pack(side=Tk.RIGHT) #.grid(row=0,column=0)
         #buttons_agent_frame = Tk.Frame
         #buttons_agent_frame.pack(side=Tk.RIGHT, fill=Tk.BOTH, expand=True)
         #buttons_agent_class = []
@@ -44,20 +44,23 @@ class PlotClassifier(Tk.Tk):
 
         self._text_mean_current_upper = Tk.StringVar()
         self._text_mean_current_greedy = Tk.StringVar()
-        label_mean_current_stats = Tk.Label(self,text="Statistics of current iteration: ", anchor='w', justify='left')
+        label_mean_current_stats = Tk.Label(self,text="Statistics of current iteration: ", anchor='w', justify='left', bg="#CCCCCC")
         label_mean_current_stats.pack(fill=Tk.BOTH, expand=1)
-        label_mean_current_upper = Tk.Label(self,textvariable=self._text_mean_current_upper, anchor='w', justify='left')
+        label_mean_current_upper = Tk.Label(self,textvariable=self._text_mean_current_upper, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_current_upper.pack(fill=Tk.BOTH, expand=1)
-        label_mean_current_greedy = Tk.Label(self,textvariable=self._text_mean_current_greedy, anchor='w', justify='left')
+        label_mean_current_greedy = Tk.Label(self,textvariable=self._text_mean_current_greedy, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_current_greedy.pack(fill=Tk.BOTH, expand=1)
+
+        hline=Tk.Frame(self,height=1,bg="black")
+        hline.pack(fill='x')
 
         mean_percentage_upper = sum([sum(b.reward)/b.upperBound for b,s in self._bookers])/len(self._bookers)
         mean_percentage_greedy = sum([sum(b.reward)/b.greedyBound for b,s in self._bookers])/len(self._bookers)
-        label_mean_stats = Tk.Label(self,text="Statistics over all iterations: ", anchor='w', justify='left')
+        label_mean_stats = Tk.Label(self,text="Statistics over all iterations: ", anchor='w', justify='left', bg="#CCCCCC")
         label_mean_stats.pack(fill=Tk.BOTH, expand=1)
-        label_mean_upper = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_upper, anchor='w', justify='left')
+        label_mean_upper = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_upper, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_upper.pack(fill=Tk.BOTH, expand=1)
-        label_mean_greedy = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_greedy, anchor='w', justify='left')
+        label_mean_greedy = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_greedy, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_greedy.pack(fill=Tk.BOTH, expand=1)
 
         toolbar = NavigationToolbar2TkAgg( self._canvas, self )
