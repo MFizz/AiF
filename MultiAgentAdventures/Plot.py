@@ -22,12 +22,15 @@ class PlotClassifier(Tk.Tk):
         self._agent_pos = 0
         self._seed_callback = seed_callback
         self._agents = []
+        self._closed_adv_frame = False
         self._setup_gui()
 
     def _setup_gui(self):
         f = Figure()
         self._ax = f.add_subplot(111)
 
+        self._agent_frame = Tk.Frame(self)
+        self._agent_frame.pack(side=Tk.RIGHT, fill=Tk.BOTH, expand=True)
         agent = Figure()
         self._agent_ax = agent.add_subplot(111)
 
@@ -43,8 +46,8 @@ class PlotClassifier(Tk.Tk):
                                 command=self.button_mean_callback)
         button_mean.pack(side=Tk.LEFT)
 
-        self._agent_canvas = FigureCanvasTkAgg(agent, master=self)
-        self._agent_canvas.get_tk_widget().pack(side=Tk.RIGHT, fill=Tk.BOTH, expand=1) #.grid(row=0, column=1, rowspan=3) #
+        self._agent_canvas = FigureCanvasTkAgg(agent, master=self._agent_frame)
+        self._agent_canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=0, column=1, rowspan=3) #
         self._agent_canvas.show()
 
         self._buttons_agents_frame = Tk.Frame(self)
@@ -132,6 +135,29 @@ class PlotClassifier(Tk.Tk):
 
     def agent_plot(self,pos):
         try:
+            if self._closed_adv_frame:
+                self._closed_adv_frame.destroy()
+            self._closed_adv_frame = Tk.Frame(self._agent_frame)
+            self._closed_adv_frame.pack(fill=Tk.BOTH, expand=1)
+            cur_agent = self._bookers[self._pos][0].agents[pos]
+            print(cur_agent.skillList)
+            print(cur_agent.skillListBegin)
+            agent_skills = ", ".join(["{}: {}".format(s.name, p) for s, p in cur_agent.skillList])
+            agent_skills_beg = ", ".join(["{}: {}".format(s.name, p) for s, p in cur_agent.skillListBegin])
+            label_agent_current_astats = Tk.Label(master=self._closed_adv_frame,text="Statistics of current agent: \n"
+                                                                                 "Agent's skills: {} \n"
+                                                                                 "At beginning: {}".format(agent_skills, agent_skills_beg)
+                                              , anchor='w', justify='left', bg="#CCCCCC")
+            label_agent_current_astats.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
+            labels_adv=[]
+            for adv, iter in cur_agent.closedAdvs:
+                adv_skills = ", ".join(["{}: {}".format(s.name, p) for s, p in adv.skillMap.items()])
+                agent_cur_skills = ", ".join(["{}: {}".format(s.name, p) for s, p in [s for a,s in adv.bestCoalition.agentList if a == cur_agent][0]])
+                labels_adv.append(Tk.Label(master=self._closed_adv_frame, text="In round {} \n{} was comleted \n"
+                                                                           "it needed: {} \n"
+                                                                           "Agent put in: {}\n ".format(iter, adv, adv_skills, agent_cur_skills), anchor='w', justify='left', bg="#CCCCCC"))
+                labels_adv[-1].pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
+
             self._agent_ax.cla()
             args = (list(accumulate(self._bookers[self._pos][0].agents[pos].rewards)),
                     list(accumulate(self._bookers[self._pos][0].agents[pos].finalCosts)),
@@ -158,6 +184,7 @@ class PlotClassifier(Tk.Tk):
             self._buttons_agents_class[-1].pack()
 
         self.agent_plot(0)
+
 
 
 def create_plot_mean(ax, args):
