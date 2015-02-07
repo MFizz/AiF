@@ -32,6 +32,7 @@ class Agent(object):
         self.coalitions = {}
         self.rewards = []
         self.finalCosts = []
+        self.chosenAdvs = []
 
 
     def clean(self):
@@ -45,13 +46,15 @@ class Agent(object):
         utility, and skill, power to achieve it.
         """
         advValues = []
-        print('Stats for agent {}:'.format(self))
+        #print('Stats for agent {}:'.format(self))
         for adv in adventures:
             features = self.featureMap.get(adv)
-            print('{}, Util {}, Costs {}, Reward {}'.format(adv, self.utility(adv), features.costs, features.reward))
+            #print('{}, Util {}, Costs {}, Reward {}'.format(adv, self.utility(adv), features.costs, features.reward))
             if self.utility(adv)[0] > 0:
                 advValues.append(self.utility(adv) + (adv,))
-        return sorted(advValues, key=lambda x: x[0], reverse=True)[0:4]
+        finalAdv = sorted(advValues, key=lambda x: x[0], reverse=True)[0:4]
+        self.chosenAdvs = [x[2] for x in finalAdv]
+        return finalAdv
 
     def utility(self, adventure):
         """ Determines the utility an agent estimates for entering a given adventure.
@@ -70,7 +73,7 @@ class Agent(object):
                 if skill in adventure.skillMap:
                     skillList.append((skill, min(value, adventure.skillMap.get(skill))))
             if features.coalition is None:
-                utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
+                utility *= 1 - ((features.timesFailed)**2)/((Booker.rounds)**2)
                 utility *= Booker.roundsLeft/Booker.rounds
             elif not Coalition.fullfillsReq(features.coalition):
                 a = np.linspace(1.35, 1, 20, endpoint=False)
@@ -79,13 +82,14 @@ class Agent(object):
                 factor = vals[features.powerNeeded]
                 factor += (np.linspace(0.15, -0.15, 101))[features.skillsNeeded]
                 utility *= factor
-                utility *= 1 - ((features.timesFailed + 1.0)**2)/((Booker.rounds/4)**2)
+                utility *= 1 - ((features.timesFailed)**2)/((Booker.rounds)**2)
 
                 utility *= Booker.roundsLeft/Booker.rounds
             else:
-                powerFactor = (1 - features.confirmedPowerNeeded)**2
-                roundsFactor = 1 + (1 - (Booker.roundsLeft/Booker.rounds))**2
-                utility *= 1+(powerFactor*roundsFactor*0.7)
+                roundsFactor = 1 + 20*(1 - (Booker.roundsLeft/Booker.rounds))**2
+                powerFactor = 1 + (1 - features.confirmedPowerNeeded)**4
+                powerFactor = powerFactor**roundsFactor
+                utility *= powerFactor
         else:
             utility = 0
         return utility, skillList
@@ -125,7 +129,7 @@ class Agent(object):
         :param coalsForAgent (list of Coalitions): The Winning coalitions for this agent for each adventure
         """
 
-        for adv in self.featureMap.keys():
+        for adv in self.chosenAdvs:
             """ TODO add confirmedAgents. Maybe these are only known at a
                      different point.
                 TODO it is redundant to reference adventure from the feature map
@@ -142,9 +146,9 @@ class Agent(object):
         bestCol = None
         bestColReward = 0
         for col in self.coalitions.values():
-            if self.estimateReward(col.adventure, col) > bestColReward:
+            if self.estimateReward(col.adventure, col)-self.costs.get(col.adventure) > bestColReward:
                 bestCol = col
-                bestColReward = self.estimateReward(col.adventure, col)
+                bestColReward = self.estimateReward(col.adventure, col)-self.costs.get(col.adventure)
         if bestCol:
             bestCol.adventure.confirmedAgents.append(self)
 
@@ -222,7 +226,7 @@ def createAgentList(t, advList,seed):
         power = round(skillMap.get(skill)*(0.1*random.random() + 0.4))
         print('Power {}'.format(power))
         agentsProb = np.random.rand(numAgents.get(skill))
-        print ('Agents Prob {}'.format(agentsProb))
+        #print ('Agents Prob {}'.format(agentsProb))
         agentsProb /= sum(agentsProb)
         agentsPow = agentsProb*power
         agentsPow = np.ceil(agentsProb*power)
@@ -307,7 +311,9 @@ class _Features:
             confirmedAgentsPowerDiff = []
             for skill in skillMap.keys():
                 confirmedAgentsPowerDiff.append((skill, adventure.skillMap[skill] - skillMap[skill]))
-            self.confirmedPowerNeeded = sum([p for s,p in confirmedAgentsPowerDiff if p>0])
+            self.confirmedPowerNeeded = adventure.totalPower()
+            agents = [(a,sp) for a,sp in coalition.agentList if a in confirmedAgents]
+            for a,sp in agents:
+                for s,p in sp:
+                    self.confirmedPowerNeeded -= p
             self.confirmedPowerNeeded /= sum(adventure.skillMap.values())
-            # TODO /= ?!
-            self.confirmedPowerNeeded = round(self.confirmedPowerNeeded*100)

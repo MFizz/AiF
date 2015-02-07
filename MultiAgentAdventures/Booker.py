@@ -40,13 +40,14 @@ class Booker:
             coalsForAdv = {}
             for r in requests:
                 coalsForAdv[r] = Coalition.createCoalitions(r, requests[r]);
+            
 
             print('')
-            print("Largest coalitions and banzhaf power per adventure:")
+            print("Best coalition and banzhaf power per adventure:")
             for adv in self.adventures:
                 if adv.coalitions:
-                    #print(adv.coalitions[-1])
-                    #print('Banzhaf powers :{}'.format(adv.banzhafPowers))
+                    print(adv)
+                    print('Banzhaf powers :{}'.format(adv.banzhafPowers))
                     print('#Coalitions = {}'.format(len(adv.coalitions)))
                     bestCoal = Coalition.bestCoalition(adv.coalitions)
                     print('Best Coalition : {}'.format(bestCoal))
@@ -57,7 +58,7 @@ class Booker:
                         if adv.bestCoalition:
                             for agent, power in adv.bestCoalition.agentList:
                                 agent.coalitions[adv] = adv.bestCoalition
-                        #print ('Fulfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
+                        #print ('F]lfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
                     print('\n')
                 else:
                     print("no coalitions for {}".format(adv))
@@ -69,15 +70,29 @@ class Booker:
                 agent.choseCoalitionForConfirmation()
             
             for adv in self.adventures:
-                print("{} Confirmed Agents: {}".format(adv, adv.confirmedAgents))
+                if adv.bestCoalition:
+                    power = 0
+                    agents = [(a,sp) for a,sp in adv.bestCoalition.agentList if a in adv.confirmedAgents]
+                    for a,sp in agents:
+                        for s,p in sp:
+                            power += p
+                        
+                    print("{} Confirmed Agents: {}, Reward {}, Power Needed {}".format(adv, adv.confirmedAgents, adv.reward, (adv.totalPower() - power)/adv.totalPower()))
+
 
             for agent in self.agents:
                 agent.updateGain()
+                '''print('Stats for agent {}:'.format(agent))
+                for adv in self.adventures:
+                    features = agent.featureMap.get(adv)
+                    print('{}, Util {}, Costs {}, Reward {}'.format(adv, agent.utility(adv), features.costs, features.reward))'''
                 agent.choseFinalCoalition()
+
                 agent.clean()
             
             for adv in self.adventures:
-                print("{} Final Agents: {}".format(adv, adv.finalAgents))
+                if adv.bestCoalition:
+                    print("{} Final Agents: {}".format(adv, adv.finalAgents))
 
             for adv in list(self.adventures):
                 if adv.bestCoalition:
@@ -95,6 +110,12 @@ class Booker:
             if rL:
                 roundsLeft -= 1
                 print('Completed adventures {}'.format(self.completedAdventures))
+                print('Agents:')
+                for agent in self.agents:
+                    print ('{} {}'.format(agent, agent.skillList))
+                print('Adventures:')
+                for adv in self.adventures:
+                    print ('{} {}'.format(adv, adv.skillMap))
 
         #for a in self.agents:
         #    a.updateGain(coalsForAdv)

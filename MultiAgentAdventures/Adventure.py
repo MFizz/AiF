@@ -64,7 +64,7 @@ class Adventure:
             agent.rewards.append(self.banzhafPowers[agent] / banzhafTot * self.reward)
             agent.finalCosts.append(agent.costs[self])
 
-            print([s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList])
+            #print([s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList])
             for s, p in [s for a, skillList in self.bestCoalition.agentList if a == agent for s in skillList]:
                 skills = [sk for sk in agent.skillList if sk[0] == s]
                 for skill in skills:
@@ -97,7 +97,7 @@ def createAdvList(t,seed):
         skillsProb = np.random.rand(numSkills)
         skillsProb = skillsProb/sum(skillsProb)
         skillsPow = np.ceil(skillsProb*p)
-        print(skillsProb)
+        #print(skillsProb)
         if sum(skillsPow) != p:
             for i in range(numSkills):
                     skillPow = p - sum(np.concatenate((skillsPow[:i],skillsPow[i+1:]), axis=1))
