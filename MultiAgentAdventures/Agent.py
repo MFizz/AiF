@@ -5,6 +5,7 @@ A list of random agents is created by *createAgentlist*
 """
 import random, Adventure, Skill, Coalition, Booker
 import numpy as np
+import Starter
 
 
 class Agent(object):
@@ -16,7 +17,7 @@ class Agent(object):
         featureMap (dict: key=Adventure, value=_Features) - Holds the agent's feature vectors for every adventure
     """
 
-    def __init__(self, skillList, advList):
+    def __init__(self, skillList, advList,seed):
         """ Initialises Agent with a given skillList, and his initial costs calculated by calcCostAdv
         Args:
             :param skillList (list of (Skill,Int)): The skills and their power which an adventurer can contribute to an
@@ -24,7 +25,7 @@ class Agent(object):
             :param advList (list of Adventures): The available Adventures.
         """
         self.skillList = skillList
-        self.costs = _calcCostsAdv(advList)
+        self.costs = _calcCostsAdv(advList,seed)
         self.featureMap = dict()
         for adv in advList:
             self.featureMap[adv] = _Features(self, adv)
@@ -45,10 +46,10 @@ class Agent(object):
         utility, and skill, power to achieve it.
         """
         advValues = []
-        print('Stats for agent {}:'.format(self))
+        #print('Stats for agent {}:'.format(self))
         for adv in adventures:
             features = self.featureMap.get(adv)
-            print('{}, Util {}, Costs {}, Reward {}'.format(adv, self.utility(adv), features.costs, features.reward))
+            #print('{}, Util {}, Costs {}, Reward {}'.format(adv, self.utility(adv), features.costs, features.reward))
             if self.utility(adv)[0] > 0:
                 advValues.append(self.utility(adv) + (adv,))
         finalAdv = sorted(advValues, key=lambda x: x[0], reverse=True)[0:4]
@@ -170,27 +171,27 @@ class Agent(object):
         return self.__str__()
 
 
-def _calcCostsAdv(adventures):
+def _calcCostsAdv(adventures,seed):
     """ Assigns random negative numbers to given adventures which represent a cost factor for every adventure.
 
     :param adventures (list of Adventures): Available Adventures.
     :return (dict: key=Adventure, value=Int): A lookup table for the costs of every Adventure.
     """
-    random.seed(Adventure.seed)
+    random.seed(seed)
     costs = dict()
     for adv in adventures:
         costs[adv] = -random.randint(1, 15)
     return costs
 
-def createAgentList(t, advList):
+def createAgentList(t, advList,seed):
     """ Creates 't' random Agents for testing.
 
     :param t (int): Number to specify how many Agents will to be created.
     :param advList (list of Adventures): Available Adventures.
     :return (list of Agents): List of random Agents with len = t.
     """
-    random.seed(Adventure.seed)
-    np.random.seed(Adventure.seed)
+    random.seed(seed)
+    np.random.seed(seed)
     agentList = []
     skillMap = dict()
     for adv in advList:
@@ -235,7 +236,7 @@ def createAgentList(t, advList):
             skillList = []
             skillList.append((skill,p))
 
-            agentList.append(Agent(skillList,advList))
+            agentList.append(Agent(skillList,advList,seed))
 
 
     return agentList

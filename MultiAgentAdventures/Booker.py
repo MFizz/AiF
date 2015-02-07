@@ -25,7 +25,7 @@ class Booker:
         self.reward = []
         self.upperBound = self.getUpperBound()
 
-    def run(self, initRounds):
+    def run(self, initRounds, rL = False):
         """ Starts and controls the game process
 
         TODO: return evaluable data of the outcome of the game
@@ -33,9 +33,7 @@ class Booker:
         global rounds, roundsLeft
         rounds = initRounds
         roundsLeft = initRounds
-        rl = rounds
-        while roundsLeft != 0:
-        #while rl != 0:
+        for i in range(0, initRounds):
             self.reward.append(0)
             print("Best adventures per adventurer:")
             requests = self.getRequests(self.agents, self.adventures)
@@ -45,7 +43,7 @@ class Booker:
             
 
             print('')
-            print("Largest coalitions and banzhaf power per adventure:")
+            print("Best coalition and banzhaf power per adventure:")
             for adv in self.adventures:
                 if adv.coalitions:
                     print(adv)
@@ -84,10 +82,10 @@ class Booker:
 
             for agent in self.agents:
                 agent.updateGain()
-                print('Stats for agent {}:'.format(agent))
+                '''print('Stats for agent {}:'.format(agent))
                 for adv in self.adventures:
                     features = agent.featureMap.get(adv)
-                    print('{}, Util {}, Costs {}, Reward {}'.format(adv, agent.utility(adv), features.costs, features.reward))
+                    print('{}, Util {}, Costs {}, Reward {}'.format(adv, agent.utility(adv), features.costs, features.reward))'''
                 agent.choseFinalCoalition()
 
                 agent.clean()
@@ -109,14 +107,16 @@ class Booker:
                 else:
                     adv.clean()
 
-            #rl -= 1
-            roundsLeft -= 1
-            print('Completed adventures {}'.format(self.completedAdventures))
-            print('Agents:')
-            for agent in self.agents:
-                print ('{} {}'.format(agent, agent.skillList))
-            for adv in self.adventures:
-                print ('{} {}'.format(adv, adv.skillMap))
+            if rL:
+                roundsLeft -= 1
+                print('Completed adventures {}'.format(self.completedAdventures))
+                print('Agents:')
+                for agent in self.agents:
+                    print ('{} {}'.format(agent, agent.skillList))
+                print('Adventures:')
+                for adv in self.adventures:
+                    print ('{} {}'.format(adv, adv.skillMap))
+
         #for a in self.agents:
         #    a.updateGain(coalsForAdv)
 
