@@ -42,19 +42,21 @@ class PlotClassifier(Tk.Tk):
 
     def button_classification_callback(self, args, class_idx):
         self._classification_callback(args, self._classes[class_idx])
-        self.classify_next_plot()
+        self.classify_next_plot(class_idx)
 
-    def classify_next_plot(self):
+    def classify_next_plot(self, loc=0):
         try:
-            self._current_args = self._arguments.pop(0)
+            self._current_args = self._arguments[loc]
+            print(self._current_args)
             self._ax.cla()
-            self._plot_generator(self._ax, self._current_args)
+            self._plot_generator(self._ax, *self._current_args)
             self._canvas.draw()
         except IndexError:
             tkinter.messagebox.showinfo("Complete!", "All plots were classified")
             self.destroy()        
 
 def create_plot(ax, args):
+    print(args)
     ax.set_ylabel("Gold")
     ax.set_xlabel("Iterations")
     ax.plot(args[0], label = "Algorithm")
@@ -67,8 +69,8 @@ def announce_classification(arguments, class_):
 
 def plot(bookers):
     classes = ["Seed %i"%s for b,s in bookers]
-    print([(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))]) for b,s in bookers])
-    arguments_for_plot = [(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))]) for b,s in bookers]
+    arguments_for_plot = [[(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))])] for b,s in bookers]
+    print(arguments_for_plot)
     root = PlotClassifier(create_plot, arguments_for_plot, classes, classification_callback=announce_classification)
     root.after(50, root.classify_next_plot)
     root.mainloop()
