@@ -3,7 +3,7 @@ Every class and parameter used to get different game outcomes should be set here
 game execution/performance should be contained here as much as possible, till we need dedicated modules for that.
 """
 
-import Agent, Skill, Adventure, random
+import Agent, Skill, Adventure, random, Plot
 from Booker import Booker
 
 """ number of random generated Adventures"""
@@ -11,11 +11,12 @@ numAdv = 10
 """ number of random generated Agents"""
 numAgents = 15
 
+plays = 2
+
 
 if __name__ == '__main__':
-
     bookers = []
-    iters = 50
+    iters = 5
     for i in range(0, iters):
         seed = random.randrange(10, 500, 1)
         print("Creating {} random adventures: ".format(numAdv))
@@ -39,7 +40,7 @@ if __name__ == '__main__':
         print("Greedy Bound for this game is: {} gold".format(greedyBound))
         closedAdventures = booker.completedAdventures
         openAdventures = booker.adventures
-        booker.run(20, True)
+        booker.run(10, True)
         print(booker.reward)
         print(sum(booker.reward))
         print('Closed Adventures {}'.format(closedAdventures))
@@ -50,7 +51,7 @@ if __name__ == '__main__':
     upperRatio = 0
     greedyRatio = 0
     for b, s in bookers:
-        print("Seed: {}, UpperBound: {}, GreedyBound {}, Completed {}, Upper Ratio {}, Greedy Ratio".format(s, b.upperBound, b.greedyBound, sum(b.reward), 
+        print("Seed: {}, UpperBound: {}, GreedyBound {}, Completed {}, Upper Ratio {}, Greedy Ratio {}".format(s, b.upperBound, b.greedyBound, sum(b.reward), 
             sum(b.reward)/b.upperBound, sum(b.reward)/b.greedyBound))
         upperRatio += sum(b.reward)/b.upperBound
         greedyRatio += sum(b.reward)/b.greedyBound
@@ -58,4 +59,4 @@ if __name__ == '__main__':
     print ('Average Greedy Ratio = {}', greedyRatio/iters)
 
 
-
+    Plot.plot(bookers)
