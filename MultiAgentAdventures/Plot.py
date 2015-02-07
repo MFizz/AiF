@@ -13,6 +13,7 @@ class PlotClassifier(Tk.Tk):
         self.title("Plotting of %i games" % len(arguments))
         self._plot_generator = plot_generator
         self._arguments = arguments
+        self._pos = 0
         self._classes = [str(x) for x in classes]
         self._classification_callback = classification_callback
         self._setup_gui()
@@ -42,18 +43,32 @@ class PlotClassifier(Tk.Tk):
 
     def button_classification_callback(self, args, class_idx):
         self._classification_callback(args, self._classes[class_idx])
-        self.classify_next_plot(class_idx)
+        self.classify_plot(class_idx)
 
-    def classify_next_plot(self, loc=0):
+    def classify_next_plot(self):
         try:
-            self._current_args = self._arguments[loc]
+            self._current_args = self._arguments[self._pos+1]
+            self._pos += 1
             print(self._current_args)
             self._ax.cla()
-            self._plot_generator(self._ax, *self._current_args)
+            self._plot_generator(self._ax, self._current_args)
             self._canvas.draw()
         except IndexError:
-            tkinter.messagebox.showinfo("Complete!", "All plots were classified")
-            self.destroy()        
+            tkinter.messagebox.showinfo("Complete!", "Start from Beginning")
+            self.classify_plot(0)
+
+    def classify_plot(self, loc):
+        try:
+            self._current_args = self._arguments[loc]
+            self._pos = loc
+            print(self._current_args)
+            self._ax.cla()
+            self._plot_generator(self._ax, self._current_args)
+            self._canvas.draw()
+        except IndexError:
+            tkinter.messagebox.showinfo("No such dataset")
+            self.destroy()
+
 
 def create_plot(ax, args):
     print(args)
@@ -69,7 +84,7 @@ def announce_classification(arguments, class_):
 
 def plot(bookers):
     classes = ["Seed %i"%s for b,s in bookers]
-    arguments_for_plot = [[(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))])] for b,s in bookers]
+    arguments_for_plot = [(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))]) for b,s in bookers]
     print(arguments_for_plot)
     root = PlotClassifier(create_plot, arguments_for_plot, classes, classification_callback=announce_classification)
     root.after(50, root.classify_next_plot)
