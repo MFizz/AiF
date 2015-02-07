@@ -11,10 +11,12 @@ numAdv = 10
 """ number of random generated Agents"""
 numAgents = 15
 
+plays = 2
+
 
 if __name__ == '__main__':
     bookers = []
-    for i in range(0, 1):
+    for i in range(0, plays):
         seed = random.randrange(10, 500, 1)
         print("Creating {} random adventures: ".format(numAdv))
         advList = Adventure.createAdvList(numAdv, seed)
