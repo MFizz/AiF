@@ -14,7 +14,7 @@ class PlotClassifier(Tk.Tk):
         self._plot_generator_seed = plot_generator_seed
         self._bookers = bookers
         self._seeds = ["Seed %i"%s for b,s in self._bookers]
-        self._seed_args = [(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))], s) for b,s in bookers]
+        self._seed_args = [(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))], [b.greedyBound for i in range(0, len(b.reward))], s) for b,s in bookers]
         self._pos = 0
         self._seed_callback = seed_callback
         self._setup_gui()
@@ -33,6 +33,8 @@ class PlotClassifier(Tk.Tk):
         button_quit = Tk.Button(master=buttons_seeds_frame, text='Quit', command=self.destroy)
         button_quit.pack(side=Tk.RIGHT) #.grid(row=0,column=0)
 
+        button_means = Tk.Button(master=buttons_seeds_frame, text='Means', command=self.destroy)
+        button_means.pack(side=Tk.RIGHT) #.grid(row=0,column=0)
         #buttons_agent_frame = Tk.Frame
         #buttons_agent_frame.pack(side=Tk.RIGHT, fill=Tk.BOTH, expand=True)
         #buttons_agent_class = []
@@ -72,21 +74,21 @@ class PlotClassifier(Tk.Tk):
 
 def create_plot_seed(ax, args):
     print(args)
-    ax.set_title("Seed %i"%args[2])
+    ax.set_title("Seed %i"%args[3])
     ax.set_ylabel("Gold")
     ax.set_xlabel("Iterations")
     ax.plot(args[0], label = "Algorithm")
     ax.plot(args[1], label = "UpperBound")
-    ax.legend(bbox_to_anchor=(0., -0.11, 1, 0), loc=3,
-           ncol=2, mode="expand", borderaxespad=0.)
+    ax.plot(args[2], label = "GreedyBound")
+    ax.legend(bbox_to_anchor=(1., 0.05), loc='lower right',
+           ncol=1)
 
 def announce_seed(arguments, class_):
     print(arguments, class_)
 
 def plot(bookers):
     classes = ["Seed %i"%s for b,s in bookers]
-    arguments_for_plot = [(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))], s) for b,s in bookers]
-    print(arguments_for_plot)
     root = PlotClassifier(create_plot_seed, bookers, seed_callback=announce_seed)
     root.after(50, root.seed_plot(0))
     root.mainloop()
+

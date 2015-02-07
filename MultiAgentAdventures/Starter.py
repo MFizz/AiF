@@ -16,7 +16,8 @@ plays = 2
 
 if __name__ == '__main__':
     bookers = []
-    for i in range(0, plays):
+    iters = 5
+    for i in range(0, iters):
         seed = random.randrange(10, 500, 1)
         print("Creating {} random adventures: ".format(numAdv))
         advList = Adventure.createAdvList(numAdv, seed)
@@ -34,10 +35,12 @@ if __name__ == '__main__':
         print("\n Creating booker: ")
         booker = Booker(agentList, advList)
         upperBound = booker.upperBound
+        greedyBound = booker.greedyBound
+        print("Upper Bound for this game is: {} gold".format(upperBound))
+        print("Greedy Bound for this game is: {} gold".format(greedyBound))
         closedAdventures = booker.completedAdventures
         openAdventures = booker.adventures
-        booker.run(10)
-        print("Upper Bound for this game is: {} gold".format(upperBound))
+        booker.run(10, True)
         print(booker.reward)
         print(sum(booker.reward))
         print('Closed Adventures {}'.format(closedAdventures))
@@ -45,11 +48,14 @@ if __name__ == '__main__':
         for agent in booker.agents:
             print("{}: Income: {} Costs: {} Total: ".format(agent, agent.rewards, agent.finalCosts))
         bookers.append((booker, seed))
-
+    upperRatio = 0
+    greedyRatio = 0
     for b, s in bookers:
-        print("Seed: {}, UpperBound: {}, Completed {}, Percentage:= {}".format(s, b.upperBound, sum(b.reward), sum(b.reward)/b.upperBound))
-    interestingSeeds = [(b,s) for b,s in bookers if sum(b.reward)/b.upperBound > 0.8 or sum(b.reward)/b.upperBound < 0.4]
-    for b, s in interestingSeeds:
-        print("Seed: {}, UpperBound: {}, Completed {}, Percentage:= {}".format(s, b.upperBound, sum(b.reward), sum(b.reward)/b.upperBound))
-
+        print("Seed: {}, UpperBound: {}, GreedyBound {}, Completed {}, Upper Ratio {}, Greedy Ratio {}".format(s, b.upperBound, b.greedyBound, sum(b.reward), 
+            sum(b.reward)/b.upperBound, sum(b.reward)/b.greedyBound))
+        upperRatio += sum(b.reward)/b.upperBound
+        greedyRatio += sum(b.reward)/b.greedyBound
+    print ('Average Upper Ratio = {}', upperRatio/iters)
+    print ('Average Greedy Ratio = {}', greedyRatio/iters)
+    
     Plot.plot(bookers)
