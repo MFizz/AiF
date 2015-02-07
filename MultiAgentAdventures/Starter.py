@@ -57,6 +57,5 @@ if __name__ == '__main__':
         greedyRatio += sum(b.reward)/b.greedyBound
     print ('Average Upper Ratio = {}', upperRatio/iters)
     print ('Average Greedy Ratio = {}', greedyRatio/iters)
-
-
+    
     Plot.plot(bookers)
