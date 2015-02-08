@@ -59,6 +59,9 @@ class PlotClassifier(Tk.Tk):
         button_quit = Tk.Button(master=buttons_seeds_frame, text='Quit', command=self.destroy)
         button_quit.pack(side=Tk.RIGHT) #.grid(row=0,column=0)
 
+        toolbar = NavigationToolbar2TkAgg( self._agent_canvas, self._agent_frame)
+        toolbar.pack() #.grid(row=3, column=1) #
+        toolbar.update()
 
         self._canvas = FigureCanvasTkAgg(f, master=self)
         self._canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=0, column=1, rowspan=3) #
@@ -90,7 +93,7 @@ class PlotClassifier(Tk.Tk):
         label_mean_stats.pack(fill=Tk.BOTH, expand=1)
         label_mean_upper = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_upper, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_upper.pack(fill=Tk.BOTH, expand=1)
-        label_mean_greedy = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_greedy, anchor='w', justify='left', bg="#CCCCCC")
+        label_mean_greedy = Tk.Label(self,text="Mean percentage of greedy bound: %f"%mean_percentage_greedy, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_greedy.pack(fill=Tk.BOTH, expand=1)
         mean_open_adv = np.mean([len(b.adventures) for b,s in self._bookers])
         label_mean_open_adv = Tk.Label(self,text="Mean open adventures: %f"%mean_open_adv, anchor='w', justify='left', bg="#CCCCCC")
@@ -101,8 +104,9 @@ class PlotClassifier(Tk.Tk):
 
 
         toolbar = NavigationToolbar2TkAgg( self._canvas, self )
-        toolbar.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=3, column=1) #
+        toolbar.pack() #.grid(row=3, column=1) #
         toolbar.update()
+
 
     def button_seeds_callback(self, args, seed_idx):
         self._seed_callback(args, self._seeds[seed_idx])
@@ -142,7 +146,7 @@ class PlotClassifier(Tk.Tk):
             mean_percentage_upper = sum(self._bookers[loc][0].reward)/ self._bookers[loc][0].upperBound
             self._text_mean_current_upper.set("Mean percentage of upper bound: %f"%mean_percentage_upper)
             mean_percentage_greedy = sum(self._bookers[loc][0].reward)/ self._bookers[loc][0].greedyBound
-            self._text_mean_current_greedy.set("Mean percentage of upper bound: %f"%mean_percentage_greedy)
+            self._text_mean_current_greedy.set("Mean percentage of greedy bound: %f"%mean_percentage_greedy)
             open_adv = len(self._bookers[loc][0].adventures)
             compl_adv = len(self._bookers[loc][0].completedAdventures)
             self._text_open_adv.set("Open adventures: %i"%open_adv)
@@ -171,9 +175,12 @@ class PlotClassifier(Tk.Tk):
             for adv, iter in cur_agent.closedAdvs:
                 adv_skills = ", ".join(["{}: {}".format(s.name, p) for s, p in adv.skillMap.items()])
                 agent_cur_skills = ", ".join(["{}: {}".format(s.name, p) for s, p in [s for a,s in adv.bestCoalition.agentList if a == cur_agent][0]])
+                adv_coal = "\n".join(["{}: {}".format(a, ", ".join(["{}: {}".format(s.name, p) for s, p in skills])) for a, skills in adv.bestCoalition.agentList])
                 labels_adv.append(Tk.Label(master=self._closed_adv_frame, text="In round {} \n{} was comleted \n"
                                                                            "it needed: {} \n"
-                                                                           "Agent put in: {}\n ".format(iter, adv, adv_skills, agent_cur_skills), anchor='w', justify='left', bg="#CCCCCC"))
+                                                                           "Agent put in: {}\n"
+                                                                           "Coalition: \n"
+                                                                           "{}".format(iter, adv, adv_skills, agent_cur_skills, adv_coal), anchor='w', justify='left', bg="#CCCCCC"))
                 labels_adv[-1].pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 
             self._agent_ax.cla()
