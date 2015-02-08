@@ -3,6 +3,7 @@ Every class and parameter used to get different game outcomes should be set here
 game execution/performance should be contained here as much as possible, till we need dedicated modules for that.
 """
 from threading import Thread
+import threading
 import Agent, Skill, Adventure, random, Plot, logging, datetime, time, sys
 from Booker import Booker
 import numpy as np
@@ -12,7 +13,8 @@ numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
 iters = 50
-plays = 200
+plays = 2000
+maxCurThreads = 50
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -32,12 +34,21 @@ logger.addHandler(streamLogger)
 logger.addHandler(handler)
 times = []
 bookers = []
+activeThreads = []
 
 def timedelta_milliseconds(td):
     return td.days*86400000 + td.seconds*1000 + td.microseconds/1000
 
-def compPlay(seed):
-    global  times, bookers
+def startMaxThreads(threads):
+    while(threads):
+        if threading.activeCount() < maxCurThreads:
+            activeThreads.append(threads[-1])
+            threads[-1].start()
+            del threads[-1]
+
+
+def compPlay(seed, i):
+    global  times, bookers, activeThreads
     start = datetime.datetime.now()
     logger.debug("Creating {} random adventures: ".format(numAdv))
     advList = Adventure.createAdvList(numAdv, seed)
@@ -70,7 +81,7 @@ def compPlay(seed):
     end = datetime.datetime.now()
     dur = timedelta_milliseconds(end-start)
     bookers.append((booker, seed))
-    logger.info("Iteration %i in %i milliseconds"%(iteration,dur))
+    logger.info("Iteration %i in %i milliseconds"%(i,dur))
     times.append(dur)
 
 if __name__ == '__main__':
@@ -81,15 +92,18 @@ if __name__ == '__main__':
 
     for iteration in range(0, plays):
         seed += 1
-        seedArgs = [seed]
+        seedArgs = [seed,iteration]
         try:
             threadPool.append(Thread(target=compPlay, args=seedArgs))
-            threadPool[-1].start()
         except:
             logger.warn("Could not start Thread %i"%plays)
 
-    for t in threadPool:
-        t.join()
+    threadArgs = [threadPool]
+    startThread = Thread(target=startMaxThreads, args=threadArgs)
+    startThread.start()
+
+    while(len(bookers) != plays):
+        pass
     end = datetime.datetime.now()
     upperRatio = 0
     greedyRatio = 0
