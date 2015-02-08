@@ -10,8 +10,8 @@ import numpy as np
 numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
-iters = 10
-plays= 10
+iters = 50
+plays= 100
 
 logging.basicConfig(level=logging.INFO)
 
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         greedyRatio += sum(b.reward)/b.greedyBound
     logger.info('#Agents: {}, #Adventures: {}, #Games: {}, #Iterations: {}, average computation time for iteration: {}ms,'
                 ' total time: {}ms'.format(numAgents, numAdv, plays, iters, round(np.mean(times)), round(sum(times))))
-    logger.info('Average Upper Ratio = {}'.format(upperRatio/iters))
-    logger.info('Average Greedy Ratio = {}'.format(greedyRatio/iters))
+    logger.info('Average Upper Ratio = {}'.format(upperRatio/plays))
+    logger.info('Average Greedy Ratio = {}'.format(greedyRatio/plays))
     
     Plot.plot(bookers,times)
