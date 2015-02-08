@@ -2,24 +2,29 @@
 Every class and parameter used to get different game outcomes should be set here. Also documentation of
 game execution/performance should be contained here as much as possible, till we need dedicated modules for that.
 """
-
-import Agent, Skill, Adventure, random, Plot, logging
+import Agent, Skill, Adventure, random, Plot, logging, datetime
 from Booker import Booker
+import numpy as np
 
 """ number of random generated Adventures"""
 numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
-iters = 10
-plays= 10
+iters = 50
+plays= 100
 
 logging.basicConfig(level=logging.INFO)
+
+def timedelta_milliseconds(td):
+    return td.days*86400000 + td.seconds*1000 + td.microseconds/1000
 
 if __name__ == '__main__':
 
     bookers = []
+    times = []
 
-    for i in range(0, plays):
+    for iteration in range(0, plays):
+        start = datetime.datetime.now()
         logger = logging.getLogger(__name__)
         seed = random.randrange(10, 500, 1)
         logger.debug("Creating {} random adventures: ".format(numAdv))
@@ -51,6 +56,11 @@ if __name__ == '__main__':
         for agent in booker.agents:
             logger.debug("{}: Income: {} Costs: {} Total: ".format(agent, agent.rewards, agent.finalCosts))
         bookers.append((booker, seed))
+        end = datetime.datetime.now()
+        dur = timedelta_milliseconds(end-start)
+        logging.info("Iteration %i in %i milliseconds"%(iteration,dur))
+        times.append(dur)
+
     upperRatio = 0
     greedyRatio = 0
     for b, s in bookers:
@@ -58,7 +68,7 @@ if __name__ == '__main__':
             sum(b.reward)/b.upperBound, sum(b.reward)/b.greedyBound))
         upperRatio += sum(b.reward)/b.upperBound
         greedyRatio += sum(b.reward)/b.greedyBound
-    logger.info('#Agents: {}, #Adventures: {}, #Games: {}, #Iterations: {}'.format(numAgents, numAdv, plays, iters))
+    logger.info('#Agents: {}, #Adventures: {}, #Games: {}, #Iterations: {}, average computation time for iteration: {}'.format(numAgents, numAdv, plays, iters, np.mean(times)))
     logger.info('Average Upper Ratio = {}'.format(upperRatio/iters))
     logger.info('Average Greedy Ratio = {}'.format(greedyRatio/iters))
     
