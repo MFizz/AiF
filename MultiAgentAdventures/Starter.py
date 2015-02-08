@@ -2,6 +2,7 @@
 Every class and parameter used to get different game outcomes should be set here. Also documentation of
 game execution/performance should be contained here as much as possible, till we need dedicated modules for that.
 """
+from threading import Thread
 import Agent, Skill, Adventure, random, Plot, logging, datetime, time, sys
 from Booker import Booker
 import numpy as np
@@ -11,7 +12,7 @@ numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
 iters = 50
-plays = 100
+plays = 200
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -29,53 +30,67 @@ handler.setFormatter(formatter)
 
 logger.addHandler(streamLogger)
 logger.addHandler(handler)
+times = []
+bookers = []
 
 def timedelta_milliseconds(td):
     return td.days*86400000 + td.seconds*1000 + td.microseconds/1000
 
-if __name__ == '__main__':
+def compPlay(seed):
+    global  times, bookers
+    start = datetime.datetime.now()
+    logger.debug("Creating {} random adventures: ".format(numAdv))
+    advList = Adventure.createAdvList(numAdv, seed)
 
-    bookers = []
-    times = []
+    for adv in advList:
+        logger.debug("Adventure ID {}: {} gold reward, needs: {}".format(id(adv), adv.reward, adv.skillMap))
+
+    logger.debug("\n Creating {} random adventurers: ".format(numAgents))
+    agentList = Agent.createAgentList(numAgents, advList, seed)
+
+    for a in agentList:
+        logger.debug("Adventurer ID {}: Skills {}, Costs {}".format(id(a), a.skillList, [(id(x), y) for x, y in a.costs.items()]))
+
+
+    logger.debug("\n Creating booker: ")
+    booker = Booker(agentList, advList)
+    upperBound = booker.upperBound
+    greedyBound = booker.greedyBound
+    logger.debug("Upper Bound for this game is: {} gold".format(upperBound))
+    logger.debug("Greedy Bound for this game is: {} gold".format(greedyBound))
+    closedAdventures = booker.completedAdventures
+    openAdventures = booker.adventures
+    booker.run(iters, True)
+    logger.debug(booker.reward)
+    logger.debug(sum(booker.reward))
+    logger.debug('Closed Adventures {}'.format(closedAdventures))
+    logger.debug('Open Adventures {}'.format(openAdventures))
+    for agent in booker.agents:
+        logger.debug("{}: Income: {} Costs: {} Total: ".format(agent, agent.rewards, agent.finalCosts))
+    end = datetime.datetime.now()
+    dur = timedelta_milliseconds(end-start)
+    bookers.append((booker, seed))
+    logger.info("Iteration %i in %i milliseconds"%(iteration,dur))
+    times.append(dur)
+
+if __name__ == '__main__':
+    global times, bookers
+    start = datetime.datetime.now()
+    threadPool = []
     seed = random.randrange(10, 30000, 1)
 
     for iteration in range(0, plays):
-        start = datetime.datetime.now()
         seed += 1
-        logger.debug("Creating {} random adventures: ".format(numAdv))
-        advList = Adventure.createAdvList(numAdv, seed)
+        seedArgs = [seed]
+        try:
+            threadPool.append(Thread(target=compPlay, args=seedArgs))
+            threadPool[-1].start()
+        except:
+            logger.warn("Could not start Thread %i"%plays)
 
-        for adv in advList:
-            logger.debug("Adventure ID {}: {} gold reward, needs: {}".format(id(adv), adv.reward, adv.skillMap))
-
-        logger.debug("\n Creating {} random adventurers: ".format(numAgents))
-        agentList = Agent.createAgentList(numAgents, advList, seed)
-
-        for a in agentList:
-            logger.debug("Adventurer ID {}: Skills {}, Costs {}".format(id(a), a.skillList, [(id(x), y) for x, y in a.costs.items()]))
-
-
-        logger.debug("\n Creating booker: ")
-        booker = Booker(agentList, advList)
-        upperBound = booker.upperBound
-        greedyBound = booker.greedyBound
-        logger.debug("Upper Bound for this game is: {} gold".format(upperBound))
-        logger.debug("Greedy Bound for this game is: {} gold".format(greedyBound))
-        closedAdventures = booker.completedAdventures
-        openAdventures = booker.adventures
-        booker.run(iters, True)
-        logger.debug(booker.reward)
-        logger.debug(sum(booker.reward))
-        logger.debug('Closed Adventures {}'.format(closedAdventures))
-        logger.debug('Open Adventures {}'.format(openAdventures))
-        for agent in booker.agents:
-            logger.debug("{}: Income: {} Costs: {} Total: ".format(agent, agent.rewards, agent.finalCosts))
-        end = datetime.datetime.now()
-        dur = timedelta_milliseconds(end-start)
-        bookers.append((booker, seed))
-        logger.info("Iteration %i in %i milliseconds"%(iteration,dur))
-        times.append(dur)
-
+    for t in threadPool:
+        t.join()
+    end = datetime.datetime.now()
     upperRatio = 0
     greedyRatio = 0
     for b, s in bookers:
@@ -87,5 +102,6 @@ if __name__ == '__main__':
                 ' total time: {}ms'.format(numAgents, numAdv, plays, iters, round(np.mean(times)), round(sum(times))))
     logger.info('Average Upper Ratio = {}'.format(upperRatio/plays))
     logger.info('Average Greedy Ratio = {}'.format(greedyRatio/plays))
+    logger.info("Total time {} ms".format(timedelta_milliseconds(end-start)))
 
     Plot.plot(bookers,times)
