@@ -10,7 +10,7 @@ from Booker import Booker
 numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
-iters = 10
+iters = 1000
 
 
 if __name__ == '__main__':
