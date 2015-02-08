@@ -37,6 +37,7 @@ class Agent(object):
         self.earnings = [0]
         self.closedAdvs = []
         self.chosenAdvs = []
+        self.booker = None
 
 
     def clean(self):
@@ -77,8 +78,8 @@ class Agent(object):
                 if skill in adventure.skillMap:
                     skillList.append((skill, min(value, adventure.skillMap.get(skill))))
             if features.coalition is None:
-                utility *= 1 - ((features.timesFailed)**2)/((Booker.rounds)**2)
-                utility *= Booker.roundsLeft/Booker.rounds
+                utility *= 1 - ((features.timesFailed)**2)/((self.booker.rounds)**2)
+                utility *= self.booker.roundsLeft/self.booker.rounds
             elif not Coalition.fullfillsReq(features.coalition):
                 a = np.linspace(1.35, 1, 20, endpoint=False)
                 b = np.linspace(1, 0.65, 81)
@@ -86,11 +87,11 @@ class Agent(object):
                 factor = vals[features.powerNeeded]
                 factor += (np.linspace(0.15, -0.15, 101))[features.skillsNeeded]
                 utility *= factor
-                utility *= 1 - ((features.timesFailed)**2)/((Booker.rounds)**2)
+                utility *= 1 - ((features.timesFailed)**2)/((self.booker.rounds)**2)
 
-                utility *= Booker.roundsLeft/Booker.rounds
+                utility *= self.booker.roundsLeft/self.booker.rounds
             else:
-                roundsFactor = 1 + 20*(1 - (Booker.roundsLeft/Booker.rounds))**2
+                roundsFactor = 1 + 20*(1 - (self.booker.roundsLeft/self.booker.rounds))**2
                 powerFactor = 1 + (1 - features.confirmedPowerNeeded)**4
                 powerFactor = powerFactor**roundsFactor
                 utility *= powerFactor

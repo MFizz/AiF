@@ -8,9 +8,6 @@ import logging
 import Coalition
 import Skill
 
-rounds = 0.0
-roundsLeft = 0.0
-
 class Booker:
     """ Contains relevant game Information and handles Communication/game process
 
@@ -21,6 +18,8 @@ class Booker:
 
     def __init__(self, agents, adventures):
         self.agents = agents
+        for agent in agents:
+            agent.booker = self
         self.adventures = adventures
         self.completedAdventures = []
         self.reward = [0]
@@ -33,9 +32,8 @@ class Booker:
         TODO: return evaluable data of the outcome of the game
         """
         logger = logging.getLogger(__name__)
-        global rounds, roundsLeft
-        rounds = initRounds
-        roundsLeft = initRounds
+        self.rounds = initRounds
+        self.roundsLeft = initRounds
         for i in range(0, initRounds):
             self.reward.append(0)
             #print("Best adventures per adventurer:")
@@ -117,7 +115,7 @@ class Booker:
                     agent.earnings.append(0)
 
             if rL:
-                roundsLeft -= 1
+                self.roundsLeft -= 1
                 logger.debug('Completed adventures {}'.format(self.completedAdventures))
                 #print('Agents:')
                 #for agent in self.agents:

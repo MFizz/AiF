@@ -13,8 +13,8 @@ numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
 iters = 50
-plays = 2000
-maxCurThreads = 50
+plays = 100
+maxCurThreads = 10
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
