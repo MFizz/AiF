@@ -11,7 +11,7 @@ numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
 iters = 50
-plays = 20000
+plays = 100
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -37,10 +37,11 @@ if __name__ == '__main__':
 
     bookers = []
     times = []
+    seed = random.randrange(10, 30000, 1)
 
     for iteration in range(0, plays):
         start = datetime.datetime.now()
-        seed = random.randrange(10, 500, 1)
+        seed += 1
         logger.debug("Creating {} random adventures: ".format(numAdv))
         advList = Adventure.createAdvList(numAdv, seed)
 
