@@ -37,10 +37,14 @@ class PlotClassifier(Tk.Tk):
         buttons_seeds_frame = Tk.Frame(self)
         buttons_seeds_frame.pack(side=Tk.TOP, fill=Tk.BOTH, expand=True)
         buttons_seed_class = []
-        for i, cls in enumerate(self._seeds):
-            buttons_seed_class.append(Tk.Button(master=buttons_seeds_frame, text=cls,
-                                           command=lambda x=i: self.button_seeds_callback(self._current_args, x)))
-            buttons_seed_class[-1].pack(side=Tk.LEFT)
+        var = Tk.StringVar()
+        var.set(self._seeds[0])
+        option = Tk.OptionMenu(buttons_seeds_frame, var, *self._seeds, command=self.option_seeds_callback)
+        option.pack(side=Tk.LEFT)
+        #for i, cls in enumerate(self._seeds):
+        #    buttons_seed_class.append(Tk.Button(master=buttons_seeds_frame, text=cls,
+        #                                   command=lambda x=i: self.button_seeds_callback(self._current_args, x)))
+        #    buttons_seed_class[-1].pack(side=Tk.LEFT)
 
         button_mean = Tk.Button(master=buttons_seeds_frame, text="Mean",
                                 command=self.button_mean_callback)
@@ -107,6 +111,8 @@ class PlotClassifier(Tk.Tk):
         toolbar.pack() #.grid(row=3, column=1) #
         toolbar.update()
 
+    def option_seeds_callback(self,val):
+        self.seed_plot([i for i,cls in enumerate(self._seeds) if cls == val][0])
 
     def button_seeds_callback(self, args, seed_idx):
         self._seed_callback(args, self._seeds[seed_idx])
