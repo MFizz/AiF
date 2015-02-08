@@ -2,7 +2,7 @@
 Every class and parameter used to get different game outcomes should be set here. Also documentation of
 game execution/performance should be contained here as much as possible, till we need dedicated modules for that.
 """
-import Agent, Skill, Adventure, random, Plot, logging, datetime
+import Agent, Skill, Adventure, random, Plot, logging, datetime, time, sys
 from Booker import Booker
 import numpy as np
 
@@ -13,7 +13,22 @@ numAgents = 10
 iters = 50
 plays= 100
 
-logging.basicConfig(level=logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(level=logging.DEBUG)
+logger.propagate = False
+
+streamLogger = logging.StreamHandler(stream= sys.stdout)
+streamLogger.setLevel(logging.INFO)
+streamLogger.setFormatter(formatter)
+
+current_time = time.strftime("%m.%d.%y_%H_%M", time.localtime())
+handler = logging.FileHandler('MultiAgents_ag{}_adv{}_it{}_pl{}_{}.log'.format(numAgents,numAdv,iters,plays,current_time))
+handler.setLevel(logging.DEBUG)
+handler.setFormatter(formatter)
+
+logger.addHandler(streamLogger)
+logger.addHandler(handler)
 
 def timedelta_milliseconds(td):
     return td.days*86400000 + td.seconds*1000 + td.microseconds/1000
@@ -25,7 +40,6 @@ if __name__ == '__main__':
 
     for iteration in range(0, plays):
         start = datetime.datetime.now()
-        logger = logging.getLogger(__name__)
         seed = random.randrange(10, 500, 1)
         logger.debug("Creating {} random adventures: ".format(numAdv))
         advList = Adventure.createAdvList(numAdv, seed)
@@ -72,5 +86,5 @@ if __name__ == '__main__':
                 ' total time: {}ms'.format(numAgents, numAdv, plays, iters, round(np.mean(times)), round(sum(times))))
     logger.info('Average Upper Ratio = {}'.format(upperRatio/plays))
     logger.info('Average Greedy Ratio = {}'.format(greedyRatio/plays))
-    
+
     Plot.plot(bookers,times)
