@@ -14,7 +14,7 @@ numAdv = 10
 numAgents = 10
 iters = 50
 plays = 100
-maxCurThreads = 10
+maxCurThreads = 5
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -45,6 +45,8 @@ def startMaxThreads(threads):
             activeThreads.append(threads[-1])
             threads[-1].start()
             del threads[-1]
+        else:
+            time.sleep(1)
 
 
 def compPlay(seed, i):
@@ -103,7 +105,7 @@ if __name__ == '__main__':
     startThread.start()
 
     while(len(bookers) != plays):
-        pass
+        time.sleep(1)
     end = datetime.datetime.now()
     upperRatio = 0
     greedyRatio = 0
