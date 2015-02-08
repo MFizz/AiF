@@ -4,6 +4,7 @@ The process and communication of/between game entities, e.g. Agent-Adventure, sh
 by the Booker module.
 
 """
+import logging
 import Coalition
 import Skill
 
@@ -31,6 +32,7 @@ class Booker:
 
         TODO: return evaluable data of the outcome of the game
         """
+        logger = logging.getLogger(__name__)
         global rounds, roundsLeft
         rounds = initRounds
         roundsLeft = initRounds
@@ -47,7 +49,7 @@ class Booker:
             #print("Best coalition and banzhaf power per adventure:")
             for adv in self.adventures:
                 if adv.coalitions:
-                    print(adv)
+                    logger.debug(adv)
                     #print('Banzhaf powers :{}'.format(adv.banzhafPowers))
                     #print('#Coalitions = {}'.format(len(adv.coalitions)))
                     bestCoal = Coalition.bestCoalition(adv.coalitions)
@@ -60,9 +62,9 @@ class Booker:
                             for agent, power in adv.bestCoalition.agentList:
                                 agent.coalitions[adv] = adv.bestCoalition
                         #print ('F]lfulls exp: {}'.format(Coalition.fullfillsReq(bestCoal)))
-                    print('\n')
+                    logger.debug('\n')
                 else:
-                    print("no coalitions for {}".format(adv))
+                    logger.debug("no coalitions for {}".format(adv))
             """ Give The agents the possibility to update their preferences
                 TODO: Agents should only see coalitions from adventures that they
                       applied for.
@@ -100,7 +102,7 @@ class Booker:
                     if set(adv.finalAgents).issuperset(set([a for a, s in adv.bestCoalition.agentList])):
                         adv.rewardAgents(i)
                         self.reward[-1] += adv.reward
-                        print(adv.reward)
+                        logger.debug(adv.reward)
                         self.adventures.remove(adv)
                         self.completedAdventures.append(adv)
                     else:
@@ -116,7 +118,7 @@ class Booker:
 
             if rL:
                 roundsLeft -= 1
-                print('Completed adventures {}'.format(self.completedAdventures))
+                logger.debug('Completed adventures {}'.format(self.completedAdventures))
                 #print('Agents:')
                 #for agent in self.agents:
                 #    print ('{} {}'.format(agent, agent.skillList))
@@ -135,6 +137,7 @@ class Booker:
         :return (dict: key=adventure, value= list of (Agent, list of (Skill, int)): The applying Agents and their
                                              skill/ power for every adventure.
         """
+        logger = logging.getLogger(__name__)
         advRequests = {}
         for agent in self.agents:
             requests = agent.calcTopAdv(self.adventures)
@@ -143,7 +146,7 @@ class Booker:
                     advRequests.get(adventure).append((agent, skillList))
                 else:
                     advRequests[adventure] = [(agent, skillList)]
-            print("Agent ID {}: {}".format(id(agent), [(x, y, id(z)) for (x, y, z) in requests]))
+            logger.debug("Agent ID {}: {}".format(id(agent), [(x, y, id(z)) for (x, y, z) in requests]))
         return advRequests
 
 

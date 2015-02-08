@@ -3,6 +3,7 @@
 The Agent represents the adventurer who should enter different adventures in order to complete them.
 A list of random agents is created by *createAgentlist*
 """
+import logging
 import random, Adventure, Skill, Coalition, Booker
 import numpy as np
 import Starter
@@ -193,6 +194,7 @@ def createAgentList(t, advList,seed):
     :param advList (list of Adventures): Available Adventures.
     :return (list of Agents): List of random Agents with len = t.
     """
+    logger = logging.getLogger(__name__)
     random.seed(seed)
     np.random.seed(seed)
     agentList = []
@@ -204,7 +206,7 @@ def createAgentList(t, advList,seed):
             else:
                 skillMap[skill] = adv.skillMap.get(skill)
 
-    print('skillMap: ', skillMap)
+    logger.debug('skillMap: ', skillMap)
 
     numAgents = dict(skillMap)
     for skill in numAgents.keys():
@@ -223,17 +225,17 @@ def createAgentList(t, advList,seed):
                 break
 
 
-    print ('#Agents per skill: {}'.format(numAgents))
+    logger.debug('#Agents per skill: {}'.format(numAgents))
 
     for skill in sorted(numAgents.keys(),key=numAgents.get):
         power = round(skillMap.get(skill)*(0.1*random.random() + 0.4))
-        print('Power {}'.format(power))
+        logger.debug('Power {}'.format(power))
         agentsProb = np.random.rand(numAgents.get(skill))
         #print ('Agents Prob {}'.format(agentsProb))
         agentsProb /= sum(agentsProb)
         agentsPow = agentsProb*power
         agentsPow = np.ceil(agentsProb*power)
-        print('Agents Power {}'.format(sum(agentsPow)))
+        logger.debug('Agents Power {}'.format(sum(agentsPow)))
 
         for p in agentsPow:
             skillList = []

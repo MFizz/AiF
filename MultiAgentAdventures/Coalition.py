@@ -3,6 +3,7 @@ coalitions and coalition
 buildung.
 """
 from itertools import chain, combinations
+import logging
 import random
 from functools import reduce
 import copy
@@ -231,6 +232,7 @@ def distributiveBestCoalition(coalitions):
         
 
 def removeExcess(coalition):
+    logger = logging.getLogger(__name__)
     pDiff = powerDiff(coalition)
     for skill in pDiff.keys():
         diff = pDiff.get(skill)
@@ -256,7 +258,7 @@ def removeExcess(coalition):
                     if coalition.agentList[j][1][k][0] == skill:
                         coalition.agentList[j][1][k] = (skill,skillMap.get(coalition.agentList[j][0]))
                     
-    print ('Best Coalition = {}'.format(coalition.agentList))
+    logger.debug('Best Coalition = {}'.format(coalition.agentList))
 
     return coalition
 def weightedChoice(choices):

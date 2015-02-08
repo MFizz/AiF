@@ -95,6 +95,8 @@ class PlotClassifier(Tk.Tk):
         mean_percentage_greedy = sum([sum(b.reward)/b.greedyBound for b,s in self._bookers])/len(self._bookers)
         label_mean_stats = Tk.Label(self,text="Statistics over all iterations: ", anchor='w', justify='left', bg="#CCCCCC")
         label_mean_stats.pack(fill=Tk.BOTH, expand=1)
+        label_seeds = Tk.Label(self,text="#Seeds: {}, agents per Seed: {}".format(len(self._bookers), len(self._bookers[0][0].agents)), anchor='w', justify='left', bg="#CCCCCC")
+        label_seeds.pack(fill=Tk.BOTH, expand=1)
         label_mean_upper = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_upper, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_upper.pack(fill=Tk.BOTH, expand=1)
         label_mean_greedy = Tk.Label(self,text="Mean percentage of greedy bound: %f"%mean_percentage_greedy, anchor='w', justify='left', bg="#CCCCCC")
@@ -168,8 +170,6 @@ class PlotClassifier(Tk.Tk):
             self._closed_adv_frame = Tk.Frame(self._agent_frame)
             self._closed_adv_frame.pack(fill=Tk.BOTH, expand=1)
             cur_agent = self._bookers[self._pos][0].agents[pos]
-            print(cur_agent.skillList)
-            print(cur_agent.skillListBegin)
             agent_skills = ", ".join(["{}: {}".format(s.name, p) for s, p in cur_agent.skillList])
             agent_skills_beg = ", ".join(["{}: {}".format(s.name, p) for s, p in cur_agent.skillListBegin])
             label_agent_current_astats = Tk.Label(master=self._closed_adv_frame,text="Statistics of current agent: \n"
