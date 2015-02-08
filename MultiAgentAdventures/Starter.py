@@ -11,7 +11,7 @@ numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
 iters = 50
-plays= 100
+plays = 20000
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ if __name__ == '__main__':
         end = datetime.datetime.now()
         dur = timedelta_milliseconds(end-start)
         bookers.append((booker, seed))
-        logging.info("Iteration %i in %i milliseconds"%(iteration,dur))
+        logger.info("Iteration %i in %i milliseconds"%(iteration,dur))
         times.append(dur)
 
     upperRatio = 0
