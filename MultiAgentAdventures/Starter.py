@@ -10,13 +10,14 @@ from Booker import Booker
 numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
+plays= 10
 iters = 10
 
 
 if __name__ == '__main__':
     bookers = []
 
-    for i in range(0, iters):
+    for i in range(0, plays):
         seed = random.randrange(10, 500, 1)
         print("Creating {} random adventures: ".format(numAdv))
         advList = Adventure.createAdvList(numAdv, seed)
@@ -39,7 +40,7 @@ if __name__ == '__main__':
         print("Greedy Bound for this game is: {} gold".format(greedyBound))
         closedAdventures = booker.completedAdventures
         openAdventures = booker.adventures
-        booker.run(10, True)
+        booker.run(iters, True)
         print(booker.reward)
         print(sum(booker.reward))
         print('Closed Adventures {}'.format(closedAdventures))

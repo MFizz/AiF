@@ -176,7 +176,8 @@ class PlotClassifier(Tk.Tk):
                 labels_adv.append(Tk.Label(master=self._closed_adv_frame, text="In round {} \n{} was comleted \n"
                                                                            "it needed: {} \n"
                                                                            "Agent put in: {}\n"
-                                                                           "Coalition: \n{}".format(iter, adv, adv_skills, agent_cur_skills, adv_coal), anchor='w', justify='left', bg="#CCCCCC"))
+                                                                           "Coalition: \n"
+                                                                           "{}".format(iter, adv, adv_skills, agent_cur_skills, adv_coal), anchor='w', justify='left', bg="#CCCCCC"))
                 labels_adv[-1].pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
 
             self._agent_ax.cla()
