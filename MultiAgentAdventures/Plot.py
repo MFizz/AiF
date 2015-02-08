@@ -93,7 +93,7 @@ class PlotClassifier(Tk.Tk):
         label_mean_stats.pack(fill=Tk.BOTH, expand=1)
         label_mean_upper = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_upper, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_upper.pack(fill=Tk.BOTH, expand=1)
-        label_mean_greedy = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_greedy, anchor='w', justify='left', bg="#CCCCCC")
+        label_mean_greedy = Tk.Label(self,text="Mean percentage of greedy bound: %f"%mean_percentage_greedy, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_greedy.pack(fill=Tk.BOTH, expand=1)
         mean_open_adv = np.mean([len(b.adventures) for b,s in self._bookers])
         label_mean_open_adv = Tk.Label(self,text="Mean open adventures: %f"%mean_open_adv, anchor='w', justify='left', bg="#CCCCCC")
@@ -146,7 +146,7 @@ class PlotClassifier(Tk.Tk):
             mean_percentage_upper = sum(self._bookers[loc][0].reward)/ self._bookers[loc][0].upperBound
             self._text_mean_current_upper.set("Mean percentage of upper bound: %f"%mean_percentage_upper)
             mean_percentage_greedy = sum(self._bookers[loc][0].reward)/ self._bookers[loc][0].greedyBound
-            self._text_mean_current_greedy.set("Mean percentage of upper bound: %f"%mean_percentage_greedy)
+            self._text_mean_current_greedy.set("Mean percentage of greedy bound: %f"%mean_percentage_greedy)
             open_adv = len(self._bookers[loc][0].adventures)
             compl_adv = len(self._bookers[loc][0].completedAdventures)
             self._text_open_adv.set("Open adventures: %i"%open_adv)
