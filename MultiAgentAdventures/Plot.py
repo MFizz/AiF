@@ -144,9 +144,9 @@ class PlotClassifier(Tk.Tk):
             self._plot_generator_seed(self._ax, self._current_args)
             self._canvas.draw()
             mean_percentage_upper = sum(self._bookers[loc][0].reward)/ self._bookers[loc][0].upperBound
-            self._text_mean_current_upper.set("Mean percentage of upper bound: %f"%mean_percentage_upper)
+            self._text_mean_current_upper.set("Percentage of upper bound: %f"%mean_percentage_upper)
             mean_percentage_greedy = sum(self._bookers[loc][0].reward)/ self._bookers[loc][0].greedyBound
-            self._text_mean_current_greedy.set("Mean percentage of greedy bound: %f"%mean_percentage_greedy)
+            self._text_mean_current_greedy.set("Percentage of greedy bound: %f"%mean_percentage_greedy)
             open_adv = len(self._bookers[loc][0].adventures)
             compl_adv = len(self._bookers[loc][0].completedAdventures)
             self._text_open_adv.set("Open adventures: %i"%open_adv)
