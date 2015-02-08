@@ -9,7 +9,7 @@ import tkinter as Tk
 import tkinter.messagebox
 
 class PlotClassifier(Tk.Tk):
-    def __init__(self, plot_generator_seed, plot_generator_agent,plot_generator_mean,bookers, seed_callback, *args, **kwargs):
+    def __init__(self, plot_generator_seed, plot_generator_agent,plot_generator_mean,bookers, times, seed_callback, *args, **kwargs):
         Tk.Tk.__init__(self, *args, **kwargs)
         self.title("Plotting of %i games" % len(bookers))
         self._plot_generator_seed = plot_generator_seed
@@ -19,6 +19,7 @@ class PlotClassifier(Tk.Tk):
         self._seeds = ["Seed %i"%s for b,s in self._bookers]
         self._seed_args = [(list(accumulate(b.reward)), [b.upperBound for i in range(0, len(b.reward))], [b.greedyBound for i in range(0, len(b.reward))], s) for b,s in bookers]
         self._pos = 0
+        self._times = times
         self._agent_pos = 0
         self._seed_callback = seed_callback
         self._agents = []
@@ -76,8 +77,11 @@ class PlotClassifier(Tk.Tk):
         self._text_mean_current_greedy = Tk.StringVar()
         self._text_open_adv = Tk.StringVar()
         self._text_completed_adv = Tk.StringVar()
+        self._text_current_time = Tk.StringVar()
         label_mean_current_stats = Tk.Label(self,text="Statistics of current iteration: ", anchor='w', justify='left', bg="#CCCCCC")
         label_mean_current_stats.pack(fill=Tk.BOTH, expand=1)
+        label_current_time = Tk.Label(self,textvariable=self._text_current_time, anchor='w', justify='left', bg="#CCCCCC")
+        label_current_time.pack(fill=Tk.BOTH, expand=1)
         label_mean_current_upper = Tk.Label(self,textvariable=self._text_mean_current_upper, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_current_upper.pack(fill=Tk.BOTH, expand=1)
         label_mean_current_greedy = Tk.Label(self,textvariable=self._text_mean_current_greedy, anchor='w', justify='left', bg="#CCCCCC")
@@ -95,7 +99,10 @@ class PlotClassifier(Tk.Tk):
         mean_percentage_greedy = sum([sum(b.reward)/b.greedyBound for b,s in self._bookers])/len(self._bookers)
         label_mean_stats = Tk.Label(self,text="Statistics over all iterations: ", anchor='w', justify='left', bg="#CCCCCC")
         label_mean_stats.pack(fill=Tk.BOTH, expand=1)
-        label_seeds = Tk.Label(self,text="#Seeds: {}, agents per Seed: {}".format(len(self._bookers), len(self._bookers[0][0].agents)), anchor='w', justify='left', bg="#CCCCCC")
+        label_seeds = Tk.Label(self,text="#Seeds: {}, agents per Seed: {}, "
+                                         "average computation time for iteration: {}ms,"
+                                         " total time {}ms"
+                               .format(len(self._bookers), len(self._bookers[0][0].agents),round(np.mean(self._times)), round(sum(self._times))), anchor='w', justify='left', bg="#CCCCCC")
         label_seeds.pack(fill=Tk.BOTH, expand=1)
         label_mean_upper = Tk.Label(self,text="Mean percentage of upper bound: %f"%mean_percentage_upper, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_upper.pack(fill=Tk.BOTH, expand=1)
@@ -159,6 +166,7 @@ class PlotClassifier(Tk.Tk):
             compl_adv = len(self._bookers[loc][0].completedAdventures)
             self._text_open_adv.set("Open adventures: %i"%open_adv)
             self._text_completed_adv.set("Completed adventures: %i"%compl_adv)
+            self._text_current_time.set("Computation time: %i ms"%self._times[loc])
         except IndexError:
             tkinter.messagebox.showinfo("No such dataset")
             self.destroy()
@@ -258,8 +266,8 @@ def announce_seed(arguments, class_):
     a =1
     #print(arguments, class_)
 
-def plot(bookers):
-    root = PlotClassifier(create_plot_seed, create_plot_agents, create_plot_mean, bookers, seed_callback=announce_seed)
+def plot(bookers,times):
+    root = PlotClassifier(create_plot_seed, create_plot_agents, create_plot_mean, bookers, times, seed_callback=announce_seed)
     root.after(50, root.seed_plot(0))
     root.mainloop()
 

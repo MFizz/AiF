@@ -10,8 +10,8 @@ import numpy as np
 numAdv = 10
 """ number of random generated Agents"""
 numAgents = 10
-iters = 50
-plays= 100
+iters = 10
+plays= 10
 
 logging.basicConfig(level=logging.INFO)
 
@@ -55,9 +55,9 @@ if __name__ == '__main__':
         logger.debug('Open Adventures {}'.format(openAdventures))
         for agent in booker.agents:
             logger.debug("{}: Income: {} Costs: {} Total: ".format(agent, agent.rewards, agent.finalCosts))
-        bookers.append((booker, seed))
         end = datetime.datetime.now()
         dur = timedelta_milliseconds(end-start)
+        bookers.append((booker, seed))
         logging.info("Iteration %i in %i milliseconds"%(iteration,dur))
         times.append(dur)
 
@@ -68,8 +68,9 @@ if __name__ == '__main__':
             sum(b.reward)/b.upperBound, sum(b.reward)/b.greedyBound))
         upperRatio += sum(b.reward)/b.upperBound
         greedyRatio += sum(b.reward)/b.greedyBound
-    logger.info('#Agents: {}, #Adventures: {}, #Games: {}, #Iterations: {}, average computation time for iteration: {}'.format(numAgents, numAdv, plays, iters, np.mean(times)))
+    logger.info('#Agents: {}, #Adventures: {}, #Games: {}, #Iterations: {}, average computation time for iteration: {}ms,'
+                ' total time: {}ms'.format(numAgents, numAdv, plays, iters, round(np.mean(times)), round(sum(times))))
     logger.info('Average Upper Ratio = {}'.format(upperRatio/iters))
     logger.info('Average Greedy Ratio = {}'.format(greedyRatio/iters))
     
-    Plot.plot(bookers)
+    Plot.plot(bookers,times)
