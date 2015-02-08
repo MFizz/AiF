@@ -59,6 +59,9 @@ class PlotClassifier(Tk.Tk):
         button_quit = Tk.Button(master=buttons_seeds_frame, text='Quit', command=self.destroy)
         button_quit.pack(side=Tk.RIGHT) #.grid(row=0,column=0)
 
+        toolbar = NavigationToolbar2TkAgg( self._agent_canvas, self._agent_frame)
+        toolbar.pack() #.grid(row=3, column=1) #
+        toolbar.update()
 
         self._canvas = FigureCanvasTkAgg(f, master=self)
         self._canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=0, column=1, rowspan=3) #
@@ -101,7 +104,7 @@ class PlotClassifier(Tk.Tk):
 
 
         toolbar = NavigationToolbar2TkAgg( self._canvas, self )
-        toolbar.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=3, column=1) #
+        toolbar.pack() #.grid(row=3, column=1) #
         toolbar.update()
 
 
@@ -186,9 +189,6 @@ class PlotClassifier(Tk.Tk):
                     list(accumulate(self._bookers[self._pos][0].agents[pos].earnings)),
                     id(self._bookers[self._pos][0].agents[pos]))
             self._plot_generator_agent(self._agent_ax, args)
-            toolbar = NavigationToolbar2TkAgg( self._agent_canvas, self._agent_frame)
-            toolbar.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) #.grid(row=3, column=1) #
-            toolbar.update()
             self._agent_canvas.draw()
 
         except IndexError:
