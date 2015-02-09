@@ -114,6 +114,46 @@ class PlotClassifier(Tk.Tk):
         mean_completed_adv = np.mean([len(b.completedAdventures) for b,s in self._bookers])
         label_mean_completed_adv = Tk.Label(self,text="Mean completed adventures: %f"%mean_completed_adv, anchor='w', justify='left', bg="#CCCCCC")
         label_mean_completed_adv.pack(fill=Tk.BOTH, expand=1)
+        
+        
+        
+        
+        
+        # global average turns, no coalition numbers, maximum turns needed
+        average_glob = 0
+        no_coal_glob = 0
+        maximum_glob = 0
+
+        for i in range(0, len(self._bookers)): #iterate all games
+            average = 0
+            no_coal = 0
+            for j in range(0, len(self._bookers[i][0].agents)): #all agents of a game
+                cur_agent = self._bookers[self._pos][0].agents[j]
+                maximum=0 # last time an agent gets into a coalition
+                for adv, iter in cur_agent.closedAdvs:
+                    if iter>maximum:
+                        maximum=iter
+                if maximum == 0:
+                     no_coal += 1
+                else:
+                    average += maximum
+
+                if maximum_glob<maximum:
+                        maximum_glob=maximum
+
+            average /= (len(self._bookers[self._pos][0].agents) - no_coal)
+            average_glob += average
+            no_coal_glob += no_coal
+
+        average_glob /= len(self._bookers)
+        avg_no_coal_glob =  no_coal_glob/len(self._bookers)
+
+        label_mean_steps_to_complete = Tk.Label(self,text="Mean steps needed to complete: %f"%average_glob, anchor='w', justify='left', bg="#CCCCCC")
+        label_mean_steps_to_complete.pack(fill=Tk.BOTH, expand=1)
+        #label_mean_no_coal = Tk.Label(self,text="Players without coalition per game: %f"%avg_no_coal_glob, anchor='w', justify='left', bg="#CCCCCC")
+        #label_mean_no_coal.pack(fill=Tk.BOTH, expand=1)
+        label_max_turns = Tk.Label(self,text="Most turns until coalition found: %f"%maximum_glob, anchor='w', justify='left', bg="#CCCCCC")
+        label_max_turns.pack(fill=Tk.BOTH, expand=1)
 
 
         toolbar = NavigationToolbar2TkAgg( self._canvas, self )
