@@ -1,0 +1,195 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Stylish Article
+% LaTeX Template
+% Version 2.0 (13/4/14)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Mathias Legrand (legrand.mathias@gmail.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[fleqn,10pt]{SelfArx} % Document font size and equations flushed left
+
+\usepackage{lipsum} % Required to insert dummy text. To be removed otherwise
+
+\newcommand{\ChapterCite}[1]{\textsc{Kapitel~\ref{#1}}}
+
+%----------------------------------------------------------------------------------------
+%	COLUMNS
+%----------------------------------------------------------------------------------------
+
+\setlength{\columnsep}{0.55cm} % Distance between the two columns of text
+\setlength{\fboxrule}{0.75pt} % Width of the border around the abstract
+
+%----------------------------------------------------------------------------------------
+%	COLORS
+%----------------------------------------------------------------------------------------
+
+\definecolor{color1}{RGB}{0,0,90} % Color of the article title and sections
+\definecolor{color2}{RGB}{0,20,20} % Color of the boxes behind the abstract and headings
+
+%----------------------------------------------------------------------------------------
+%	HYPERLINKS
+%----------------------------------------------------------------------------------------
+
+\usepackage{hyperref} % Required for hyperlinks
+\hypersetup{hidelinks,colorlinks,breaklinks=true,urlcolor=color2,citecolor=color1,linkcolor=color1,bookmarksopen=false,pdftitle={Title},pdfauthor={Author}}
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE INFORMATION
+%----------------------------------------------------------------------------------------
+
+\JournalInfo{Journal, Vol. XXI, No. 1, 1-5, 2013} % Journal information
+\Archive{Additional note} % Additional notes (e.g. copyright, DOI, review/research article)
+
+\PaperTitle{Coalition skill games with incomplete information and over-abundance of tasks} % Article title
+
+\Authors{Mihail Bogojeski, Tobias Pockrandt, Mitja Phillip Richter, Björn Fischer} % Authors
+
+
+\Keywords{coalition games --- skills --- incomplete information --- matching problem} % Keywords - if you don't want any simply remove all the text between the curly brackets
+\newcommand{\keywordname}{Keywords} % Defines the keywords heading name
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\Abstract{In diesem Paper stellen wir einen Lösungsansatz für das Matchen von Agenten mit gewissen Fertigkeiten auf Aufgaben welche besagte fertigkeiten benötigen. Das Ziel ist es bei fehlen von vollständiger Information eine maximierung der sozialen Wohlfahrt zu erreichen. Hierzu werden verschiedene Methoden und Konzepte aus bereichen wie der Spieltheorie angewandt. Der vorgestellte Lösungsansatz wird zu ca. 80\% die optimale Lösung erreichen und wir liefern eine Reihe von Maßnahmen die eine Inkrementierung dieses Wertes ermöglichen sollten, bzw. die Kalkulationszeit bei minimalen Verlust verbessern.}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\flushbottom % Makes all text pages the same height
+
+\maketitle % Print the title and abstract box
+
+\tableofcontents % Print the contents section
+
+\thispagestyle{empty} % Removes page numbering from the first page
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\section*{Introduction} % The \section*{} command stops section numbering
+\label{sec:introduction}
+
+\addcontentsline{toc}{section}{Introduction} % Adds this section to the table of contents
+
+Dieses Paper stellt einen Abschlussbericht für den Kurs \textit{Agententechnologien in der Forschung} dar und repräsentiert die im Semester erarbeiten Resultate. Das matchen von Agenten und Aufgaben ist ein äußerst komplexes Problem. Aus diesem Grund werden einige Einschränkungen vorgenommen. Es existiert ein Pool aus Fertigkeiten und ihren Intensitäten. Aus diesem Pool bestehen die Aufgaben und die Fertigkeiten der Agenten. Zwischen der Menge von Agenten und der, der Aufgaben soll ein möglichst effizientes Matching gefunden werden. Effizienz definiert hierbei der Grad in dem die soziale Wohlfahrt maximiert wurde. Um einen erhöhten Bezug zu Realität zu erreichen unterliegen die Agenten eine Beschränkung in ihren Informationen. Dies führt zusätzlich dazu das die beste Lösung nicht durch einfaches propagieren durch alle Permutationen ermittelbar ist. \\
+Für dies Spezifikation des Problems wird in diesem Paper eine Lösung dargestellt. Hierfür wird zunächst auf die genauen Rahmenbedingungen des Versuchs eingegangen (\ChapterCite{sec:Umgebung}). Im Anschluss erfolgt eine genauere Betrachtung des angewandten Algorithmus (\ChapterCite{sec:Algorithmus}) sowie der genutzten Methoden und Konzepte (\ChapterCite{sec:Methoden}). Um die Validität der präsentierten Lösung zu bewerten wurde eine Evaluation durchgeführt (\ChapterCite{sec:Evaluation}). Den Abschluss bilden ein Ausblick für mögliche Verbesserung (\ChapterCite{sec:Future}), sowie eine Zusammenfassung (\ChapterCite{sec:Conclusion}). 
+
+%------------------------------------------------
+
+\section{Versuchsumgebung und Beschreibung}
+\label{sec:Umgebung}
+
+Um eine spannendere Umgebung zu erschaffen bezieht sich der gewählte Algorithmus nicht einfach auf Agenten und Aufgaben. Um das gesetzte Problem interessanter und intuitiver darzustellen handelt es sich hier um Abenteurer (Agenten) die in einer Kaschemme angeheuert werden um gewisse Quests (Aufgaben) gegen eine bestimmte Menge Gold zu erfüllen. Im Folgenden wird daher auch von Abenteuerern und Quests gesprochen. Die Abenteurer besitzen einen von 3 möglichen Skills (Fertigkeiten). Der Pool aus Skills besteht aus Kämpfen, Verhandeln und Schleichen. Jeder Fertigkeit eines Abenteurers ist ein Power-Wert zugeordnet, die beschreibt wie gut er diese beherrscht. Die Quests benötigen von jedem Skill einen gewissen Wert um erfüllt zu werden. Eine Quest kann nicht abgeschlossen werden, solange nicht alle Anforderungen komplett erfüllt worden sind.\\
+Aufgrund des Überangebots von Aufgaben existieren mehr Quests als Abenteurer, bzw. benötigen die Quests mehr Power um gelöst zu werden als die Agenten in ihrer Summe verfügen. Sowohl die Abenteurer als auch die Quests werden in einem gewissen Rahmen zufällig generiert. Für erstere wird ca. die Hälfte der Gesamtpower aller Abenteuer auf die Abenteurer verteilt. Die Quests hingegen sind frei von solchen Abhängigkeiten. Sie unterscheiden sich allerdings in ihrer Größe (klein, mittel, groß), wobei viele kleine und wenig große Quests existieren. Der Erlös einer Quest im Vergleich zu ihrer Größe ist allerdings nicht linear, sodass das große Quest proportional mehr Gold ergibt als die Summe kleinerer mit gleicher Power. Dies entspricht auch der Realitätsnähe des Versuchs, da Großprojekte i.d.r. einen größeren Gewinn ausstoßen als kleinere.\\
+Wie der Titel der Arbeit verrät handelt es sich hier um unvollständige Informationen, was bedeutet, dass jeder Abenteurer alle Quests kennt inklusive deren Bedarf und Erlös. Der Agent weiß jedoch nicht wie viele andere Agenten im Spiel sind und insbesondere nicht wie viel Power sie besitzen.\\ 
+In der Planungsphase des Versuchsaufbaus gab es die Diskussion ob die Abenteurer mit Solo- oder Multiskilled sein sollten. Für den Besitz von 2-3 Skills sprachen eine Interessantere Verhandlungsphase zwischen den Abenteurern. Dagegen standen der stark erhöhte Aufwand, sowie der Realismus, da eine Firma zu Meist auf eine Aufgabe Spezialisiert ist. Weiterhin bestand die unbewiesene Annahme, dass sich ein Multiskillagent auch als mehrere Soloskillagenten darstellen lässt. So führte auch nicht zuletzt die Tatsache, dass hier lediglich ein relativ ausgereifter Lösungsansatz vorgestellt werden soll, zu der Entscheidung Solokillagenten zuz verwenden. \\
+Weiterhin besitzen die Agenten für jedes Abenteuer gewisse Grundkosten die anfallen und mit dem Gewinn abgedeckt werden müssen. In unserem Beispiel ist das die Beschaffung von Tränken und die Instandhaltung von Waffen und Ausrüstung. In der Realität könnte sich dies durch Fahrtkosten oder Wartung von Maschinen darstellen lassen. Ein weiteres Ziel welches damit verfolgt wird, ist eine Erhöhung der Individualität der Einzelnen Agenten. Die Abenteurer unterliegen alle dem gleichen Verhalten, sodass sich ihre Handlungen nur durch ihre eigene Power und die Grundkosten unterscheidet. Ergo gibt es hier keine risikoscheuen oder risikoaverse Agenten. Für alle Agenten existiert ein Zeitlimit (Deadline) welches Bekannt ist, nachdem keine Bewerbungen auf Quests mehr möglich sind, sodass die Abenteurer bei fortgeschrittener Zeit auch in weniger profitablere Alternativen wechseln um noch Gewinne zu machen.\\
+Die Stellschrauben an denen hier initial gedreht werden kann, sind die Anzahl an Abenteurern und die der Quests. Die Einhaltung der Rahmenbedingungen erfolgen anschließend Automatisch. Eine genaue Beschreibung des Ablaufes des Algorithmus erfolgt im nächsten Kapitel.\\
+
+
+
+
+
+%------------------------------------------------
+
+\section{Algorithmusbeschreibung}
+\label{sec:Algorithmus}
+Zunächst erfolgt eine grobe Zusammenfassung des Algorithmus, wobei die einzelnen Bestandteile in den folgenden Unterkapiteln ausführlicher beleuchtet werden. Initial berechnen die Agenten für jedes Abenteuer ihren Nutzen. Anschließend bewerben sie sich auf bis zu 4. Abenteuer. Anhand dieser Bewerbungen werden Koalitionen gebildet und die Beste ausgewählt. Potentieller Überschuss in den Koalitionen wird entfernt, da nur so ein erreichen des maximal möglichen Erlöses erst möglich wird. Der zu erwartende Gewinn wird virtuell an die Agenten verteilt, welche sich mit diesen Informationen auf Quests bzw. Koalitionen festlegen. Letztlich werden die geschlossenen Quests aus dem Spiel entfernt, zusammen mit der eingesetzten Power, die Auszahlungen finden statt und sofern noch Power im Spiel ist und die Zeit noch nicht abgelaufen ist beginnt der Algorithmus von vorn.
+
+\subsection{Nutzenkalkulation}
+
+\subsection{Bewerbungsphase}
+
+\subsection{Koalitionsermittlung}
+
+\subsection{Beste Koalition}
+
+\subsection{Überschusstilgung}
+
+\subsection{Gewinnverteilung}
+
+\subsection{Festlegung auf Quest/Koaltion}
+
+\subsection{Schliessung erfüllter Quests}
+
+\section{Methoden und Konzepte}
+\label{sec:Methoden}
+Hier erfolgt eine Zusammenfassung der Methoden und Konzepte, welche unter anderem aus der Spieltheorie kommen um einen Überblick zu erhalten für potentielle Veränderungen aus \ChapterCite{sec:Future} oder Diskussionen für und gegen die angewandten bzw. nicht angewandten Mittel.
+
+\paragraph{Banzhaf-Power}: 
+
+\paragraph{-.-.-.-.-.-.-}:
+
+\paragraph{-.-.-.-.-.-.-}:
+
+\paragraph{-.-.-.-.-.-.-}:
+
+\section{Evaluation}
+\label{sec:Evaluation}
+
+\section{Future Work}
+\label{sec:Future}
+
+Wie bereits aus der Evaluation des vorherigen Kapitels, bekannt erreicht der von uns entwickelte Algorithmus eine recht akzeptable Leistung, wobei durchaus noch Verbesserungen bzw. Veränderungen möglich und notwendig sind. Diese weiteren Arbeiten können und sollen unter anderem die Effizienz (nähe zum Optimum) als auch die Geschwindigkeit verbessern. Es sind unter anderem auf Maßnahmen aufgelistete, welche den Informationsgehalt des Versuchs erhöhen, indem z.B. mehr (spezifischere) Daten betrachtet und damit auch berücksichtigt und ausgelesen werden können.
+
+\paragraph{Verteilung des Algorithmus:}
+Die hier gewählte Implementation ist kein echter verteilter Algorithmus. Die Hauptarbeit wird von einer zentralen Instanz durchgeführt, welche die Berechnungen und Entscheidungen für die Agenten (in deren Sinne) durchführt. Wenn jeder Agent als Einzelne Entität in einem verteilten Algorithmus realisiert ist, lassen sich sehr einfach individuelle Verhaltensmuster für jeweilige Abenteuerer festlegen. Dann können unter anderem verschiedene Risikoaspekte mit in den Aufbau eingewoben werden. Was bedeutet risikoscheue und averse Agenten können aufeinander Treffen. \\
+Ein weiterer Aspekt könnte sein, das ein Agent A unter keinen Umständen mit einem Agenten B	eine Koalition bilden möchte, aufgrund schlechter Erfahrungen oder ähnliches. Hierbei könnte untersucht werden in wie weit die Effizienz des gesamten Konstruktes, durch den Ausschluss der Zusammenarbeit zweier Agenten, in Mitleidenschaft gezogen wird. Der Kreativität im Design vom Verhalten einzelner Agenten ist hierbei kein Limit gesetzt.
+
+\paragraph{Optimierung der Koalitionsbildung:}
+Da aktuell jeder Koalition berechnet werden muss, aufgrund des Banzhafpowerindex befindet sich der Aufwand in einem Exponentiellen Bereich, was dazu führt, dass der Algorithmus schon bei einer vergleichsweise geringen Anzahl an Abenteurern extrem viel Zeit benötigt. Es muss demnach eine Möglichkeit gefunden werden ein im besten Fall identisches Ergebnis in geringerer Zeit zu finden. Der intuitive Ansatz ist hierbei nicht alle Koalitionen zu betrachten, sondern eine simple Vorauswahl zu treffen welche die Anzahl einschränkt. Wie diese Auszusehen hat und wie groß der Effizienzverlust ist muss ermittelt und evaluiert werden.
+
+\paragraph{Maschinelles Lernen:} 
+In der von uns entwickelten Lösung ist Maschinelles Lernen nur sehr marginal vertreten. Agenten merken sich unter anderem wie oft sie bereits an einer Koalition gescheitert sind. Wenn dieser Anteil erheblich ausgebaut werden würde und sich jede Aktion und ihr Resultat quasi gespeichert wird, lassen sich unter Umständen ganz neue Lösungsverhalten finden, welche das Optimum näher erreichen. Hierbei sind allerdings nicht Lernphase über die Dauer eines Spiels gemeint, sondern lernen anhand von 1000 und oder mehr Spielen das anzustrebende Ergebnis. Sodass sich mittels Lernen unter Umständen neue oder unerwartete Lösungen mit ähnlichem bzw. besserem Ergebnis finden lassen. Dieser Lernende Agent kann gegen "gewöhnliche" Agenten oder sogar Menschen Spielen, diese schnell Anhand ihres Verhaltens identifizieren bzw. kategorisieren und eine geeignete Strategien anzuwenden. Dies sei nur als Anreiz für die Einbettung maschinellen Lernens zu verstehen und erhebt nicht den Anspruch vollständig zu sein.
+
+\paragraph{Untersuchung aller Parameter:}
+Das großflächige Untersuchen sämtlicher Parameter könnte aufschlussreiche Ergebnisse liefern. In dieser Evaluation wurde nur an der Menge von Agenten und Abenteuern manipuliert. Weitere Stellschrauben an denen zu drehen ist, sind:
+\begin{itemize}
+	\item \textit{Belohnung}: Die Verteilung von Auszahlungen könnte variiert werden. Den Anstieg noch mehr Quadratische, oder linear oder mittels einer Beliebigen Fkt darstellen. Auch ein stagnierender Anstieg der Auszahlung für größere Abenteuer ist denkbar.
+	\item \textit{Skillmengen}: Statt 3 Skills, könnte eine Beliebige Anzahl an Skills vorhanden sein (z.B. 5). Eine weitere denkbare Alternative ist, das nicht jede Baustelle alle Skills braucht, oder die Agenten mehr als nur einen Skill besitzen, wodurch die Verhandlung eine weitere Dimension erreicht. 
+	\item \textit{Powergrößen}: Die Power die jeder Agent hat bzw. alle Agenten haben oder die Abenteuer haben, kann weiterhin variiert werden.
+	\item \textit{Angebot}: Zum einen kann das Überangebot der Aufgaben noch verschärft oder zu ein Unterangebot abgewandelt werden. Dann würde sich auch die Frage nach dem Ergebnis abwandeln, da bei dieser Veränderung nicht von Interesse ist, wie viel Gold alle Agenten Erwirtschaften, sondern wer bekommt grundsätzlich Gewinn und wie viel. \\
+	Ein weiteres Szenario ist eine komplette Gleichverteilung. Es ist demnach möglich alle Quest zu lösen ohne das ein Skillpunkt eines Abenteurers übrig bleibt. Hier stellt sich die Frage, welcher Agent wie viel vom Gewinn erwirtschaften kann.
+	\item \textit{Agenten}: Die verschiedenen Verhalten die ein Agent aufweisen kann wurden bereits erläutert.
+\end{itemize}
+
+
+
+
+\section{Conclusion}
+\label{sec:Conclusion}
+
+%------------------------------------------------
+\phantomsection
+\section*{Acknowledgments} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{Acknowledgments} % Adds this section to the table of contents
+
+So long and thanks for all the fish \cite{Figueredo:2009dg}.
+
+%----------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%----------------------------------------------------------------------------------------
+\phantomsection
+\bibliographystyle{unsrt}
+\bibliography{sample}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
