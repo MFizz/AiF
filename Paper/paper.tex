@@ -21,6 +21,9 @@
 \documentclass[fleqn,10pt]{SelfArx} % Document font size and equations flushed left
 
 \usepackage{lipsum} % Required to insert dummy text. To be removed otherwise
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage[justification=centering]{caption}
 
 \newcommand{\ChapterCite}[1]{\textsc{Kapitel~\ref{#1}}}
 
@@ -149,7 +152,7 @@ Die Nutzenfunktion ist das wichtigste Mittel, um das verhalten der Agenten zu st
 
 Wie bei der Gewinnschätzung, wird in der Nutzenfunktion zwischen drei Fälle unterschieden, wobei in jedem Fall unterschiedliche Eigenschaften des Abenteuers einen Einfluss auf der ursprünglichen Gewinnschätzung haben. Im ersten Fall ist der Agent kein Mitglied der Gewinnerkoalition des Abenteuers und die Gewinnschätzung wird von Eigenschaft E1 und der Anzahl an vergangenen Runden negativ beeinflusst, d.h.\ der Nutzen für so einen Abenteuer wird später im Spiel und mit steigendem Anzahl an Fehlversuche immer kleiner. \\
 Der zweite Fall tritt auf, wenn der Agent Teil der großen Koalition ist, die aber nicht alle Anforderungen des Abenteuers erfüllen kann. Die Gewinnschätzung wird in diesem Fall von E1 und der Anzahl an vergangenen Runden auch negativ beeinflusst, kann sich aber in Abhängigkeit von E2 und E3 vergrößern oder verkleinern. Die Nutzen ist daher in diesem Fall größer, falls die große Koalition nur wenig Power benötigt um das Abenteuer abzuschließen. \\
-Im dritten Fall, wenn der Agent einen Mitglied der Gewinnerkoalition ist, wird die Gewinnschätzung von der Anzahl an vergangenen Runden stark positiv beeinflusst, d.h.\ der Nutzen eines Abenteuers im diesen Fall steigt in den letzten Runden sehr stark. Außerdem wird in den letzten Runden der positive Einfluss von Eigenschaft E4 auch viel stärker. Also die Nutzen in dritten Fall wird größer, wenn die bereits festgelegten Agenten wenig Power benötigen, um das Abenteuer zu schliessen, und diesen Nuzten steigt in den letzten Runden besonders viel.\\
+Im dritten Fall, wenn der Agent einen Mitglied der Gewinnerkoalition ist, wird die Gewinnschätzung von der Anzahl an vergangenen Runden stark positiv beeinflusst, d.h.\ der Nutzen eines Abenteuers im diesen Fall steigt in den letzten Runden sehr stark. Außerdem wird in den letzten Runden der positive Einfluss von Eigenschaft E4 auch viel stärker. Also die Nutzen in dritten Fall wird größer, wenn die bereits festgelegten Agenten wenig Power benötigen, um das Abenteuer zu schliessen, und diesen Nutzen steigt in den letzten Runden besonders viel.\\
 So einen Nutzenfunktion stellt sicher, dass die Agenten am Anfang mit ihren Bewerbungen flexibel sind und versuchen, einen maximalen Gewinn zu erzielen. Andererseits, in den späteren Runden, versucht jeder Agent vor dem Deadline irgendein Gewinn zu erzielen, auch wenn dieser für ihn nicht optimal ist. In diese weise wird ein realistisches Verhalten der Agenten modelliert. 
 
 
@@ -165,13 +168,47 @@ Die Deadline war ein ganz wichtiges Konzept in unser Implementierung, das das Ve
 \section{Evaluation}
 \label{sec:Evaluation}
 \paragraph{Testaufbau und Initialisierung:}
-Die Evaluation unser Implementieren war mit verschiedenen Kombinationen von 10-15 Agenten, 10-20 Abenteuer und 10-50 Runden durchgeführt. Abenteuer mit Anforderungen von verschiedenen Größen werden von einer Beta-Verteilung mit Parametern $\alpha=2.3$ und $\beta=4.6$ generiert. Für jedes Abenteuer wird das so generierte Power an zwei oder drie Skills baliebig verteilt. Schließlich, wird der Gewinn eines Abenteuers mit eine superlineare Funktion aus der benötigten Power zusammen mit einem gewissen randomisierten Rauschen ausgerechnet. So ist eine Power-Einheit, die in einem Abenteuer mit höheren Anfordeungen inverstiert ist, im Schnitt mehr wert als eine Power-Einheit in einem Abenteuer mit nidrigen Anforderungen.\\
-Solbald alle Abenteuer generiert sind, wird der angegebenen Anzahl der Agenten generiert, sodass für jedes Skill, die gesamte Power aller Agenten 40-50\% der gesamten benotigten Power aller Abenteuer beträgt. So wird sichergestellt, dass es eine Überangebot an Abenteuer gibt. Die Anzahl der Agenten, die einen bestimmten Skill besitzen, wird in Abhängigkeit von der Höhe der benötigten Power für dieses Skill in allen Abenteuern bestimmt. Das heißt, wenn für einen bestimmten Skill in allen Abenteuern mehr Power als den anderen Skills benötigt wird, werden auch mehr Agenten diesen Skill besitzen. So werden alle Agenten im schnitt den gleichen Power haben, unabhängig von welchen Skill sie besitzen. Als letztes werden die Kosten der Agenten für jedes Abeuteuer in einem bestimmten Intevall beliebig generiert.
+Die Evaluation unser Implementieren war mit verschiedenen Kombinationen von 10-15 Agenten, 10-20 Abenteuer und 10-50 Runden durchgeführt. Abenteuer mit Anforderungen von verschiedenen Größen werden von einer Beta-Verteilung mit Parametern $\alpha=2.3$ und $\beta=4.6$ generiert. Für jedes Abenteuer wird das so generierte Power an zwei oder drei Skills beliebig verteilt. Schließlich, wird der Gewinn eines Abenteuers mit eine superlineare Funktion aus der benötigten Power zusammen mit einem gewissen randomisierten Rauschen ausgerechnet. So ist eine Power-Einheit, die in einem Abenteuer mit höheren Anforderungen investiert ist, im Schnitt mehr wert als eine Power-Einheit in einem Abenteuer mit niedrigen Anforderungen.\\
+Sobald alle Abenteuer generiert sind, wird der angegebenen Anzahl der Agenten generiert, sodass für jedes Skill, die gesamte Power aller Agenten 40-50\% der gesamten benötigten Power aller Abenteuer beträgt. So wird sichergestellt, dass es eine Überangebot an Abenteuer gibt. Die Anzahl der Agenten, die einen bestimmten Skill besitzen, wird in Abhängigkeit von der Höhe der benötigten Power für dieses Skill in allen Abenteuern bestimmt. Das heißt, wenn für einen bestimmten Skill in allen Abenteuern mehr Power als den anderen Skills benötigt wird, werden auch mehr Agenten diesen Skill besitzen. So werden alle Agenten im schnitt den gleichen Power haben, unabhängig von welchen Skill sie besitzen. Als letztes werden die Kosten der Agenten für jedes Abenteuer in einem bestimmten Intervall beliebig generiert.
 
 \paragraph{Greedy Bound und Upper Bound:}
-Die optimale Lösung, und damit der maximal erreichbaren Gewinn für einen Spiel auszurechnen ist sehr auswändig (equivalent zu einer Lösung der multidimensionalen Rücksackproblem, was NP-schwer ist). Deswegen haben wir haben wir zwei heuristische Werte für jedes Spiel ausgerechnet: die Greedy und Upper Bound, die wir mit dem von unser Implementierung erzielten Gewinn vergleichen, um unser Algorithmus zu evaluieren. \\
-Die Greedy Bound ist der Gewinn, der mit einem Greedy Algorithmus mit vollstandiger Information im Spiel erzielen kann. Der Greedy Algorithmus schliesst in jede Iteration das Abenteuer mit dem höchsten Gewinn das geschlossen werden kann, bis es kein Abenteuer gibt das geschlossen werden kann. Der Greedy Algorithmus liefert natürlich nicht immer die optimale Lösung, ist aber in der Regel relativ nah dem Optimum.\\
+Die optimale Lösung, und damit der maximal erreichbaren Gewinn für einen Spiel auszurechnen ist sehr aufwändig (äquivalent zu einer Lösung der multidimensionalen Rücksackproblem, was NP-schwer ist). Deswegen haben wir haben wir zwei heuristische Werte für jedes Spiel ausgerechnet: die Greedy und Upper Bound, die wir mit dem von unser Implementierung erzielten Gewinn vergleichen, um unser Algorithmus zu evaluieren. \\
+Die Greedy Bound ist der Gewinn, der mit einem Greedy Algorithmus mit vollständiger Information im Spiel erzielen kann. Der Greedy Algorithmus schliesst in jede Iteration das Abenteuer mit dem höchsten Gewinn das geschlossen werden kann, bis es kein Abenteuer gibt das geschlossen werden kann. Der Greedy Algorithmus liefert natürlich nicht immer die optimale Lösung, ist aber in der Regel relativ nah dem Optimum.\\
 Die Upper Bound ist dann eine echte Obergrenze, d.h.\ die Gewinn von der Upper Bound ist immer gleich oder höher als dem maximal erreichbaren Gewinn. Dieser Gewinn wird wie folgt berechnet: In jeder Iteration wird versucht, das Abenteuer mit dem höchsten Gewinn zu schließen. Falls das möglich ist, wird das Abenteuer geschlossen und der Algorithmus geht weiter. Wenn die Agenten nicht genug Power haben dieses Abenteuer zu schliessen, wird so viel Power wie möglich in das Abenteuer investiert, und der gleichen Anteil des Gewinns an den Agenten ausgezahlt, wie der Anteil der investierten Power von der benötigten Power des Abenteuers. Dieser Schritt wird dann so lange wiederholt, bis die Agenten kein Power mehr zu Investieren haben. Die so ausgerechnete Upper Bound, ist deswegen höher als dem maximal erreichbaren Gewinn, weil der Gewinn eines Abenteuers superlinear von der benötigten Power abhängig ist.
+
+\paragraph{Ergebnisse:}
+Wir haben hauptsächlich vier verschiedenen Konfigurationen getestet:
+\begin{itemize}
+  \item[K1] 10 Agenten, 10 Abenteuer, 50 Runden - 1000 Spiele getestet
+  \item[K2] 10 Agenten, 15 Abenteuer, 50 Runden - 1000 Spiele getestet
+  \item[K3] 15 Agenten, 10 Abenteuer, 50 Runden - 50 Spiele getestet
+  \item[K4] 15 Agenten, 20 Abenteuer, 50 Runden - 50 Spiele getestet
+\end{itemize}
+Wir könnten Konfigurationen mit mehr als 15 Agenten nicht effizient testen, da der Rechenaufwand für Spiele mit vielen Agenten wegen der Koalitionsermittlung sehr hoch ist. Die Ergebnisse von der Evaluation aller vier Konfigurationen können auf den Abbildungen 1-4 gesehen werden. Die Abbildungen zeigen der mittleren Gewinn aller Agenten für jede Runde über alle getesteten Spiele, sowie die mittlere Upper und Greedy Bound. Außerdem, wird in der Beschreibung eingeführt, wie viel Prozent aus der Upper und Greedy Bound erzielt im Mittel unsere Implementierung.
+\begin{figure}
+  \centering
+  \includegraphics[width=.4\textwidth]{10ad_50r_1000it_cut.png}
+  \caption{Konfiguration K1: 76\% Upper Bound, 90\% Greedy Bound}
+\end{figure}
+\label{fig:eval1}
+\begin{figure}
+  \centering
+  \includegraphics[width=.4\textwidth]{15ad_50r_1000it_cut.png}
+  \caption{Konfiguration K2: 81\% Upper Bound, 90\% Greedy Bound}
+\end{figure}
+\label{fig:eval2}
+\begin{figure}
+  \centering
+  \includegraphics[width=.4\textwidth]{10ad_15ag_50r_50it_cut.png}
+  \caption{Konfiguration K3: 75\% Upper Bound, 89\% Greedy Bound}
+\end{figure}
+\label{fig:eval3}
+\begin{figure}
+  \centering
+  \includegraphics[width=.4\textwidth]{20ad_15ag_50r_50it_cut.png}
+  \caption{Konfiguration K4: 80\% Upper Bound, 87\% Greedy Bound}
+\end{figure}
+\label{fig:eval4}
 
 \section{Future Work}
 \label{sec:Future}
