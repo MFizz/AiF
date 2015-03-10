@@ -103,55 +103,64 @@ Weiterhin besitzen die Agenten für jedes Abenteuer gewisse Grundkosten die anfa
 Die Stellschrauben an denen hier initial gedreht werden kann, sind die Anzahl an Abenteurern und die der Abenteuer. Die Einhaltung der Rahmenbedingungen erfolgen anschließend automatisch. Eine genaue Beschreibung des Ablaufes des Algorithmus erfolgt im nächsten Kapitel.\\
 
 
-
-
-
 %------------------------------------------------
 
 \section{Algorithmusbeschreibung}
 \label{sec:Algorithmus}
 Zunächst erfolgt eine grobe Zusammenfassung des Algorithmus, wobei die einzelnen Bestandteile in den folgenden Unterkapiteln ausführlicher beleuchtet werden. Zu Beginn berechnen die Agenten für jedes Abenteuer ihren Nutzen. Anschließend dürfen sie sich auf bis zu 4. Abenteuer bewerben. Anhand dieser Bewerbungen werden Koalitionen gebildet und die Beste ausgewählt. Potentieller Überschuss in den Koalitionen wird entfernt und möglichst sinnvoll an die Agenten zurückgezahlt, da nur so ein erreichen des maximal möglichen Erlöses erst möglich wird. Der zu erwartende Gewinn wird virtuell an die Agenten verteilt, welche sich mit diesen Informationen auf Abenteuer bzw. Koalitionen festlegen. Letztlich werden die geschlossenen Abenteuer aus dem Spiel entfernt, zusammen mit der eingesetzten Power, die Auszahlungen finden statt und sofern noch Power im Spiel ist und die Zeit noch nicht abgelaufen ist beginnt der Algorithmus von neuem.
 
-\subsection{Bewerbungsphase}
+\paragraph{Bewerbungsphase:}
 Jeder Agent berechnet seinen Nutzen für jedes Abenteuer und bewirbt sich für maximal vier Abenteuer, die den höchsten Nutzen für ihn haben. Die Agenten bewerben sich mit ihren ganzen verfügbaren Power, solange diese Power der benötigten Power des Abenteuers nicht überschreitet (in diesem Fall bewirbt sich der Agent mit der benötigten Power für das Skill exakt).  Die Bewerbungen aller Agenten werden aufgesammelt und anhand dieser werden die Koalitionen für jedes Abenteuer ermittelt. 
 
-\subsection{Koalitionsermittlung}
-Für jedes Abenteuer, werder zuerst alle mögliche Koalitionen aus der Agenten die sich für dieses Abenteuer beworben haben gebildet. Danach werden alle Koalitionen, die keine Gewinnerkoalitionen sind (d.h.\ die Koalitionen, die die Anforderungen des Abenteuers nicht erfüllen), eliminiert. Schließlich, wird aus der Gewinnerkoalitionen der Banzhap Power für jedes Agent in diesem Abenteuer berechnet. In dieser Phase werden auch die Veto-Spieler in jedes Abenteuer ermittelt und ihren Banzhaf Power wird mit einem bestimmten Faktor multipliziert (in unser Implementierung verdoppelt), um die Macht der Veto-Spieler im Vergleich zu den anderen Spieler noch mehr zu vergrößern. 
+\paragraph{Koalitionsermittlung:}
+Für jedes Abenteuer, werder zuerst alle mögliche Koalitionen aus der Agenten die sich für dieses Abenteuer beworben haben gebildet. Danach werden alle Koalitionen, die keine Gewinnerkoalitionen sind (d.h.\ die Koalitionen, die die Anforderungen des Abenteuers nicht erfüllen), eliminiert. Falls es keine Gewinnerkoalition gibt, wird die große Koalition als die einzige Koalition für dieses Abenteuer gespeichert. Schließlich, wird aus der Gewinnerkoalitionen der Banzhap Power für jedes Agent in diesem Abenteuer berechnet. In dieser Phase werden auch die Veto-Spieler in jedes Abenteuer ermittelt und ihren Banzhaf Power wird mit einem bestimmten Faktor multipliziert (in unser Implementierung verdoppelt), um die Macht der Veto-Spieler im Vergleich zu den anderen Spieler noch mehr zu vergrößern. 
 
-\subsection{Beste Koalition}
-Die beste Koalition für eines Abenteuer wird mit einer leicht geänderter Version des verteilten Algorithmus ermittelt. Zuerst werden die Koalitionen eliminiert, die einen nicht minimalen Überschuss an investierter Power haben. Unter Überschuss wird hier die Differenz zwischen der investierten Power der Koalition und der benötigten Power des Abenteuers für jedes Skill gemeint. Eine Koalition die einen höhen Überschuss hat ist daher nicht effizient, da die überflüssige Power potentiell bei anderen Abenteuer ausgenutzt werden könnte. So werden auch Dummy-Spieler aus der potentiell besten Koalition entfernt, da es immer eine Koalition ohne Dummy-Spielern und mit kleinerem Überschuss gibt. Der verteilte Algorithmus wird dann auf die Koalitionen mit minimalem Überschuss angewandt, wo die beste Koalition auf eine elitäre Weise ausgewählt wird. Genauer gesagt, die beste Koalition ist die Koalition, für die irgendeinen Agent die größte Gewinnschätzung hat. Eine egalitäre Version dieser Algorithmus war auch getestet, hat aber zu keine besseren Ergebnisse geführt.
+\paragraph{Beste Koalition:}
+Die beste Koalition für eines Abenteuer wird mit einer leicht geänderter Version des verteilten Algorithmus ermittelt. Zuerst werden die Koalitionen eliminiert, die einen nicht minimalen Überschuss an investierter Power haben. Unter Überschuss wird hier die Differenz zwischen der investierten Power der Koalition und der benötigten Power des Abenteuers für jedes Skill gemeint. Eine Koalition die einen höhen Überschuss hat ist daher nicht effizient, da die überflüssige Power potentiell bei anderen Abenteuer ausgenutzt werden könnte. So werden auch Dummy-Spieler aus der potentiell besten Koalition entfernt, da es immer eine Koalition ohne Dummy-Spielern und mit kleinerem Überschuss gibt. Der verteilte Algorithmus wird dann auf die Koalitionen mit minimalem Überschuss angewandt, wo die beste Koalition auf eine elitäre Weise ausgewählt wird. Genauer gesagt, die beste Koalition ist die Koalition, für die irgendeinen Agent die größte Gewinnschätzung hat.
 
-\subsection{Überschusstilgung} 
+\paragraph{Überschusstilgung:} 
 In dieser Phase wird die überflüssige Power aus der besten Koalition entfernt und an den Agenten zurückgegeben. Da Power nur ganzzahlig werden kann, muss der Überschuss nur an bestimmten Agenten aufgeteilt werden. In unsere Implementierung wird die Aufteilung des Überschusses durch eine iterierte randomisierte Prozedur realisiert. Für jedes Skill bei dem es einen Überschuss gibt, wird in jede Iteration eine Power-Einheit einem Agenten zurückgegeben. Jeder Agent, der Power von einem Skilltyp investiert hat, kann mit einer gewissen Wahrscheinlichkeit eine Power-Einheit von der Überschuss in diese Skilltyp zurückbekommen. Diese Wahrscheinlichkeit ist gleich der Anteil der inverstierten Power des Agenten aus der gesamten inverstierten Power aller Agenten. Das heißt, dass Agenten die mehr Power aus einen Skilltyp inverstiert haben, mit einer höheren Wahrscheinlichkeit eine Power-Einheit aus der Überschuss zurückbekommen. Diese Prozedur wird so oft wiederholt, bis den ganzen Überschuss aus der besten Koalition entfernt wird.
 )
-\subsection{Gewinnverteilung}
+\paragraph{Gewinnverteilung:}
 Der Gewinn wird abhängig von der Banzhaf Power der Agenten aufgeteilt. Jeder Agent in der beste Koalition bekommt der gleichen Anteil der Gesamtgewinn, wie der Anteil seinen Banzhaf Power aus der Summe der Banzhaf Power aller Agenten. Dank der Banzhaf Power ist diese Verteilung fair bezüglich der Macht der Agenten und zusätzlich auch pareto-effizient, da der gesamte Gewinn verteilt wird.
 
-\subsection{Festlegung auf Abenteuer/Koaltion}
+\paragraph{Festlegung auf Abenteuer/Koaltion:}
 Da sich die Agenten zu maximal vier Abenteuer mit voller Power bewerben können, muss sich jeder Agent auf nur ein Abenteuer festlegen. Die Entscheidung erfolgt in 2 Phasen: In der ersten Phase, wählt jeder Agent das Abenteuer aus, wo er am meisten gewinnen kann, d.h.\ wo seine Gewinnschätzung am höchsten ist. Für die zweite Phase werden diese Entscheidungen bekannt gegeben und die Agenten haben jetzt eine Möglichkeit ihre Entscheidung zu ändern. Diesmal entscheiden die Agenten nicht anhand ihrer Gewinnschätzung, sondern anhand ihrer Nutzenfunktion, die die Entscheidungen der anderen Agenten aus der ersten Phase miteinbezieht. Die Agenten wählen das Abenteuer mit dem größten Nutzen und diese Entscheidung ist für die aktuelle Runde endgültig.
 
-\subsection{Schliessung erfüllter Abenteuer}
+\paragraph{Schliessung erfüllter Abenteuer:}
 Nachdem sich jeder Agent für eine einzige Abenteuer entschieden hat, werden die Abenteuer, wo die Gewinnerkoalition vollständig ist (d.h.\ jeder Agent in der Koalition hat sich auf dieses Abenteuer festgelegt). Falls einen Abenteuer geschlossen wird, wird das Gewinn an der Agenten ausgezahlt und das geschlossene Abenteuer entfernt. Ab der nächste Runde kann sich kein Agent mehr für das geschlossene Abenteuer anmelden.
 
 \section{Methoden und Konzepte}
 \label{sec:Methoden}
 Hier erfolgt eine Zusammenfassung der Methoden und Konzepte, welche unter anderem aus der Spieltheorie kommen um einen Überblick zu erhalten für potentielle Veränderungen aus \ChapterCite{sec:Future} oder Diskussionen für und gegen die angewandten bzw. nicht angewandten Mittel.
 
-\paragraph{Gewinnschätzung}
+\paragraph{Gewinnschätzung:}
 Die Gewinnschätzung des Agenten für einen Abenteuer ist eine ganz wichtige Funktion, die in viele Teile der Implementierung benutztz wird.
-Für ein bestimmtes Abenteuer, wird die Gewinnschätzung wie folgt berechnet: Falls der Agent kein Mitglied der aktuellen Gewinnerkoalition des Abenteuer ist, schätzt er, dass er seinen fairen Anteil des Gewinns bekommt, d.h.\ er erwartet den gleichen Anteil des Gewinns, wie der Anteil seine investierte Power von der gesamten benötigten Power des Abenteuer. Falls der Agent Teil der großen Koalition ist, die aber nicht alle Anforderungen des Abenteuer erfüllen kann, schätzt der Agent das er der gleichen Anteil des Gewinns bekommt, wie der Anteil seine investierte Power von der gesamten Power der Koalition. Wenn der Agent ein Mitglied der aktuellen Gewinnerkolaition ist, kennt er seinen Banzhaf Power für dieses Abenteuer und schätzt sein Gewinn als der gleichen Anteil des gesamten Gewinns, wie der Anteil seiner Banzhaf Power aus der Summe der Banzhaf Power aller Agenten in dieser Koalition.
+Für ein bestimmtes Abenteuer, wird die Gewinnschätzung wie folgt berechnet: Falls der Agent kein Mitglied der aktuellen Gewinnerkoalition des Abenteuers ist, schätzt er, dass er seinen fairen Anteil des Gewinns bekommt, d.h.\ er erwartet den gleichen Anteil des Gewinns, wie der Anteil seine investierte Power von der gesamten benötigten Power des Abenteuers. Falls der Agent Teil der großen Koalition ist, die aber nicht alle Anforderungen des Abenteuers erfüllen kann, schätzt der Agent das er der gleichen Anteil des Gewinns bekommt, wie der Anteil seine investierte Power von der gesamten Power der Koalition. Wenn der Agent ein Mitglied der aktuellen Gewinnerkolaition ist, kennt er seinen Banzhaf Power für dieses Abenteuer und schätzt sein Gewinn als der gleichen Anteil des gesamten Gewinns, wie der Anteil seiner Banzhaf Power aus der Summe der Banzhaf Power aller Agenten in dieser Koalition.
 
-\paragraph{Nutzenfunktion}
-Die Basis des Nutzen eines Agenten von einem Abenteuer wird aus der Gewinnschätzung für das Abenteuer gebildet und dann abhängig von den Eigenschaften des Abenteuer angepasst.
+\paragraph{Nutzenfunktion:}
+Die Nutzenfunktion ist das wichtigste Mittel, um das verhalten der Agenten zu steuern. Die Basis des Nutzen eines Agenten von einem bestimmten Abenteuer wird aus der Gewinnschätzung minus die Kosten für das Abenteuer gebildet. Dann wird dieser Wert abhängig von den Eigenschaften des Abenteuers angepasst und daraus der endgültige Nutzen erhalten. Es werden vier Eigenschaften eines Abenteuers und die zugehörige beste Koalition unterschieden:
+\begin{itemize}
+  \item[E1] Die Anzahl der bisherigen Fehlversuche bei diesem Abenteuer. Eine frühere Bewerbung zählt als Fehlversuch, wenn der Agent mit dieser Bewerbung kein Mitglied der Gewinnerkoalition geworden ist.
+  \item[E2] Diese Eigenschaft spielt nur dann eine Rolle, wenn die große Koalition nicht alle Anforderungen des Abenteuers erfüllt. Es wird der Anteil der fehlenden Power der große Koalition zur Schließung des Abenteuers aus der gesamten benötigten Power für das Abenteuer berechnet. 
+  \item[E3] Diese Eigenschaft spielt auch nur dann eine Rolle, wenn die große Koalition nicht alle Anforderungen des Abenteuers erfüllt. Es wird die Anzahl an Skills gezählt, bei denen die große Koalitionen einen Mangel an Power hat. Dieser Wert wird dann durch den Anzahl an insgesamt benötigten Skills für das Abenteuer dividiert.
+  \item[E4] Diese Eigenschaft spielt in der zweite Phase des Festlegungsprotokolls eine Rolle. Sie wird genau wie E2 berechnet, aber statt der großen Koalition, wird hier die Anteil der fehlenden Power der Koalition aus der bereits festgelegten Agenten berechnet. Diese Eigenschaft drückt also aus, wie viel Power benötigen die bereits festgelegten Agenten um das Abenteuer abzuschließen. 
+\end{itemize}
 
-\paragraph{Banzhaf-Power}: 
-Um die Banzhaf-Power eines Agenten zu bestimmen wird gezählt in wie vielen möglichen Koalitionen dieser ein kritischer Spieler ist.
+Wie bei der Gewinnschätzung, wird in der Nutzenfunktion zwischen drei Fälle unterschieden, wobei in jedem Fall unterschiedliche Eigenschaften des Abenteuers einen Einfluss auf der ursprünglichen Gewinnschätzung haben. Im ersten Fall ist der Agent kein Mitglied der Gewinnerkoalition des Abenteuers und die Gewinnschätzung wird von Eigenschaft E1 und der Anzahl an vergangenen Runden negativ beeinflusst, d.h.\ der Nutzen für so einen Abenteuer wird später im Spiel und mit steigendem Anzahl an Fehlversuche immer kleiner. \\
+Der zweite Fall tritt auf, wenn der Agent Teil der großen Koalition ist, die aber nicht alle Anforderungen des Abenteuers erfüllen kann. Die Gewinnschätzung wird in diesem Fall von E1 und der Anzahl an vergangenen Runden auch negativ beeinflusst, kann sich aber in Abhängigkeit von E2 und E3 vergrößern oder verkleinern. Die Nutzen ist daher in diesem Fall größer, falls die große Koalition nur wenig Power benötigt um das Abenteuer abzuschließen. \\
+Im dritten Fall, wenn der Agent einen Mitglied der Gewinnerkoalition ist, wird die Gewinnschätzung von der Anzahl an vergangenen Runden stark positiv beeinflusst, d.h.\ der Nutzen eines Abenteuers im diesen Fall steigt in den letzten Runden sehr stark. Außerdem wird in den letzten Runden der positive Einfluss von Eigenschaft E4 auch viel stärker. Also die Nutzen in dritten Fall wird größer, wenn die bereits festgelegten Agenten wenig Power benötigen, um das Abenteuer zu schliessen, und diesen Nuzten steigt in den letzten Runden besonders viel.\\
+So einen Nutzenfunktion stellt sicher, dass die Agenten am Anfang mit ihren Bewerbungen flexibel sind und versuchen, einen maximalen Gewinn zu erzielen. Andererseits, in den späteren Runden, versucht jeder Agent vor dem Deadline irgendein Gewinn zu erzielen, auch wenn dieser für ihn nicht optimal ist. In diese weise wird ein realistisches Verhalten der Agenten modelliert. 
 
-\paragraph{-.-.-.-.-.-.-}:
 
-\paragraph{-.-.-.-.-.-.-}:
+\paragraph{Banzhaf-Power:}
+Um die Banzhaf-Power eines Agenten zu bestimmen wird gezählt in wie vielen möglichen Koalitionen dieser ein kritischer Spieler ist. Wie vorher erwähnt, wird die Banzhaf-Power der Veto-Spieler zusätzlich mit einem Faktor multipliziert, um die Tatsache auszudrücken, dass Veto-Spieler viel mächtiger als den anderen Spielern sind.
 
-\paragraph{-.-.-.-.-.-.-}:
+\paragraph{Egalitäre und elitäre Funktionen:} Für die Ermittlung der besten Koalition haben wir auch eine egalitäre Version des Algorithmus getestet, wo wir die Koalition, mit dem größten minimalen Nutzen für einen Agent, als die beste Koalition ausgewählt haben. Diese Version des Algorithmus hat schlechtere, aber nicht signifikant unterschiedliche Ergebnisse als die elitäre Version erzielt.
+
+
+\paragraph{Deadline:}
+Die Deadline war ein ganz wichtiges Konzept in unser Implementierung, das das Verhalten der Agenten stark beeinflusst hat. Dank der Deadline ist der Spielzustand in jeder Runde ein bisschen anders, was ein zyklisches Verhalten der Agenten verhindert. Die Deadline hat auch einen großen Einfluss auf der Konvergenz unser Algorithmus, weil das Verhalten der Agenten in den letzen Runden vor der Deadline viel stabiler wird. So wird sicher gestellt, dass die Agenten in den letzten Runden so viele Abenteuer wie möglich abschließen, obwohl diese Abenteuer für jeden einzelnen Agent nicht einen optimalen Gewinn liefern.
 
 \section{Evaluation}
 \label{sec:Evaluation}
